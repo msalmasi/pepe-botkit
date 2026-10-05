@@ -1,0 +1,27 @@
+{
+  "description": "seq starts at 1",
+  "expect_path": "/seq",
+  "frame": {
+    "op": "event",
+    "id": "c-bad-1",
+    "ts": "2026-10-05T18:00:00.000Z",
+    "seq": 0,
+    "type": "message",
+    "connector": "cf-main",
+    "scope": {
+      "platform": "camfrog",
+      "room": {
+        "id": "LilyPond.Room",
+        "name": "The Lily Pond",
+        "kind": "room"
+      }
+    },
+    "data": {
+      "user": {
+        "id": "lilypadlou",
+        "login": "LilyPadLou"
+      },
+      "text": "hi"
+    }
+  }
+}

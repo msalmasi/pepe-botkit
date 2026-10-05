@@ -1,0 +1,27 @@
+{
+  "description": "mic.release reason is an enum",
+  "expect_path": "/data/reason",
+  "frame": {
+    "op": "event",
+    "id": "c-bad-1",
+    "ts": "2026-10-05T18:00:00.000Z",
+    "seq": 5,
+    "type": "mic.release",
+    "connector": "cf-main",
+    "scope": {
+      "platform": "camfrog",
+      "room": {
+        "id": "LilyPond.Room",
+        "name": "The Lily Pond",
+        "kind": "room"
+      }
+    },
+    "data": {
+      "user": {
+        "id": "lilypadlou",
+        "login": "LilyPadLou"
+      },
+      "reason": "got bored"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "description": "rate_limited errors are always retryable",
+  "expect_path": "/error/retryable",
+  "frame": {
+    "op": "result",
+    "id": "c-bad-2",
+    "ts": "2026-10-05T18:00:00.000Z",
+    "seq": 6,
+    "ref": "r-bad-1",
+    "type": "send",
+    "ok": false,
+    "error": {
+      "code": "rate_limited",
+      "message": "slow down",
+      "retryable": false
+    }
+  }
+}

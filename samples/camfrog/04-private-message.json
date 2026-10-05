@@ -1,0 +1,58 @@
+{
+  "description": "A room-scoped private message (Camfrog PM) with display markup vs real login, and the private reply.",
+  "grounding": "v1 memory pm-packet-0x60: s2c 0x60 = [display line 'Private message from <b><n>DISPLAY</n></b>: \"TEXT\"', sender LOGIN, u32 id, u64 ms timestamp]. No recipient field (an inbound PM is by definition to the bot). The PM arrives on one room's socket and the reply must go back through that room (sent as '/msg <login> <text>'). The bot's own sent PM echoes back as 'Private message to ...' and is not emitted as an inbound PM.",
+  "frames": [
+    {
+      "dir": "c2r",
+      "note": "display comes from the markup line; login is field 2. Resolve identity by id/login, never by display.",
+      "frame": {
+        "op": "event", "id": "c-0301", "ts": "2026-10-05T18:05:21.533Z", "seq": 30, "type": "message.private",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room", "name": "The Lily Pond", "kind": "room" } },
+        "data": {
+          "message_id": "cf-pm-3901122",
+          "user": {
+            "id": "toadstool77",
+            "login": "toadstool77",
+            "display": "mossy",
+            "display_raw": "<b><n>mossy</n></b>"
+          },
+          "text": "hey pepe can you not tell the room about my bet",
+          "ext": { "camfrog": { "packet_id": 3901122 } }
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "r-0301", "ts": "2026-10-05T18:05:24.100Z", "type": "send.private",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room" } },
+        "data": { "user": { "id": "toadstool77", "login": "toadstool77" }, "text": "my lips are sealed. well, my lily pad is." },
+        "origin": { "bot": "bot-pepe", "module": "ai-chat", "event": "c-0301" }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result", "id": "c-0302", "ts": "2026-10-05T18:05:24.330Z", "seq": 31, "ref": "r-0301", "type": "send.private", "ok": true,
+        "data": { "parts": 1 }
+      }
+    },
+    {
+      "dir": "r2c",
+      "note": "Without a room the connector cannot route a Camfrog PM (features.private_messages=room) and the user is not in any joined room.",
+      "frame": {
+        "op": "action", "id": "r-0302", "ts": "2026-10-05T18:06:00.000Z", "type": "send.private",
+        "scope": { "platform": "camfrog" },
+        "data": { "user": { "id": "farawayfrog" }, "text": "your loan is due" }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result", "id": "c-0303", "ts": "2026-10-05T18:06:00.004Z", "seq": 32, "ref": "r-0302", "type": "send.private", "ok": false,
+        "error": { "code": "not_in_room", "message": "PMs travel through a room; farawayfrog is not in any joined room", "retryable": true, "retry_after_ms": 60000 }
+      }
+    }
+  ]
+}

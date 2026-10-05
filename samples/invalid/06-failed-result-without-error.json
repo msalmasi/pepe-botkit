@@ -1,0 +1,13 @@
+{
+  "description": "ok=false needs an error object",
+  "expect_path": "/",
+  "frame": {
+    "op": "result",
+    "id": "c-bad-2",
+    "ts": "2026-10-05T18:00:00.000Z",
+    "seq": 6,
+    "ref": "r-bad-1",
+    "type": "kick",
+    "ok": false
+  }
+}

@@ -1,0 +1,162 @@
+{
+  "description": "A Twitch connector: the room is the broadcaster's channel, users have numeric ids plus login and display, emotes are emoji elements, subs and raids are notices, timeouts are mutes, whispers have no room.",
+  "grounding": "Platform-neutrality check. Ids and names are invented.",
+  "frames": [
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "hello", "id": "t-0001", "ts": "2026-10-05T18:00:00.000Z",
+        "data": {
+          "pcp": "1.0",
+          "connector": { "id": "twitch-main", "platform": "twitch", "kind": "chat", "name": "twitch-connector", "version": "0.1.0" },
+          "self": { "id": "900000001", "login": "pepebot_tv", "display": "PepeBot_TV", "is_self": true, "is_bot": true },
+          "capabilities": {
+            "events": ["message", "message.private", "notice", "member.join", "member.leave", "moderation", "room.joined", "room.left", "connector.status", "sync.gap"],
+            "actions": ["send", "send.private", "ban", "unban", "mute", "unmute", "room.join", "room.leave"],
+            "features": {
+              "message_ids": true, "threads": false, "reactions": false,
+              "content_elements": ["text", "mention", "emoji", "quote"],
+              "private_messages": "global", "user_id_kind": "numeric"
+            },
+            "limits": { "message_max_chars": 500, "send_per_minute": 20 }
+          }
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "welcome", "id": "tr-0001", "ts": "2026-10-05T18:00:00.020Z", "ref": "t-0001",
+        "data": { "pcp": "1.0", "session_id": "sess-01J9ZE0000TWT", "heartbeat_ms": 20000, "bindings": [{ "room": { "id": "800000042", "name": "frogpond_live" } }] }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "tr-0002", "ts": "2026-10-05T18:00:00.100Z", "type": "room.join",
+        "data": { "room": { "id": "800000042", "name": "frogpond_live" } }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event", "id": "t-0002", "ts": "2026-10-05T18:00:00.600Z", "seq": 1, "type": "room.joined",
+        "connector": "twitch-main",
+        "scope": { "platform": "twitch", "room": { "id": "800000042", "name": "frogpond_live", "kind": "channel" } },
+        "data": { "room": { "id": "800000042", "name": "frogpond_live", "kind": "channel" } }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result", "id": "t-0003", "ts": "2026-10-05T18:00:00.610Z", "seq": 2, "ref": "tr-0002", "type": "room.join", "ok": true,
+        "data": { "room": { "id": "800000042", "name": "frogpond_live", "kind": "channel" }, "joined": true }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "Twitch JOINs are batched and lossy for big channels; member.join is best-effort there.",
+      "frame": {
+        "op": "event", "id": "t-0004", "ts": "2026-10-05T18:00:05.000Z", "seq": 3, "type": "member.join",
+        "connector": "twitch-main",
+        "scope": { "platform": "twitch", "room": { "id": "800000042", "kind": "channel" } },
+        "data": { "user": { "id": "700000013", "login": "toadstool77" } }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "Badges map to roles; the emote is an emoji element with its Twitch id.",
+      "frame": {
+        "op": "event", "id": "t-0005", "ts": "2026-10-05T18:01:00.000Z", "seq": 4, "type": "message",
+        "connector": "twitch-main",
+        "scope": { "platform": "twitch", "room": { "id": "800000042", "name": "frogpond_live", "kind": "channel" } },
+        "data": {
+          "message_id": "5f0c1e2a-0000-4000-8000-000000000001",
+          "user": { "id": "700000013", "login": "toadstool77", "display": "Toadstool77", "roles": ["subscriber", "vip"] },
+          "text": "!heist join Kappa",
+          "content": [
+            { "type": "text", "text": "!heist join " },
+            { "type": "emoji", "name": "Kappa", "id": "25" }
+          ],
+          "ext": { "twitch": { "badges": { "subscriber": "12", "vip": "1" }, "color": "#1E90FF" } }
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "tr-0003", "ts": "2026-10-05T18:01:00.300Z", "type": "send",
+        "scope": { "platform": "twitch", "room": { "id": "800000042" } },
+        "data": { "text": "Toadstool77 is in the crew. 3/6.", "reply_to": "5f0c1e2a-0000-4000-8000-000000000001" }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": { "op": "result", "id": "t-0006", "ts": "2026-10-05T18:01:00.500Z", "seq": 5, "ref": "tr-0003", "type": "send", "ok": true, "data": { "parts": 1 } }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event", "id": "t-0007", "ts": "2026-10-05T18:02:00.000Z", "seq": 6, "type": "notice",
+        "connector": "twitch-main",
+        "scope": { "platform": "twitch", "room": { "id": "800000042", "kind": "channel" } },
+        "data": { "text": "Toadstool77 subscribed for 12 months!", "kind": "subscription", "user": { "id": "700000013", "login": "toadstool77" } }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event", "id": "t-0008", "ts": "2026-10-05T18:03:00.000Z", "seq": 7, "type": "moderation",
+        "connector": "twitch-main",
+        "scope": { "platform": "twitch", "room": { "id": "800000042", "kind": "channel" } },
+        "data": { "kind": "mute", "target": { "id": "700000666", "login": "spamtoad" }, "duration_s": 600, "source": "platform" }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "tr-0004", "ts": "2026-10-05T18:03:30.000Z", "type": "mute",
+        "scope": { "platform": "twitch", "room": { "id": "800000042" } },
+        "data": { "user": { "id": "700000667", "login": "spamtoad2" }, "duration_s": 300, "reason": "same spam, new account" }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": { "op": "result", "id": "t-0009", "ts": "2026-10-05T18:03:30.300Z", "seq": 8, "ref": "tr-0004", "type": "mute", "ok": true, "data": {} }
+    },
+    {
+      "dir": "c2r",
+      "note": "A whisper has no room at all.",
+      "frame": {
+        "op": "event", "id": "t-0010", "ts": "2026-10-05T18:04:00.000Z", "seq": 9, "type": "message.private",
+        "connector": "twitch-main",
+        "scope": { "platform": "twitch" },
+        "data": { "user": { "id": "700000013", "login": "toadstool77" }, "text": "how do I link my PATV account?" }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "tr-0005", "ts": "2026-10-05T18:04:05.000Z", "type": "cam.capture",
+        "scope": { "platform": "twitch", "room": { "id": "800000042" } },
+        "data": { "user": { "id": "800000042" } }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result", "id": "t-0011", "ts": "2026-10-05T18:04:05.001Z", "seq": 10, "ref": "tr-0005", "type": "cam.capture", "ok": false,
+        "error": { "code": "unsupported", "message": "action cam.capture is not supported by twitch-connector", "retryable": false }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event", "id": "t-0012", "ts": "2026-10-05T19:00:00.000Z", "seq": 11, "type": "member.leave",
+        "connector": "twitch-main",
+        "scope": { "platform": "twitch", "room": { "id": "800000042", "kind": "channel" } },
+        "data": { "user": { "id": "700000013", "login": "toadstool77" }, "reason": "left" }
+      }
+    }
+  ]
+}

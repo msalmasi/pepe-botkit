@@ -1,0 +1,72 @@
+{
+  "description": "Stickers: one arrives (with the locally cached image exposed as media), the bot lists what it can send, and sends one in a room whose server never acks and one in a room that does.",
+  "grounding": "v1 memory camfrog-stickers: s2c 0x3f = [sender, set_id, sticker_id, big_id, timestamps]; the image is cached by the client as a .blob wrapping a 100x100 PNG (carved at the first PNG signature; animated stickers keep only frame 1). c2s 0x3f sends (set_id, sticker_id, constant token). The s2c 0x58 ack (status 1 posted / 0 rejected) comes only from some room servers, so 'posted' is tri-state.",
+  "frames": [
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event", "id": "c-0701", "ts": "2026-10-05T19:00:00.000Z", "seq": 80, "type": "sticker",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room", "name": "The Lily Pond", "kind": "room" } },
+        "data": {
+          "user": { "id": "lilypadlou", "login": "LilyPadLou" },
+          "sticker": {
+            "id": "1644", "set_id": "1642", "animated": false,
+            "media": { "kind": "image", "mime": "image/png", "blob": "blob-stk-1644", "width": 100, "height": 100 }
+          },
+          "message_id": "cf-stk-LilyPond.Room-000310"
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": { "op": "action", "id": "r-0701", "ts": "2026-10-05T19:00:05.000Z", "type": "sticker.list", "data": { "limit": 3 } }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result", "id": "c-0702", "ts": "2026-10-05T19:00:05.080Z", "seq": 81, "ref": "r-0701", "type": "sticker.list", "ok": true,
+        "data": {
+          "stickers": [
+            { "id": "1644", "set_id": "1642", "media": { "kind": "image", "mime": "image/png", "blob": "blob-stk-1644" } },
+            { "id": "1645", "set_id": "1642", "media": { "kind": "image", "mime": "image/png", "blob": "blob-stk-1645" } },
+            { "id": "1650", "set_id": "1642", "animated": true, "media": { "kind": "image", "mime": "image/png", "blob": "blob-stk-1650" } }
+          ]
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "r-0702", "ts": "2026-10-05T19:00:06.000Z", "type": "sticker.send",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room" } },
+        "data": { "sticker": { "id": "1645", "set_id": "1642" } },
+        "origin": { "bot": "bot-pepe", "module": "ai-chat" }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "This room's server never sends the 0x58 ack: posted=null means 'sent, unconfirmed' - not a failure.",
+      "frame": {
+        "op": "result", "id": "c-0703", "ts": "2026-10-05T19:00:08.000Z", "seq": 82, "ref": "r-0702", "type": "sticker.send", "ok": true,
+        "data": { "posted": null }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "r-0703", "ts": "2026-10-05T19:01:00.000Z", "type": "sticker.send",
+        "scope": { "platform": "camfrog", "room": { "id": "TestPond.Room" } },
+        "data": { "sticker": { "id": "9999", "set_id": "77" } }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "Ack status 0: the account doesn't own that set. The action itself succeeded at the protocol level, the platform rejected the sticker.",
+      "frame": {
+        "op": "result", "id": "c-0704", "ts": "2026-10-05T19:01:00.700Z", "seq": 83, "ref": "r-0703", "type": "sticker.send", "ok": true,
+        "data": { "posted": false }
+      }
+    }
+  ]
+}

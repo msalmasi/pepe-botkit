@@ -1,0 +1,18 @@
+{
+  "description": "an accepted resume must say where to replay from",
+  "expect_path": "/data/resume",
+  "frame": {
+    "op": "welcome",
+    "id": "r-1",
+    "ts": "2026-10-05T18:00:00.000Z",
+    "ref": "c-1",
+    "data": {
+      "pcp": "1.0",
+      "session_id": "sess-1",
+      "heartbeat_ms": 15000,
+      "resume": {
+        "accepted": true
+      }
+    }
+  }
+}

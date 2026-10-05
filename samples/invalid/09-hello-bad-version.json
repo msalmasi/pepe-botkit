@@ -1,0 +1,22 @@
+{
+  "description": "hello.pcp must be MAJOR.MINOR",
+  "expect_path": "/data/pcp",
+  "frame": {
+    "op": "hello",
+    "id": "c-1",
+    "ts": "2026-10-05T18:00:00.000Z",
+    "data": {
+      "pcp": "v1",
+      "connector": {
+        "id": "cf-main",
+        "platform": "camfrog",
+        "name": "cf-connector",
+        "version": "0.1.0"
+      },
+      "capabilities": {
+        "events": [],
+        "actions": []
+      }
+    }
+  }
+}

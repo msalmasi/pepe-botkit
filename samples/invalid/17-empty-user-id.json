@@ -1,0 +1,27 @@
+{
+  "description": "UserRef.id cannot be empty",
+  "expect_path": "/data/user/id",
+  "frame": {
+    "op": "event",
+    "id": "c-bad-1",
+    "ts": "2026-10-05T18:00:00.000Z",
+    "seq": 5,
+    "type": "message",
+    "connector": "cf-main",
+    "scope": {
+      "platform": "camfrog",
+      "room": {
+        "id": "LilyPond.Room",
+        "name": "The Lily Pond",
+        "kind": "room"
+      }
+    },
+    "data": {
+      "user": {
+        "id": "",
+        "login": "x"
+      },
+      "text": "hi"
+    }
+  }
+}

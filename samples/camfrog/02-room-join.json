@@ -1,0 +1,101 @@
+{
+  "description": "Joining a Camfrog room by display name, the join snapshot of members (0x41 burst), and a failed join.",
+  "grounding": "v1 room_control.py drives the Join Room dialog (accepts id or display name; window title is '<Display>, Topic: ...', not the room id). The c2s JOIN (0x00) names the room id; the server's 'You are now logged in' line marks the room as usable. 0x41 user-list entries carry login + display name; group headers split members (on cam) from lurkers. A missing room shows 'Room name is not found in the active chat room list.'",
+  "frames": [
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "r-0101", "ts": "2026-10-05T18:00:00.020Z", "type": "room.join",
+        "data": { "room": { "name": "Swamp Lounge" }, "accept_motd": true, "wait_ms": 20000 },
+        "origin": { "bot": "bot-pepe", "module": "autojoin" }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "Emitted after the logged-in server line. Room-level capabilities narrow the connector's: this room's server never acks stickers and the mic here is single-slot.",
+      "frame": {
+        "op": "event", "id": "c-0101", "ts": "2026-10-05T18:00:01.412Z", "seq": 1, "type": "room.joined",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog", "room": { "id": "Swamp_Lounge", "name": "Swamp Lounge", "kind": "room" } },
+        "data": {
+          "room": { "id": "Swamp_Lounge", "name": "Swamp Lounge", "kind": "room" },
+          "topic": "bring snacks, no spoilers",
+          "member_count": 3,
+          "self": { "id": "pepebot", "login": "PepeBot", "display": "Pepe", "is_self": true },
+          "capabilities": {
+            "events": ["message", "message.private", "notice", "member.join", "member.leave", "member.update", "mic.grab", "mic.release", "sticker", "room.update", "moderation"],
+            "actions": ["send", "send.private", "kick", "mute", "mic.block", "mic.unblock", "topic.set", "room.leave", "mic.grab", "mic.release", "user.list", "sticker.send"],
+            "features": { "mic": { "slots": 1 }, "sticker_send_ack": "never" }
+          }
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "0x41 entry: login 'LilyPadLou', display name differs. id is the login lowercased.",
+      "frame": {
+        "op": "event", "id": "c-0102", "ts": "2026-10-05T18:00:01.430Z", "seq": 2, "type": "member.join",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog", "room": { "id": "Swamp_Lounge", "name": "Swamp Lounge", "kind": "room" } },
+        "data": {
+          "user": { "id": "lilypadlou", "login": "LilyPadLou", "display": "lou the lily" },
+          "initial": true, "group": "members", "on_cam": true
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event", "id": "c-0103", "ts": "2026-10-05T18:00:01.431Z", "seq": 3, "type": "member.join",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog", "room": { "id": "Swamp_Lounge", "name": "Swamp Lounge", "kind": "room" } },
+        "data": { "user": { "id": "bogwalker", "login": "bogwalker" }, "initial": true, "group": "lurkers", "on_cam": false }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "A room's own chat bot. is_bot comes from connector config (v1 _room_bots).",
+      "frame": {
+        "op": "event", "id": "c-0104", "ts": "2026-10-05T18:00:01.433Z", "seq": 4, "type": "member.join",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog", "room": { "id": "Swamp_Lounge", "name": "Swamp Lounge", "kind": "room" } },
+        "data": { "user": { "id": "swampbot", "login": "SwampBot", "is_bot": true }, "initial": true, "group": "lurkers" }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "A real arrival after the snapshot: no 'initial', so greeters react.",
+      "frame": {
+        "op": "event", "id": "c-0105", "ts": "2026-10-05T18:00:44.010Z", "seq": 5, "type": "member.join",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog", "room": { "id": "Swamp_Lounge", "name": "Swamp Lounge", "kind": "room" } },
+        "data": { "user": { "id": "neon_newt", "login": "neon_newt", "display": "Newt" }, "group": "lurkers", "on_cam": false }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result", "id": "c-0106", "ts": "2026-10-05T18:00:01.440Z", "seq": 6, "ref": "r-0101", "type": "room.join", "ok": true,
+        "data": { "room": { "id": "Swamp_Lounge", "name": "Swamp Lounge", "kind": "room" }, "joined": true, "topic": "bring snacks, no spoilers" }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "r-0102", "ts": "2026-10-05T18:01:00.000Z", "type": "room.join",
+        "data": { "room": { "name": "Nonexistent Pond" } }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "The client's 'Room name is not found' dialog, dismissed by the connector.",
+      "frame": {
+        "op": "result", "id": "c-0107", "ts": "2026-10-05T18:01:00.900Z", "seq": 7, "ref": "r-0102", "type": "room.join", "ok": false,
+        "error": {
+          "code": "not_found", "message": "room not in the active chat room list", "retryable": false,
+          "platform_code": "Room name is not found in the active chat room list."
+        }
+      }
+    }
+  ]
+}

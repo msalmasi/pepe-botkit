@@ -1,0 +1,39 @@
+{
+  "description": "Camfrog direct messages (the contact-list inbox, not room PMs): a content-free activity ping, then an on-demand read of the inbox.",
+  "grounding": "v1 memory camfrog-dms + pepe_dm.py: s2c 0x57 carries ids + a timestamp and no sender or text (and may re-fire on reconnect). The inbox ('Conversations' window) is a Chromium view with no native text, so v1 screenshots it with PrintWindow and reads it with a vision model. The DM web API is deliberately not used. Replying is not built.",
+  "frames": [
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event", "id": "c-1301", "ts": "2026-10-05T20:05:00.000Z", "seq": 140, "type": "inbox.notify",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog" },
+        "data": { "at": "2026-10-05T20:04:59.871Z", "ext": { "camfrog": { "packet": "0x57", "small_int": 2 } } }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "r-1301", "ts": "2026-10-05T20:05:10.000Z", "type": "inbox.read",
+        "data": { "limit": 5 },
+        "origin": { "bot": "bot-pepe", "module": "admin", "user": { "id": "ownerfrog" } }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "Read from pixels: names are what the inbox shows (often display names), so user.id may be missing and confidence is < 1.",
+      "frame": {
+        "op": "result", "id": "c-1302", "ts": "2026-10-05T20:05:16.400Z", "seq": 141, "ref": "r-1301", "type": "inbox.read", "ok": true,
+        "data": {
+          "method": "vision",
+          "confidence": 0.82,
+          "conversations": [
+            { "name": "mossy", "preview": "did you get my sticker lol", "unread": 2, "at": "2026-10-05T20:04:00Z" },
+            { "user": { "id": "lilypadlou", "login": "LilyPadLou" }, "name": "LilyPadLou", "preview": "see you at karaoke", "unread": 0 }
+          ],
+          "image": { "kind": "image", "mime": "image/png", "blob": "blob-inbox-20261005-2005", "width": 616, "height": 639 }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "description": "ts must be RFC 3339",
+  "expect_path": "/ts",
+  "frame": {
+    "op": "event",
+    "id": "c-bad-1",
+    "ts": "yesterday at 6",
+    "seq": 5,
+    "type": "message",
+    "connector": "cf-main",
+    "scope": {
+      "platform": "camfrog",
+      "room": {
+        "id": "LilyPond.Room",
+        "name": "The Lily Pond",
+        "kind": "room"
+      }
+    },
+    "data": {
+      "user": {
+        "id": "lilypadlou",
+        "login": "LilyPadLou"
+      },
+      "text": "hi"
+    }
+  }
+}

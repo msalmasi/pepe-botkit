@@ -1,0 +1,33 @@
+{
+  "description": "audiohook connects as its own connector (kind=audio) for the same Camfrog account, emitting only audio.segment. It subscribes to nothing; the runtime tells it which room is the audio room.",
+  "grounding": "ARCHITECTURE section 11.4: audiohook does loopback capture and segmentation driven by 'who is talking' signals from any connector (Camfrog mic packets today) and emits audio.segment with speaker and room. v1 binds one 'audio room' at a time (the loopback carries one room's sound).",
+  "frames": [
+    {
+      "dir": "c2r",
+      "note": "This connector's host cannot set headers on the upgrade request, so it authenticates inside hello. The token is a placeholder.",
+      "frame": {
+        "op": "hello", "id": "ah-hello-1", "ts": "2026-10-05T17:59:59.000Z",
+        "data": {
+          "pcp": "1.0",
+          "connector": { "id": "audiohook-1", "platform": "camfrog", "kind": "audio", "name": "audiohook", "version": "0.1.0" },
+          "auth": { "token": "pcp_tok_EXAMPLE_NOT_A_REAL_TOKEN_000000" },
+          "capabilities": {
+            "events": ["audio.segment", "connector.status", "sync.gap"],
+            "actions": []
+          }
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "welcome", "id": "r-ah-1", "ts": "2026-10-05T17:59:59.020Z", "ref": "ah-hello-1",
+        "data": {
+          "pcp": "1.0", "session_id": "sess-01J9ZC4P8AH1", "heartbeat_ms": 15000,
+          "bindings": [{ "room": { "id": "LilyPond.Room" }, "audio": true }],
+          "limits": { "replay_window_events": 200 }
+        }
+      }
+    }
+  ]
+}

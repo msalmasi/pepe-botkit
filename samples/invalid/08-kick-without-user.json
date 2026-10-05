@@ -1,0 +1,19 @@
+{
+  "description": "kick action needs a user",
+  "expect_path": "/data",
+  "frame": {
+    "op": "action",
+    "id": "r-bad-1",
+    "ts": "2026-10-05T18:00:00.000Z",
+    "type": "kick",
+    "scope": {
+      "platform": "camfrog",
+      "room": {
+        "id": "LilyPond.Room"
+      }
+    },
+    "data": {
+      "reason": "spam"
+    }
+  }
+}

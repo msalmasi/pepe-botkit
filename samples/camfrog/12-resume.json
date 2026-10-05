@@ -1,0 +1,114 @@
+{
+  "description": "Reconnect and resume: the WebSocket dropped mid-burst; the connector resumes the session, replays what the runtime had not processed, and an action that was in flight is re-sent with the same id and answered from the connector's result cache (no double kick). A second connection whose resume is refused gets a sync.gap.",
+  "grounding": "Protocol behaviour (spec/PCP.md, Heartbeats, reconnect and resume). The v1 IOCP duplicate-packet bug (commands running twice) is the reason actions are idempotent by id and events carry seq.",
+  "frames": [
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "hello", "id": "c-1101", "ts": "2026-10-05T19:40:03.000Z",
+        "data": {
+          "pcp": "1.0",
+          "connector": { "id": "cf-main", "platform": "camfrog", "kind": "chat", "name": "cf-connector", "version": "0.1.0" },
+          "capabilities": {
+            "events": ["message", "message.private", "member.join", "mic.grab", "mic.release", "moderation", "room.joined", "room.left", "sync.gap", "connector.status"],
+            "actions": ["send", "send.private", "kick", "mic.grab", "mic.release", "user.list"]
+          },
+          "resume": { "session_id": "sess-01J9ZC4N2K7Q", "last_seq_sent": 125, "buffer_from_seq": 60 }
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "note": "Runtime had processed up to 122; the connector replays 123..125 before anything new.",
+      "frame": {
+        "op": "welcome", "id": "r-1101", "ts": "2026-10-05T19:40:03.040Z", "ref": "c-1101",
+        "data": {
+          "pcp": "1.0", "session_id": "sess-01J9ZC4N2K7Q", "heartbeat_ms": 15000,
+          "resume": { "accepted": true, "last_seq": 122 }
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "Replayed with its original id, seq and ts.",
+      "frame": {
+        "op": "event", "id": "c-1023", "ts": "2026-10-05T19:39:58.100Z", "seq": 123, "type": "message",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room", "name": "The Lily Pond", "kind": "room" } },
+        "data": { "message_id": "cf-m-LilyPond.Room-000400", "user": { "id": "spamfrog9", "login": "spamfrog9" }, "text": "free PAT at sketchy dot link" }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "Result for an action the runtime sent just before the drop; it never arrived on the old socket.",
+      "frame": {
+        "op": "result", "id": "c-1024", "ts": "2026-10-05T19:39:59.000Z", "seq": 124, "ref": "r-1099", "type": "kick", "ok": true, "data": {}
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event", "id": "c-1025", "ts": "2026-10-05T19:39:59.010Z", "seq": 125, "type": "moderation",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room", "name": "The Lily Pond", "kind": "room" } },
+        "data": {
+          "kind": "kick", "actor": { "id": "pepebot", "login": "PepeBot", "is_self": true },
+          "target": { "id": "spamfrog9", "login": "spamfrog9" }, "source": "server", "text": "PepeBot kicked spamfrog9"
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "note": "The runtime re-sends every action it has no FINAL result for, with the SAME id. Here it had not yet seen c-1024 when it decided to re-send (a race); the connector recognises r-1099 and answers from its cache instead of kicking again.",
+      "frame": {
+        "op": "action", "id": "r-1099", "ts": "2026-10-05T19:39:58.900Z", "type": "kick",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room" } },
+        "data": { "user": { "id": "spamfrog9", "login": "spamfrog9" }, "reason": "link spam" }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "Duplicate answer for the same ref is allowed; the runtime ignores results for already-finished actions.",
+      "frame": {
+        "op": "result", "id": "c-1102", "ts": "2026-10-05T19:40:03.120Z", "seq": 126, "ref": "r-1099", "type": "kick", "ok": true, "data": {}
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": { "op": "ack", "id": "r-1102", "ts": "2026-10-05T19:40:03.200Z", "seq": 126 }
+    },
+    {
+      "dir": "c2r",
+      "note": "--- Another day: the connector process restarted and lost its buffer; the runtime also no longer knows the session. ---",
+      "frame": {
+        "op": "hello", "id": "c-2001", "ts": "2026-10-06T08:00:00.000Z",
+        "data": {
+          "pcp": "1.0",
+          "connector": { "id": "cf-main", "platform": "camfrog", "name": "cf-connector", "version": "0.1.0" },
+          "capabilities": { "events": ["message", "sync.gap", "connector.status"], "actions": ["send", "user.list"] },
+          "resume": { "session_id": "sess-01J9ZC4N2K7Q" }
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "welcome", "id": "r-2001", "ts": "2026-10-06T08:00:00.030Z", "ref": "c-2001",
+        "data": {
+          "pcp": "1.0", "session_id": "sess-01JA1B7T0QXM", "heartbeat_ms": 15000,
+          "resume": { "accepted": false, "reason": "session expired" }
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "New session, seq restarts at 1. Modules re-snapshot (user.list) on sync.gap.",
+      "frame": {
+        "op": "event", "id": "c-2002", "ts": "2026-10-06T08:00:00.050Z", "seq": 1, "type": "sync.gap",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog" },
+        "data": { "reason": "resume_rejected" }
+      }
+    }
+  ]
+}

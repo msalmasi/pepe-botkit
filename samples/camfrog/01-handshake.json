@@ -1,0 +1,99 @@
+{
+  "description": "cf-connector connects to the runtime, declares Camfrog capabilities and is told which rooms to sit in. Then a heartbeat round and a cumulative ack.",
+  "grounding": "v1 frida-bot.py: one Camfrog client, several room sockets (fd per room); mic is multi-slot (2 in the home room); own mic state readable from the Talk button (1.52b); PMs are room-scoped; display names carry <b><n>..</n></b> markup; chat lines cap at ~480 chars; sticker send acks only on some room servers.",
+  "frames": [
+    {
+      "dir": "c2r",
+      "note": "Sent right after the WebSocket upgrade (subprotocol pcp.v1, Authorization: Bearer <token> header), so no auth block here.",
+      "frame": {
+        "op": "hello",
+        "id": "c-0001",
+        "ts": "2026-10-05T17:59:58.104Z",
+        "data": {
+          "pcp": "1.0",
+          "connector": {
+            "id": "cf-main",
+            "platform": "camfrog",
+            "kind": "chat",
+            "name": "cf-connector",
+            "version": "0.1.0",
+            "platform_version": "8.5.0",
+            "host": "edge-windows-1"
+          },
+          "self": { "id": "pepebot", "login": "PepeBot", "display": "Pepe", "is_self": true },
+          "capabilities": {
+            "events": [
+              "message", "message.private", "notice", "member.join", "member.leave", "member.update",
+              "mic.grab", "mic.release", "cam.open", "cam.close", "cam.view", "sticker",
+              "room.joined", "room.left", "room.update", "moderation", "inbox.notify",
+              "connector.status", "sync.gap"
+            ],
+            "actions": [
+              "send", "send.private", "kick", "ban", "unban", "mute", "unmute", "mic.block", "mic.unblock",
+              "role.set", "topic.set", "room.join", "room.leave", "room.list", "mic.grab", "mic.release",
+              "audio.play", "cam.capture", "cam.open", "cam.close", "cam.self.set", "user.list",
+              "sticker.send", "sticker.list", "inbox.read", "platform.command"
+            ],
+            "features": {
+              "message_ids": false,
+              "threads": false,
+              "reactions": false,
+              "edits": false,
+              "content_elements": ["text"],
+              "private_messages": "room",
+              "display_markup": true,
+              "user_id_kind": "login",
+              "mic": { "slots": 2, "self_state_observable": true },
+              "cam": { "capture_requires_open": true, "max_capture_width": 768 },
+              "sticker_send_ack": "sometimes",
+              "roles": ["admin", "moderator", "friend"],
+              "platform_commands": ["/watchlist", "/oplist", "/addfriend"]
+            },
+            "limits": { "message_max_chars": 480, "send_per_minute": 40, "max_rooms": 4 }
+          }
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "note": "Bindings come from the admin console (bot instance -> rooms). Passwords never travel in welcome; a password room is joined with an explicit room.join action.",
+      "frame": {
+        "op": "welcome",
+        "id": "r-0001",
+        "ts": "2026-10-05T17:59:58.131Z",
+        "ref": "c-0001",
+        "data": {
+          "pcp": "1.0",
+          "session_id": "sess-01J9ZC4N2K7Q",
+          "heartbeat_ms": 15000,
+          "runtime": { "name": "pepe-botkit", "version": "0.1.0" },
+          "limits": {
+            "max_frame_bytes": 1048576,
+            "max_inflight_actions": 32,
+            "replay_window_events": 2000,
+            "replay_window_ms": 300000,
+            "ack_every_events": 50
+          },
+          "bindings": [
+            { "room": { "id": "LilyPond.Room", "name": "The Lily Pond" }, "bot": "bot-pepe", "rejoin_on_kick": true, "audio": true },
+            { "room": { "name": "Swamp Lounge" }, "bot": "bot-pepe", "rejoin_on_kick": false }
+          ]
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": { "op": "ping", "id": "r-0002", "ts": "2026-10-05T18:00:13.140Z" }
+    },
+    {
+      "dir": "c2r",
+      "note": "platform_ok=false would mean the WebSocket is fine but the Frida hook / Camfrog client is not.",
+      "frame": { "op": "pong", "id": "c-0002", "ts": "2026-10-05T18:00:13.152Z", "ref": "r-0002", "data": { "platform_ok": true, "last_seq": 48 } }
+    },
+    {
+      "dir": "r2c",
+      "note": "Runtime has durably handled seq 1..48; the connector may drop them from its replay buffer.",
+      "frame": { "op": "ack", "id": "r-0003", "ts": "2026-10-05T18:00:13.200Z", "seq": 48 }
+    }
+  ]
+}

@@ -1,0 +1,201 @@
+{
+  "description": "A Discord connector: guild + channels + threads, numeric ids, rich elements (mentions, custom emoji, attachments, replies), reactions, DMs, presence and timeouts. Same events/actions as Camfrog; no mic or cam capabilities, so modules that need them simply stay off here.",
+  "grounding": "Platform-neutrality check for ARCHITECTURE section 11.2 ('Discord has threads and reactions'). Ids are made-up snowflakes.",
+  "frames": [
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "hello", "id": "d-0001", "ts": "2026-10-05T18:00:00.000Z",
+        "data": {
+          "pcp": "1.0",
+          "connector": { "id": "discord-casino", "platform": "discord", "kind": "chat", "name": "discord-connector", "version": "0.1.0", "platform_version": "gateway-v10" },
+          "self": { "id": "1290000000000000001", "login": "pepe_casino", "display": "Pepe Casino", "is_self": true, "is_bot": true },
+          "capabilities": {
+            "events": ["message", "message.private", "notice", "member.join", "member.leave", "member.update", "presence", "reaction", "room.joined", "room.left", "room.update", "moderation", "connector.status", "sync.gap"],
+            "actions": ["send", "send.private", "kick", "ban", "unban", "mute", "unmute", "role.set", "topic.set", "react", "user.list", "room.list"],
+            "features": {
+              "message_ids": true, "threads": true, "reactions": true, "edits": true,
+              "content_elements": ["text", "mention", "mention_all", "emoji", "link", "media", "quote", "style"],
+              "private_messages": "global", "display_markup": false, "user_id_kind": "numeric",
+              "roles": ["Croupier", "High Roller"]
+            },
+            "limits": { "message_max_chars": 2000, "send_per_minute": 50, "topic_max_chars": 1024 }
+          }
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "welcome", "id": "dr-0001", "ts": "2026-10-05T18:00:00.030Z", "ref": "d-0001",
+        "data": { "pcp": "1.0", "session_id": "sess-01J9ZD0000DSC", "heartbeat_ms": 30000 }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "A message in a thread under #casino, replying to an earlier message, with a mention, a custom emoji and an image attachment.",
+      "frame": {
+        "op": "event", "id": "d-0002", "ts": "2026-10-05T18:01:00.000Z", "seq": 1, "type": "message",
+        "connector": "discord-casino",
+        "scope": {
+          "platform": "discord",
+          "guild": { "id": "1100000000000000001", "name": "Frog Pond" },
+          "room": { "id": "1100000000000000010", "name": "casino", "kind": "channel" },
+          "thread": { "id": "1100000000000000099", "name": "blackjack table 2", "kind": "thread", "parent_id": "1100000000000000010" }
+        },
+        "data": {
+          "message_id": "1290000000000000555",
+          "user": { "id": "1000000000000000042", "login": "lilypad_lou", "display": "Lou", "roles": ["High Roller"] },
+          "text": "@Pepe Casino look at this hand :frogcry:",
+          "content": [
+            { "type": "mention", "user": { "id": "1290000000000000001", "display": "Pepe Casino", "is_self": true } },
+            { "type": "text", "text": " look at this hand " },
+            { "type": "emoji", "name": "frogcry", "id": "1200000000000000777" },
+            { "type": "media", "media": { "kind": "image", "mime": "image/png", "url": "https://cdn.example/attachments/hand.png", "width": 640, "height": 360, "name": "hand.png" } }
+          ],
+          "reply_to": "1290000000000000500",
+          "mentions_self": true
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "dr-0002", "ts": "2026-10-05T18:01:00.400Z", "type": "send",
+        "scope": {
+          "platform": "discord",
+          "room": { "id": "1100000000000000010" },
+          "thread": { "id": "1100000000000000099" }
+        },
+        "data": {
+          "text": "Lou, that's a soft 17. Dealer stands. Brutal.",
+          "content": [
+            { "type": "mention", "user": { "id": "1000000000000000042" } },
+            { "type": "text", "text": ", that's a " },
+            { "type": "style", "styles": ["bold"], "children": [{ "type": "text", "text": "soft 17" }] },
+            { "type": "text", "text": ". Dealer stands. Brutal." }
+          ],
+          "reply_to": "1290000000000000555"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result", "id": "d-0003", "ts": "2026-10-05T18:01:00.700Z", "seq": 2, "ref": "dr-0002", "type": "send", "ok": true,
+        "data": { "message_ids": ["1290000000000000556"], "parts": 1 }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event", "id": "d-0004", "ts": "2026-10-05T18:01:05.000Z", "seq": 3, "type": "reaction",
+        "connector": "discord-casino",
+        "scope": { "platform": "discord", "guild": { "id": "1100000000000000001" }, "room": { "id": "1100000000000000010", "kind": "channel" }, "thread": { "id": "1100000000000000099", "kind": "thread" } },
+        "data": { "user": { "id": "1000000000000000042" }, "message_id": "1290000000000000556", "emoji": { "name": "😭" }, "op": "add" }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "dr-0003", "ts": "2026-10-05T18:01:06.000Z", "type": "react",
+        "scope": { "platform": "discord", "room": { "id": "1100000000000000010" }, "thread": { "id": "1100000000000000099" } },
+        "data": { "message_id": "1290000000000000555", "emoji": { "name": "frogcry", "id": "1200000000000000777" }, "op": "add" }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": { "op": "result", "id": "d-0005", "ts": "2026-10-05T18:01:06.200Z", "seq": 4, "ref": "dr-0003", "type": "react", "ok": true, "data": {} }
+    },
+    {
+      "dir": "c2r",
+      "note": "Discord DM: its own channel (kind=dm), no guild.",
+      "frame": {
+        "op": "event", "id": "d-0006", "ts": "2026-10-05T18:02:00.000Z", "seq": 5, "type": "message.private",
+        "connector": "discord-casino",
+        "scope": { "platform": "discord", "room": { "id": "1300000000000000123", "kind": "dm" } },
+        "data": { "message_id": "1290000000000000600", "user": { "id": "1000000000000000077", "login": "bog_walker" }, "text": "!bal" }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "dr-0004", "ts": "2026-10-05T18:02:00.300Z", "type": "send.private",
+        "scope": { "platform": "discord", "room": { "id": "1300000000000000123", "kind": "dm" } },
+        "data": { "user": { "id": "1000000000000000077" }, "text": "12,400 PAT" }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": { "op": "result", "id": "d-0007", "ts": "2026-10-05T18:02:00.500Z", "seq": 6, "ref": "dr-0004", "type": "send.private", "ok": true, "data": { "message_ids": ["1290000000000000601"], "parts": 1 } }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event", "id": "d-0008", "ts": "2026-10-05T18:03:00.000Z", "seq": 7, "type": "member.join",
+        "connector": "discord-casino",
+        "scope": { "platform": "discord", "guild": { "id": "1100000000000000001" }, "room": { "id": "1100000000000000001", "name": "Frog Pond", "kind": "group" } },
+        "data": { "user": { "id": "1000000000000000099", "login": "newt_n", "display": "Newt" } }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event", "id": "d-0009", "ts": "2026-10-05T18:03:10.000Z", "seq": 8, "type": "member.update",
+        "connector": "discord-casino",
+        "scope": { "platform": "discord", "guild": { "id": "1100000000000000001" }, "room": { "id": "1100000000000000001", "kind": "group" } },
+        "data": { "user": { "id": "1000000000000000099" }, "changes": { "roles": ["Croupier"] } }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event", "id": "d-0010", "ts": "2026-10-05T18:03:20.000Z", "seq": 9, "type": "presence",
+        "connector": "discord-casino",
+        "scope": { "platform": "discord", "guild": { "id": "1100000000000000001" } },
+        "data": { "user": { "id": "1000000000000000042" }, "status": "idle", "activity": "Playing Frog Kart" }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "Discord timeout = PCP mute with a duration.",
+      "frame": {
+        "op": "event", "id": "d-0011", "ts": "2026-10-05T18:04:00.000Z", "seq": 10, "type": "moderation",
+        "connector": "discord-casino",
+        "scope": { "platform": "discord", "guild": { "id": "1100000000000000001" }, "room": { "id": "1100000000000000001", "kind": "group" } },
+        "data": {
+          "kind": "mute", "actor": { "id": "1000000000000000005", "login": "marsh_mod" }, "target": { "id": "1000000000000000066" },
+          "duration_s": 600, "reason": "spam", "source": "platform"
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "dr-0005", "ts": "2026-10-05T18:05:00.000Z", "type": "ban",
+        "scope": { "platform": "discord", "guild": { "id": "1100000000000000001" }, "room": { "id": "1100000000000000001", "kind": "group" } },
+        "data": { "user": { "id": "1000000000000000066" }, "reason": "scam links", "delete_history_s": 86400 }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": { "op": "result", "id": "d-0012", "ts": "2026-10-05T18:05:00.400Z", "seq": 11, "ref": "dr-0005", "type": "ban", "ok": true, "data": {} }
+    },
+    {
+      "dir": "r2c",
+      "note": "A module that ignored capabilities: Discord does not declare mic.grab.",
+      "frame": {
+        "op": "action", "id": "dr-0006", "ts": "2026-10-05T18:06:00.000Z", "type": "mic.grab",
+        "scope": { "platform": "discord", "room": { "id": "1100000000000000010" } },
+        "data": {}
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result", "id": "d-0013", "ts": "2026-10-05T18:06:00.001Z", "seq": 12, "ref": "dr-0006", "type": "mic.grab", "ok": false,
+        "error": { "code": "unsupported", "message": "action mic.grab is not supported by discord-connector", "retryable": false }
+      }
+    }
+  ]
+}

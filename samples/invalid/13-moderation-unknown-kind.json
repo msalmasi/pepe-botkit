@@ -1,0 +1,27 @@
+{
+  "description": "moderation.kind is an enum",
+  "expect_path": "/data/kind",
+  "frame": {
+    "op": "event",
+    "id": "c-bad-1",
+    "ts": "2026-10-05T18:00:00.000Z",
+    "seq": 5,
+    "type": "moderation",
+    "connector": "cf-main",
+    "scope": {
+      "platform": "camfrog",
+      "room": {
+        "id": "LilyPond.Room",
+        "name": "The Lily Pond",
+        "kind": "room"
+      }
+    },
+    "data": {
+      "kind": "nuke",
+      "target": {
+        "id": "lilypadlou",
+        "login": "LilyPadLou"
+      }
+    }
+  }
+}

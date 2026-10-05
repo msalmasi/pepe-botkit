@@ -1,0 +1,43 @@
+{
+  "description": "Reading the room's member list with real names and groups, including an incomplete read, and a leave inferred from the list.",
+  "grounding": "v1 memory userlist-ownerdraw: the Camfrog participant list is owner-drawn (LVS_OWNERDATA), so names are captured from WM_DRAWITEM/DrawTextW per row; group headers ('MEMBERS 3', 'LURKERS 7') give on-cam vs off-cam; rows below the fold only paint when paged into view, and 'blank' counts rows that stayed nameless. Names can carry a badge suffix like 'name (Pop)'. The 0x41 packet gives login + display; the list gives what the room shows. v1 has no explicit leave packet, so leaves are inferred from list diffs.",
+  "frames": [
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "r-0901", "ts": "2026-10-05T19:20:00.000Z", "type": "user.list",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room" } },
+        "data": { "refresh": true }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "One row never painted, so complete=false and count > members.length.",
+      "frame": {
+        "op": "result", "id": "c-0901", "ts": "2026-10-05T19:20:01.800Z", "seq": 100, "ref": "r-0901", "type": "user.list", "ok": true,
+        "data": {
+          "members": [
+            { "user": { "id": "pepebot", "login": "PepeBot", "is_self": true }, "group": "members", "on_cam": true, "on_mic": false },
+            { "user": { "id": "lilypadlou", "login": "LilyPadLou", "display": "lou the lily" }, "group": "members", "on_cam": true, "on_mic": false },
+            { "user": { "id": "ribbit_ron", "login": "ribbit_ron", "display": "Ron", "ext": { "camfrog": { "badge": "Pop" } } }, "group": "members", "on_cam": true, "on_mic": true },
+            { "user": { "id": "bogwalker", "login": "bogwalker" }, "group": "lurkers", "on_cam": false, "on_mic": false },
+            { "user": { "id": "marshmod", "login": "MarshMod", "roles": ["moderator"] }, "group": "lurkers", "on_cam": false, "on_mic": false }
+          ],
+          "count": 6,
+          "complete": false,
+          "method": "ownerdraw-capture"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "neon_newt was in the previous list and is gone from this one.",
+      "frame": {
+        "op": "event", "id": "c-0902", "ts": "2026-10-05T19:20:01.810Z", "seq": 101, "type": "member.leave",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room", "name": "The Lily Pond", "kind": "room" } },
+        "data": { "user": { "id": "neon_newt", "login": "neon_newt" }, "reason": "unknown", "inferred": true }
+      }
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "description": "Audio: the bot speaks a TTS line into the room (long-running action with interim results), and audiohook - a separate connector - delivers a speaker-attributed audio segment.",
+  "grounding": "v1 mic_audio.py plays WAVs to a virtual cable that Camfrog uses as its mic (resampled to 48 kHz). The audio worker waits up to 300 s for a free slot, posts a caption when playback starts (not before), and falls back to text when the mic stays full. transcriber.py records the room loopback, starts a segment on the first mic grab and ends it when the room's mic empties; holds over 300 s are chunked; one mixed stream, so overlap is attributed to the first holder; level stats (rms/peak/clip/tail dropout) feed automod's 'was the block warranted' check.",
+  "frames": [
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "r-0801", "ts": "2026-10-05T19:10:00.000Z", "type": "audio.play",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room" } },
+        "data": {
+          "media": { "kind": "audio", "mime": "audio/wav", "url": "https://voice.example/tts/out/9b1e.wav", "duration_ms": 4200, "sample_rate": 24000, "channels": 1 },
+          "mode": "queue",
+          "mic": "auto",
+          "wait_for_slot_ms": 300000,
+          "caption": "welcome to the pond, Newt",
+          "label": "greeter: Newt"
+        },
+        "origin": { "bot": "bot-pepe", "module": "greeter" }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result", "id": "c-0801", "ts": "2026-10-05T19:10:00.050Z", "seq": 90, "ref": "r-0801", "type": "audio.play", "ok": true, "final": false,
+        "data": { "status": "queued" }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "Slot freed after 12 s; caption posted now.",
+      "frame": {
+        "op": "result", "id": "c-0802", "ts": "2026-10-05T19:10:12.300Z", "seq": 91, "ref": "r-0801", "type": "audio.play", "ok": true, "final": false,
+        "data": { "status": "playing", "waited_ms": 12250 }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result", "id": "c-0803", "ts": "2026-10-05T19:10:16.700Z", "seq": 92, "ref": "r-0801", "type": "audio.play", "ok": true,
+        "data": { "status": "played", "waited_ms": 12250, "played_ms": 4200 }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "From the audiohook connector (its own session and seq space). Bound to the same Camfrog room; speaker comes from cf-connector's mic events.",
+      "frame": {
+        "op": "event", "id": "ah-0001", "ts": "2026-10-05T19:12:02.100Z", "seq": 1, "type": "audio.segment",
+        "connector": "audiohook-1",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room", "name": "The Lily Pond", "kind": "room" } },
+        "data": {
+          "speaker": { "id": "ribbit_ron", "login": "ribbit_ron" },
+          "media": {
+            "kind": "audio", "mime": "audio/wav", "blob": "seg-20261005-191120-ribbit_ron",
+            "url": "https://audiohook.example/pcp/blobs/seg-20261005-191120-ribbit_ron",
+            "duration_ms": 41800, "sample_rate": 48000, "channels": 2, "size": 16051200,
+            "sha256": "9f2c5a0e0d4b3f6a1c7e8d9b0a1f2e3d4c5b6a7980f1e2d3c4b5a69788f0e1d2"
+          },
+          "started_at": "2026-10-05T19:11:20.300Z",
+          "ended_at": "2026-10-05T19:12:02.100Z",
+          "attribution": "mic_holder",
+          "overlap": [],
+          "part": 0,
+          "final": true,
+          "levels": { "rms": 0.061, "peak": 0.82, "clip_ratio": 0.0, "silent": false, "tail_dropout": false }
+        }
+      }
+    }
+  ]
+}

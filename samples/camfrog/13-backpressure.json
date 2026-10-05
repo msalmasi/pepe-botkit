@@ -1,0 +1,72 @@
+{
+  "description": "Backpressure both ways: the connector's send queue backs up (Camfrog throttles fast typing), an over-limit send is refused with rate_limited, the runtime later asks the connector to hold low-priority events, and finally a clean shutdown with bye.",
+  "grounding": "v1 sends every chat line through one serial send-worker per client; the TTS queue is bounded (TTS_QUEUE_MAX=6) and refuses work rather than piling up. Protocol behaviour per spec/PCP.md, Backpressure.",
+  "frames": [
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "flow", "id": "c-1201", "ts": "2026-10-05T19:50:00.000Z",
+        "data": {
+          "state": "slow", "reason": "platform_rate_limit",
+          "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room" } },
+          "action_types": ["send"], "max_per_minute": 20, "queue_depth": 14
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "r-1201", "ts": "2026-10-05T19:50:00.500Z", "type": "send",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room" } },
+        "data": { "text": "spin result: 3x cherries" }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result", "id": "c-1202", "ts": "2026-10-05T19:50:00.510Z", "seq": 130, "ref": "r-1201", "type": "send", "ok": false,
+        "error": { "code": "rate_limited", "message": "send queue full for LilyPond.Room", "retryable": true, "retry_after_ms": 3000 }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "flow", "id": "c-1203", "ts": "2026-10-05T19:50:30.000Z",
+        "data": { "state": "resume", "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room" } } }
+      }
+    },
+    {
+      "dir": "r2c",
+      "note": "Runtime is overloaded: hold low-priority events (presence, cam.view, audio.segment, reaction). Normal and critical events keep flowing.",
+      "frame": {
+        "op": "flow", "id": "r-1202", "ts": "2026-10-05T19:51:00.000Z",
+        "data": { "state": "pause", "reason": "overloaded", "retry_after_ms": 10000 }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": { "op": "flow", "id": "r-1203", "ts": "2026-10-05T19:51:20.000Z", "data": { "state": "resume" } }
+    },
+    {
+      "dir": "c2r",
+      "note": "The connector's low-priority buffer overflowed during the pause, so it reports what it dropped.",
+      "frame": {
+        "op": "event", "id": "c-1204", "ts": "2026-10-05T19:51:20.010Z", "seq": 131, "type": "sync.gap",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog" },
+        "data": { "reason": "dropped_low_priority", "dropped_types": ["cam.view"] }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "Connector is shutting down for an update; it will come back and resume.",
+      "frame": {
+        "op": "bye", "id": "c-1205", "ts": "2026-10-05T20:00:00.000Z",
+        "data": {
+          "reconnect": true, "retry_after_ms": 5000,
+          "error": { "code": "unavailable", "message": "connector restarting for update", "retryable": true }
+        }
+      }
+    }
+  ]
+}

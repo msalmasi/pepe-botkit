@@ -1,0 +1,195 @@
+{
+  "description": "Moderation seen and done: a mic block and a punish (timed mute) parsed from server lines, a role change reported by a room bot, a topic change, and the bot's own moderation actions (including one it lacks the power for).",
+  "grounding": "v1 frida-bot.py parse_mod_event(): server lines (0x06 with empty sender) like '<actor> blocked <target> microphone', '<actor> temporarily disabled <target> for 1 day(s), 00:00:00', '<actor> kicked <target>', '<actor> gave <target> new role FRIEND', \"Topic: '...' (Set by <actor>)\". Role changes and bans come only from a room bot's chat lines. The bot moderates with slash commands: /blockmic, /unblockmic, /punish, /unpunish, /kick, /ban, /unban, /topic, /oplist add|remove <user> <role>, /addfriend.",
+  "frames": [
+    {
+      "dir": "c2r",
+      "note": "The raw server line, for modules that want it (logs, /watchlist answers).",
+      "frame": {
+        "op": "event", "id": "c-0501", "ts": "2026-10-05T18:20:00.100Z", "seq": 50, "type": "notice",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room", "name": "The Lily Pond", "kind": "room" } },
+        "data": { "text": "MarshMod blocked ribbit_ron microphone", "kind": "server" }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "Parsed from the same line. Display names may contain spaces and emoticons, so the connector resolves them to logins where it can.",
+      "frame": {
+        "op": "event", "id": "c-0502", "ts": "2026-10-05T18:20:00.101Z", "seq": 51, "type": "moderation",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room", "name": "The Lily Pond", "kind": "room" } },
+        "data": {
+          "kind": "mic.block",
+          "actor": { "id": "marshmod", "login": "MarshMod" },
+          "target": { "id": "ribbit_ron", "login": "ribbit_ron" },
+          "source": "server",
+          "text": "MarshMod blocked ribbit_ron microphone"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event", "id": "c-0503", "ts": "2026-10-05T18:21:10.000Z", "seq": 52, "type": "moderation",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room", "name": "The Lily Pond", "kind": "room" } },
+        "data": {
+          "kind": "mute",
+          "actor": { "id": "marshmod", "login": "MarshMod" },
+          "target": { "id": "neon_newt", "login": "neon_newt" },
+          "duration_s": 86400,
+          "source": "server",
+          "text": "MarshMod temporarily disabled neon_newt for 1 day(s), 00:00:00"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "Reported by the room's chat bot, not the server: source=room_bot (less trustworthy).",
+      "frame": {
+        "op": "event", "id": "c-0504", "ts": "2026-10-05T18:22:30.000Z", "seq": 53, "type": "moderation",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room", "name": "The Lily Pond", "kind": "room" } },
+        "data": {
+          "kind": "role.add",
+          "actor": { "id": "marshmod", "login": "MarshMod" },
+          "target": { "id": "lilypadlou", "login": "LilyPadLou" },
+          "role": "friend",
+          "source": "room_bot",
+          "text": "MarshMod gave LilyPadLou new role FRIEND"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event", "id": "c-0505", "ts": "2026-10-05T18:23:00.000Z", "seq": 54, "type": "room.update",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room", "name": "The Lily Pond", "kind": "room" } },
+        "data": {
+          "room": { "id": "LilyPond.Room", "name": "The Lily Pond" },
+          "changes": { "topic": "karaoke night, sign up with !queue" },
+          "by": { "id": "marshmod", "login": "MarshMod" }
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "note": "Automod lifts a courtesy block after two minutes.",
+      "frame": {
+        "op": "action", "id": "r-0501", "ts": "2026-10-05T18:22:00.000Z", "type": "mic.unblock",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room" } },
+        "data": { "user": { "id": "ribbit_ron", "login": "ribbit_ron" } },
+        "origin": { "bot": "bot-pepe", "module": "automod" }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": { "op": "result", "id": "c-0506", "ts": "2026-10-05T18:22:00.300Z", "seq": 55, "ref": "r-0501", "type": "mic.unblock", "ok": true, "data": {} }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "r-0502", "ts": "2026-10-05T18:24:00.000Z", "type": "mic.block",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room" } },
+        "data": { "user": { "id": "toadstool77", "login": "toadstool77" } },
+        "origin": { "bot": "bot-pepe", "module": "automod" }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": { "op": "result", "id": "c-0507", "ts": "2026-10-05T18:24:00.250Z", "seq": 56, "ref": "r-0502", "type": "mic.block", "ok": true, "data": {} }
+    },
+    {
+      "dir": "r2c",
+      "note": "Camfrog /punish has a server-chosen duration; duration_s is advisory and the connector ignores it there.",
+      "frame": {
+        "op": "action", "id": "r-0503", "ts": "2026-10-05T18:25:00.000Z", "type": "mute",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room" } },
+        "data": { "user": { "id": "toadstool77", "login": "toadstool77" }, "reason": "third mic-hog strike" }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": { "op": "result", "id": "c-0508", "ts": "2026-10-05T18:25:00.200Z", "seq": 57, "ref": "r-0503", "type": "mute", "ok": true, "data": {} }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "r-0504", "ts": "2026-10-06T18:25:00.000Z", "type": "unmute",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room" } },
+        "data": { "user": { "id": "toadstool77", "login": "toadstool77" } }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": { "op": "result", "id": "c-0509", "ts": "2026-10-06T18:25:00.220Z", "seq": 58, "ref": "r-0504", "type": "unmute", "ok": true, "data": {} }
+    },
+    {
+      "dir": "r2c",
+      "note": "/oplist remove <user> moderator, then /addfriend - the connector maps role.set onto the right slash commands.",
+      "frame": {
+        "op": "action", "id": "r-0505", "ts": "2026-10-05T18:26:00.000Z", "type": "role.set",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room" } },
+        "data": { "user": { "id": "bogwalker", "login": "bogwalker" }, "role": "moderator", "op": "remove" }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": { "op": "result", "id": "c-0510", "ts": "2026-10-05T18:26:00.400Z", "seq": 59, "ref": "r-0505", "type": "role.set", "ok": true, "data": {} }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "r-0506", "ts": "2026-10-05T18:27:00.000Z", "type": "topic.set",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room" } },
+        "data": { "topic": "heist tonight. bring a drill." }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": { "op": "result", "id": "c-0511", "ts": "2026-10-05T18:27:00.200Z", "seq": 60, "ref": "r-0506", "type": "topic.set", "ok": true, "data": {} }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "r-0507", "ts": "2026-10-05T18:28:00.000Z", "type": "kick",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room" } },
+        "data": { "user": { "id": "spamfrog9", "login": "spamfrog9" }, "reason": "link spam" }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": { "op": "result", "id": "c-0512", "ts": "2026-10-05T18:28:00.150Z", "seq": 61, "ref": "r-0507", "type": "kick", "ok": true, "data": {} }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "r-0508", "ts": "2026-10-05T18:29:00.000Z", "type": "ban",
+        "scope": { "platform": "camfrog", "room": { "id": "Swamp_Lounge" } },
+        "data": { "user": { "id": "spamfrog9", "login": "spamfrog9" }, "reason": "link spam" }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "The bot is not an op in this room; the server answered with a refusal line.",
+      "frame": {
+        "op": "result", "id": "c-0513", "ts": "2026-10-05T18:29:00.900Z", "seq": 62, "ref": "r-0508", "type": "ban", "ok": false,
+        "error": { "code": "forbidden", "message": "bot lacks ban rights in Swamp_Lounge", "retryable": false, "platform_code": "You don't have permission" }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "r-0509", "ts": "2026-10-05T18:30:00.000Z", "type": "unban",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room" } },
+        "data": { "user": { "id": "oldfriend", "login": "OldFriend" } }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": { "op": "result", "id": "c-0514", "ts": "2026-10-05T18:30:00.300Z", "seq": 63, "ref": "r-0509", "type": "unban", "ok": true, "data": {} }
+    }
+  ]
+}

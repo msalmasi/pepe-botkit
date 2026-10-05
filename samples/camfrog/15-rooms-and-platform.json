@@ -1,0 +1,76 @@
+{
+  "description": "Multi-room housekeeping: list joined rooms, run a platform-native slash command and collect the server's answer, leave a room, and the connector reporting that the Camfrog client went away and came back.",
+  "grounding": "v1: each Camfrog room is its own TCP socket (fd -> room map); the 'active' room is the window the bot drives (mic button, cams, user list) and the 'audio' room is the one the loopback hears - two different settings. Slash commands like /watchlist are answered by server lines that v1 taps (_server_tap). Leaving = SC_CLOSE on the room window (refused in tabbed mode, where it would close every room). The Frida hook can lose the client (crash/restart).",
+  "frames": [
+    {
+      "dir": "r2c",
+      "frame": { "op": "action", "id": "r-1401", "ts": "2026-10-05T20:10:00.000Z", "type": "room.list", "data": {} }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result", "id": "c-1401", "ts": "2026-10-05T20:10:00.020Z", "seq": 150, "ref": "r-1401", "type": "room.list", "ok": true,
+        "data": {
+          "rooms": [
+            { "room": { "id": "LilyPond.Room", "name": "The Lily Pond", "kind": "room" }, "joined_at": "2026-10-05T19:30:09.400Z", "member_count": 6, "active": true, "audio": true },
+            { "room": { "id": "Swamp_Lounge", "name": "Swamp Lounge", "kind": "room" }, "joined_at": "2026-10-05T18:00:01.412Z", "member_count": 4, "active": false, "audio": false }
+          ]
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "r-1402", "ts": "2026-10-05T20:11:00.000Z", "type": "platform.command",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room" } },
+        "data": { "command": "/watchlist", "args": [], "collect_ms": 1500 }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result", "id": "c-1402", "ts": "2026-10-05T20:11:01.600Z", "seq": 151, "ref": "r-1402", "type": "platform.command", "ok": true,
+        "data": { "lines": ["Watch list: 2 user(s)", "spamfrog9", "sketchytoad"] }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "r-1403", "ts": "2026-10-05T20:12:00.000Z", "type": "room.leave",
+        "scope": { "platform": "camfrog", "room": { "id": "Swamp_Lounge" } },
+        "data": { "reason": "binding removed" }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event", "id": "c-1403", "ts": "2026-10-05T20:12:00.900Z", "seq": 152, "type": "room.left",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog", "room": { "id": "Swamp_Lounge", "name": "Swamp Lounge", "kind": "room" } },
+        "data": { "room": { "id": "Swamp_Lounge", "name": "Swamp Lounge" }, "reason": "requested" }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": { "op": "result", "id": "c-1404", "ts": "2026-10-05T20:12:00.910Z", "seq": 153, "ref": "r-1403", "type": "room.leave", "ok": true, "data": {} }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event", "id": "c-1405", "ts": "2026-10-05T20:20:00.000Z", "seq": 154, "type": "connector.status",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog" },
+        "data": { "state": "platform_down", "detail": "Camfrog client process exited", "components": { "client": "down", "hook": "down", "ui": "down" } }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event", "id": "c-1406", "ts": "2026-10-05T20:21:30.000Z", "seq": 155, "type": "connector.status",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog" },
+        "data": { "state": "ready", "components": { "client": "ok", "hook": "ok", "ui": "ok" } }
+      }
+    }
+  ]
+}

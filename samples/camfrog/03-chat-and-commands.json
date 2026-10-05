@@ -1,0 +1,86 @@
+{
+  "description": "Room chat: a plain line, a command, the bot's own echo, a reply, and a long reply the connector splits.",
+  "grounding": "v1: s2c 0x06 ROOM_TEXT fields = [nickname, text, font blob, timestamps]. The bot's own line echoes back with the fields shifted (text in the nickname field, font data in the text field) - v1 detects it and ignores it; the connector emits it once with self=true. Camfrog has no message ids, so the connector mints them. Lines over ~480 chars are split.",
+  "frames": [
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event", "id": "c-0201", "ts": "2026-10-05T18:02:10.511Z", "seq": 20, "type": "message",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room", "name": "The Lily Pond", "kind": "room" } },
+        "data": {
+          "message_id": "cf-m-LilyPond.Room-000231",
+          "user": { "id": "lilypadlou", "login": "LilyPadLou", "display": "lou the lily" },
+          "text": "anyone else hear the frogs outside lol"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "Commands are ordinary messages; the matcher in the runtime decides they are commands (prefix '!').",
+      "frame": {
+        "op": "event", "id": "c-0202", "ts": "2026-10-05T18:02:14.020Z", "seq": 21, "type": "message",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room", "name": "The Lily Pond", "kind": "room" } },
+        "data": {
+          "message_id": "cf-m-LilyPond.Room-000232",
+          "user": { "id": "bogwalker", "login": "bogwalker" },
+          "text": "!bal",
+          "mentions_self": false
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "r-0201", "ts": "2026-10-05T18:02:14.180Z", "type": "send",
+        "traceparent": "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room" } },
+        "data": { "text": "you've got 12,400 PAT", "mention": { "id": "bogwalker", "login": "bogwalker" } },
+        "origin": { "bot": "bot-pepe", "module": "economy", "event": "c-0202", "user": { "id": "bogwalker" } },
+        "timeout_ms": 10000
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result", "id": "c-0203", "ts": "2026-10-05T18:02:14.391Z", "seq": 22, "ref": "r-0201", "type": "send", "ok": true,
+        "traceparent": "00-4bf92f3577b34da6a3ce929d0e0e4736-a1b2c3d4e5f60718-01",
+        "data": { "message_ids": ["cf-m-LilyPond.Room-000233"], "parts": 1 }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "The bot's own line coming back from the server, emitted once with self=true. Default matchers skip self messages; loggers keep them.",
+      "frame": {
+        "op": "event", "id": "c-0204", "ts": "2026-10-05T18:02:14.402Z", "seq": 23, "type": "message",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room", "name": "The Lily Pond", "kind": "room" } },
+        "data": {
+          "message_id": "cf-m-LilyPond.Room-000233",
+          "user": { "id": "pepebot", "login": "PepeBot", "display": "Pepe", "is_self": true },
+          "text": "@bogwalker you've got 12,400 PAT",
+          "self": true
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "r-0202", "ts": "2026-10-05T18:03:00.000Z", "type": "send",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room" } },
+        "data": {
+          "text": "Heist crew, listen up. The vault under the old boathouse opens at midnight and the guard rotation changes every twelve minutes, so we go in two waves: the first wave cuts the lights and the second wave cracks the door. Anyone who brought a drill, stand by the east wall. Anyone who brought snacks, you are now the lookout. Nobody touches the golden lily pad on the pedestal, it is wired to the alarm and also deeply cursed. If the alarm trips, scatter, do not run to the car, the car is a decoy. Payouts split by vault share once we are out. Questions go to the crew chat, not the main room. Good luck, frogs."
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "Over limits.message_max_chars, so the connector split it at a sentence boundary into two lines.",
+      "frame": {
+        "op": "result", "id": "c-0205", "ts": "2026-10-05T18:03:01.120Z", "seq": 24, "ref": "r-0202", "type": "send", "ok": true,
+        "data": { "message_ids": ["cf-m-LilyPond.Room-000240", "cf-m-LilyPond.Room-000241"], "parts": 2, "truncated": false }
+      }
+    }
+  ]
+}

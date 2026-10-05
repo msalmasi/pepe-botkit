@@ -1,0 +1,11 @@
+{
+  "description": "cam.self.set must change something",
+  "expect_path": "/data",
+  "frame": {
+    "op": "action",
+    "id": "r-3",
+    "ts": "2026-10-05T18:00:00.000Z",
+    "type": "cam.self.set",
+    "data": {}
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "description": "sticker.send result posted must be true/false/null",
+  "expect_path": "/data/posted",
+  "frame": {
+    "op": "result",
+    "id": "c-bad-2",
+    "ts": "2026-10-05T18:00:00.000Z",
+    "seq": 6,
+    "ref": "r-bad-1",
+    "type": "sticker.send",
+    "ok": true,
+    "data": {
+      "posted": "yes"
+    }
+  }
+}

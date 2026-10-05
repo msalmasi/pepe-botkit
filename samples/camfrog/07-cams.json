@@ -1,0 +1,137 @@
+{
+  "description": "Cameras: someone starts broadcasting, someone opens the bot's cam, the bot opens a cam and captures a frame for vision, then the bot changes its own cam settings.",
+  "grounding": "v1 memory cam-packet-0x0d: s2c 0x0d stream setup carries username, codec ('cvc') and a 4-byte cam id that the c2s 0x0d open request reuses. s2c 0x15 names a viewer of the bot's own cam. Frames are captured with PrintWindow on the 'VideoViewport' window titled with the broadcaster's name (only for OPEN cams); a richness gate waits past the loading screen; images are downscaled to 768px. Lurkers in the user list = off cam. cam_control.py toggles the bot's own HQ and pause buttons.",
+  "frames": [
+    {
+      "dir": "c2r",
+      "note": "User moved from lurkers to members in the owner-drawn list.",
+      "frame": {
+        "op": "event", "id": "c-0601", "ts": "2026-10-05T18:40:00.000Z", "seq": 70, "type": "member.update",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room", "name": "The Lily Pond", "kind": "room" } },
+        "data": { "user": { "id": "bogwalker", "login": "bogwalker" }, "changes": { "group": "members", "on_cam": true } }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "From the s2c 0x0d stream setup. stream.id is the cam id the connector needs later; opaque to modules.",
+      "frame": {
+        "op": "event", "id": "c-0602", "ts": "2026-10-05T18:40:00.420Z", "seq": 71, "type": "cam.open",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room", "name": "The Lily Pond", "kind": "room" } },
+        "data": {
+          "user": { "id": "bogwalker", "login": "bogwalker" },
+          "stream": { "id": "c8a1e300", "codec": "cvc", "width": 320, "height": 240 }
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "s2c 0x15: someone opened the bot's own cam.",
+      "frame": {
+        "op": "event", "id": "c-0603", "ts": "2026-10-05T18:40:05.000Z", "seq": 72, "type": "cam.view",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room", "name": "The Lily Pond", "kind": "room" } },
+        "data": {
+          "viewer": { "id": "lilypadlou", "login": "LilyPadLou" },
+          "target": { "id": "pepebot", "login": "PepeBot", "is_self": true },
+          "state": "open"
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "r-0601", "ts": "2026-10-05T18:40:10.000Z", "type": "cam.open",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room" } },
+        "data": { "user": { "id": "bogwalker", "login": "bogwalker" } }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "Opened through the user-list context menu (cursor spoof + WM_CONTEXTMENU + 'View Webcam'), with the 0x0d inject as fallback.",
+      "frame": {
+        "op": "result", "id": "c-0604", "ts": "2026-10-05T18:40:10.700Z", "seq": 73, "ref": "r-0601", "type": "cam.open", "ok": true,
+        "data": { "opened": true, "method": "menu" }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "r-0602", "ts": "2026-10-05T18:40:20.000Z", "type": "cam.capture",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room" } },
+        "data": { "user": { "id": "bogwalker", "login": "bogwalker" }, "open_if_closed": true, "wait_ready_ms": 8000, "max_width": 768, "format": "jpeg" },
+        "origin": { "bot": "bot-pepe", "module": "vision" }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "The JPEG is served from the connector's blob endpoint; the URL is short-lived.",
+      "frame": {
+        "op": "result", "id": "c-0605", "ts": "2026-10-05T18:40:21.300Z", "seq": 74, "ref": "r-0602", "type": "cam.capture", "ok": true,
+        "data": {
+          "media": {
+            "kind": "image", "mime": "image/jpeg", "blob": "blob-cam-7f3a91",
+            "url": "https://connector.example/pcp/blobs/blob-cam-7f3a91",
+            "width": 768, "height": 576, "size": 48211,
+            "expires_at": "2026-10-05T18:45:21.300Z"
+          },
+          "captured_at": "2026-10-05T18:40:21.210Z",
+          "opened": false,
+          "ready_score": 38.6
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "r-0603", "ts": "2026-10-05T18:41:00.000Z", "type": "cam.capture",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room" } },
+        "data": { "user": { "id": "neon_newt", "login": "neon_newt" }, "open_if_closed": true }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "User is a lurker (off cam): fail fast instead of a 10 s open attempt.",
+      "frame": {
+        "op": "result", "id": "c-0606", "ts": "2026-10-05T18:41:00.050Z", "seq": 75, "ref": "r-0603", "type": "cam.capture", "ok": false,
+        "error": { "code": "not_found", "message": "neon_newt is not broadcasting", "retryable": true, "details": { "reason": "off_cam" } }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "r-0604", "ts": "2026-10-05T18:42:00.000Z", "type": "cam.close",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room" } },
+        "data": { "user": { "id": "bogwalker", "login": "bogwalker" } }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": { "op": "result", "id": "c-0607", "ts": "2026-10-05T18:42:00.200Z", "seq": 76, "ref": "r-0604", "type": "cam.close", "ok": true, "data": {} }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event", "id": "c-0608", "ts": "2026-10-05T18:50:00.000Z", "seq": 77, "type": "cam.close",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room", "name": "The Lily Pond", "kind": "room" } },
+        "data": { "user": { "id": "bogwalker", "login": "bogwalker" }, "reason": "stopped" }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "r-0605", "ts": "2026-10-05T18:51:00.000Z", "type": "cam.self.set",
+        "data": { "hq": true, "paused": false }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result", "id": "c-0609", "ts": "2026-10-05T18:51:00.400Z", "seq": 78, "ref": "r-0605", "type": "cam.self.set", "ok": true,
+        "data": { "hq": true, "paused": false }
+      }
+    }
+  ]
+}

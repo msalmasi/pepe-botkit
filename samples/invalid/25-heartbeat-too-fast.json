@@ -1,0 +1,15 @@
+{
+  "description": "heartbeat_ms has a 1 s floor",
+  "expect_path": "/data/heartbeat_ms",
+  "frame": {
+    "op": "welcome",
+    "id": "r-4",
+    "ts": "2026-10-05T18:00:00.000Z",
+    "ref": "c-1",
+    "data": {
+      "pcp": "1.0",
+      "session_id": "s-1",
+      "heartbeat_ms": 50
+    }
+  }
+}

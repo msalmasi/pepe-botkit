@@ -1,0 +1,12 @@
+{
+  "description": "flow.state is slow/pause/resume",
+  "expect_path": "/data/state",
+  "frame": {
+    "op": "flow",
+    "id": "c-9",
+    "ts": "2026-10-05T18:00:00.000Z",
+    "data": {
+      "state": "stop"
+    }
+  }
+}

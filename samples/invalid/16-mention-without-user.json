@@ -1,0 +1,36 @@
+{
+  "description": "a mention element needs a user",
+  "expect_path": "/data/content/0",
+  "frame": {
+    "op": "event",
+    "id": "c-bad-1",
+    "ts": "2026-10-05T18:00:00.000Z",
+    "seq": 5,
+    "type": "message",
+    "connector": "cf-main",
+    "scope": {
+      "platform": "camfrog",
+      "room": {
+        "id": "LilyPond.Room",
+        "name": "The Lily Pond",
+        "kind": "room"
+      }
+    },
+    "data": {
+      "user": {
+        "id": "lilypadlou",
+        "login": "LilyPadLou"
+      },
+      "text": "@? hi",
+      "content": [
+        {
+          "type": "mention"
+        },
+        {
+          "type": "text",
+          "text": " hi"
+        }
+      ]
+    }
+  }
+}

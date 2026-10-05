@@ -1,0 +1,22 @@
+{
+  "description": "a MediaRef needs url, blob or data",
+  "expect_path": "/data/media",
+  "frame": {
+    "op": "action",
+    "id": "r-bad-1",
+    "ts": "2026-10-05T18:00:00.000Z",
+    "type": "audio.play",
+    "scope": {
+      "platform": "camfrog",
+      "room": {
+        "id": "LilyPond.Room"
+      }
+    },
+    "data": {
+      "media": {
+        "kind": "audio",
+        "mime": "audio/wav"
+      }
+    }
+  }
+}

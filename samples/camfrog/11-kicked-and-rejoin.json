@@ -1,0 +1,44 @@
+{
+  "description": "The bot is kicked from a room, the connector rejoins on its own (binding has rejoin_on_kick), and reports both.",
+  "grounding": "v1 room_autojoin.py: a kicked client gets no '<op> kicked <bot>' room line; the server sends s2c 0x0A 'You were kicked (by <b><n>NAME</n></b>)' (bans: 'You were banned (by ...)') and closes the socket. Camfrog keeps the stale room window open, so presence must follow sockets, not window titles. Rejoins are rate-limited (kick_rejoin_limit per hour) and an immediate rejoin is silently ignored, so it retries after ~8 s.",
+  "frames": [
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event", "id": "c-1001", "ts": "2026-10-05T19:30:00.000Z", "seq": 110, "type": "room.left",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room", "name": "The Lily Pond", "kind": "room" } },
+        "data": {
+          "room": { "id": "LilyPond.Room", "name": "The Lily Pond" },
+          "reason": "kicked",
+          "by": { "id": "marshmod", "login": "MarshMod", "display_raw": "<b><n>MarshMod</n></b>" },
+          "detail": "You were kicked (by MarshMod)",
+          "will_rejoin": true
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "Mic state for that room is dropped without crediting mic time (interrupted, not completed).",
+      "frame": {
+        "op": "event", "id": "c-1002", "ts": "2026-10-05T19:30:00.010Z", "seq": 111, "type": "mic.release",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room", "name": "The Lily Pond", "kind": "room" } },
+        "data": { "user": { "id": "pepebot", "login": "PepeBot", "is_self": true }, "reason": "kicked" }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event", "id": "c-1003", "ts": "2026-10-05T19:30:09.400Z", "seq": 112, "type": "room.joined",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room", "name": "The Lily Pond", "kind": "room" } },
+        "data": {
+          "room": { "id": "LilyPond.Room", "name": "The Lily Pond", "kind": "room" },
+          "topic": "heist tonight. bring a drill.",
+          "rejoin": true
+        }
+      }
+    }
+  ]
+}

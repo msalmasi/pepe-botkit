@@ -1,0 +1,125 @@
+{
+  "description": "Multi-mic room: two users grab, one drops; the bot asks for the mic while it is full, gets it later, and then loses it to a timeout.",
+  "grounding": "v1 memory mic-protocol: s2c 0x16 is a holder heartbeat (~6/s) whose ONSET is the grab; s2c 0x25 is the authoritative drop naming the releaser; 0x04 is a general keepalive, not a mic signal. Rooms can be multi-mic (holder SET, not one value). The server never echoes the bot's own grab; a 0x25 naming the bot means it LOST the mic (timeout or block) and its audio pipeline is disarmed. Mic slots are per room.",
+  "frames": [
+    {
+      "dir": "c2r",
+      "note": "First 0x16 for LilyPadLou in this room. The following heartbeats are swallowed by the connector.",
+      "frame": {
+        "op": "event", "id": "c-0401", "ts": "2026-10-05T18:10:00.012Z", "seq": 40, "type": "mic.grab",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room", "name": "The Lily Pond", "kind": "room" } },
+        "data": {
+          "user": { "id": "lilypadlou", "login": "LilyPadLou" },
+          "session": "a41f09c2",
+          "holders": [{ "id": "lilypadlou", "login": "LilyPadLou" }],
+          "slots": 2
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "Second holder; both 0x16 streams now interleave.",
+      "frame": {
+        "op": "event", "id": "c-0402", "ts": "2026-10-05T18:10:03.520Z", "seq": 41, "type": "mic.grab",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room", "name": "The Lily Pond", "kind": "room" } },
+        "data": {
+          "user": { "id": "ribbit_ron", "login": "ribbit_ron", "display": "Ron" },
+          "session": "a41f0a10",
+          "holders": [{ "id": "lilypadlou", "login": "LilyPadLou" }, { "id": "ribbit_ron", "login": "ribbit_ron" }],
+          "slots": 2
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "r-0401", "ts": "2026-10-05T18:10:05.000Z", "type": "mic.grab",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room" } },
+        "data": { "hold": false, "wait_ms": 0 },
+        "origin": { "bot": "bot-pepe", "module": "tts" }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "Both slots taken and the action said not to wait.",
+      "frame": {
+        "op": "result", "id": "c-0403", "ts": "2026-10-05T18:10:05.003Z", "seq": 42, "ref": "r-0401", "type": "mic.grab", "ok": false,
+        "error": { "code": "conflict", "message": "mic full (2/2)", "retryable": true, "retry_after_ms": 5000, "details": { "holders": ["lilypadlou", "ribbit_ron"] } }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "0x25 for LilyPadLou: authoritative drop.",
+      "frame": {
+        "op": "event", "id": "c-0404", "ts": "2026-10-05T18:10:41.877Z", "seq": 43, "type": "mic.release",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room", "name": "The Lily Pond", "kind": "room" } },
+        "data": {
+          "user": { "id": "lilypadlou", "login": "LilyPadLou" },
+          "reason": "released", "held_ms": 41865, "session": "a41f09c2",
+          "holders": [{ "id": "ribbit_ron", "login": "ribbit_ron" }]
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "r-0402", "ts": "2026-10-05T18:10:42.000Z", "type": "mic.grab",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room" } },
+        "data": { "hold": true, "wait_ms": 30000 }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "The connector clicked the room's Talk button (arms the audio pipeline AND sends 0x07), then confirmed via BM_GETCHECK. It reports its own grab as an event because the server never will.",
+      "frame": {
+        "op": "event", "id": "c-0405", "ts": "2026-10-05T18:10:42.310Z", "seq": 44, "type": "mic.grab",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room", "name": "The Lily Pond", "kind": "room" } },
+        "data": {
+          "user": { "id": "pepebot", "login": "PepeBot", "is_self": true },
+          "holders": [{ "id": "ribbit_ron", "login": "ribbit_ron" }, { "id": "pepebot", "login": "PepeBot", "is_self": true }],
+          "slots": 2
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result", "id": "c-0406", "ts": "2026-10-05T18:10:42.312Z", "seq": 45, "ref": "r-0402", "type": "mic.grab", "ok": true,
+        "data": { "held": true, "waited_ms": 0 }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "A 0x25 naming the bot itself = lost (mic timeout here; a block would also produce a moderation event). With hold=true the connector re-arms and reclaims on its own.",
+      "frame": {
+        "op": "event", "id": "c-0407", "ts": "2026-10-05T18:15:42.400Z", "seq": 46, "type": "mic.release",
+        "connector": "cf-main",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room", "name": "The Lily Pond", "kind": "room" } },
+        "data": {
+          "user": { "id": "pepebot", "login": "PepeBot", "is_self": true },
+          "reason": "lost", "held_ms": 300090,
+          "holders": [{ "id": "ribbit_ron", "login": "ribbit_ron" }]
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action", "id": "r-0403", "ts": "2026-10-05T18:16:00.000Z", "type": "mic.release",
+        "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room" } },
+        "data": {}
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result", "id": "c-0408", "ts": "2026-10-05T18:16:00.210Z", "seq": 47, "ref": "r-0403", "type": "mic.release", "ok": true,
+        "data": { "held": false }
+      }
+    }
+  ]
+}

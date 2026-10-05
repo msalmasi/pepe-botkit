@@ -1,0 +1,9 @@
+{
+  "description": "ack must carry the cumulative seq",
+  "expect_path": "/",
+  "frame": {
+    "op": "ack",
+    "id": "r-2",
+    "ts": "2026-10-05T18:00:00.000Z"
+  }
+}
