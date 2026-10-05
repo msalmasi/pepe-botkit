@@ -1,0 +1,12 @@
+{
+  "name": "pepe-botkit",
+  "private": true,
+  "description": "Pepe bot runtime toolkit: PCP (Pepe Connector Protocol) spec, JSON Schemas and validators.",
+  "workspaces": ["packages/*"],
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "gen": "node scripts/gen-dispatch.mjs",
+    "check:gen": "node scripts/gen-dispatch.mjs --check",
+    "test": "npm run check:gen && npm test --workspace @pepe-botkit/pcp-schemas"
+  }
+}
