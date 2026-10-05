@@ -66,13 +66,13 @@
     },
     {
       "dir": "c2r",
-      "note": "The JPEG is served from the connector's blob endpoint; the URL is short-lived.",
+      "note": "The connector uploaded the JPEG to the runtime's blob endpoint (PUT /pcp/v1/blobs/<id>) before sending this result.",
       "frame": {
         "op": "result", "id": "c-0605", "ts": "2026-10-05T18:40:21.300Z", "seq": 74, "ref": "r-0602", "type": "cam.capture", "ok": true,
         "data": {
           "media": {
             "kind": "image", "mime": "image/jpeg", "blob": "blob-cam-7f3a91",
-            "url": "https://connector.example/pcp/blobs/blob-cam-7f3a91",
+            "url": "https://runtime.example/pcp/v1/blobs/blob-cam-7f3a91",
             "width": 768, "height": 576, "size": 48211,
             "expires_at": "2026-10-05T18:45:21.300Z"
           },

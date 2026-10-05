@@ -117,7 +117,7 @@
       }
     },
     "MediaRef": {
-      "description": "Reference to binary media. Bytes never travel inside a PCP frame except tiny inline data; fetch url (or the connector blob endpoint for blob).",
+      "description": "Reference to binary media. Bytes never travel inside a PCP frame except tiny inline data. 'blob' names an object in the runtime's blob store (uploaded by the connector before the frame is sent, see spec/PCP.md, Media); 'url' is any fetchable location.",
       "type": "object",
       "required": ["kind"],
       "properties": {

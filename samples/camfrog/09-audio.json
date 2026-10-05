@@ -8,7 +8,7 @@
         "op": "action", "id": "r-0801", "ts": "2026-10-05T19:10:00.000Z", "type": "audio.play",
         "scope": { "platform": "camfrog", "room": { "id": "LilyPond.Room" } },
         "data": {
-          "media": { "kind": "audio", "mime": "audio/wav", "url": "https://voice.example/tts/out/9b1e.wav", "duration_ms": 4200, "sample_rate": 24000, "channels": 1 },
+          "media": { "kind": "audio", "mime": "audio/wav", "url": "https://runtime.example/pcp/v1/blobs/tts-9b1e", "duration_ms": 4200, "sample_rate": 24000, "channels": 1 },
           "mode": "queue",
           "mic": "auto",
           "wait_for_slot_ms": 300000,
@@ -51,7 +51,7 @@
           "speaker": { "id": "ribbit_ron", "login": "ribbit_ron" },
           "media": {
             "kind": "audio", "mime": "audio/wav", "blob": "seg-20261005-191120-ribbit_ron",
-            "url": "https://audiohook.example/pcp/blobs/seg-20261005-191120-ribbit_ron",
+            "url": "https://runtime.example/pcp/v1/blobs/seg-20261005-191120-ribbit_ron",
             "duration_ms": 41800, "sample_rate": 48000, "channels": 2, "size": 16051200,
             "sha256": "9f2c5a0e0d4b3f6a1c7e8d9b0a1f2e3d4c5b6a7980f1e2d3c4b5a69788f0e1d2"
           },
