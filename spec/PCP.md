@@ -659,6 +659,6 @@ client version.
    Discord; on Camfrog it means two client installs. Confirm that is acceptable.
 8. **Room-level capability narrowing** is a full replacement of `events`/`actions` but a key-wise
    override of `features`. Simple enough, or should it be a diff?
-9. **Licence** for the public repo is not chosen yet (packages say `UNLICENSED`).
+9. **Licence**: decided — MIT (see `LICENSE`).
 10. **Ordering across rooms.** Actions are ordered per room only. Does any module need a global
     order (e.g. turf announcements to several rooms at once)?

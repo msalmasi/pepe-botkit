@@ -83,4 +83,4 @@ file's `grounding` note), never real traffic.
 ## Status
 
 Draft 1.0 of the protocol (work package F-4). Open questions are listed at the end of
-[`spec/PCP.md`](spec/PCP.md#18-open-questions). Licence: not chosen yet.
+[`spec/PCP.md`](spec/PCP.md#18-open-questions). Licence: [MIT](LICENSE).
