@@ -80,6 +80,12 @@ def test_results_answer_actions_in_same_file():
                 assert actions.get(f["ref"]) == f["type"], f"{path.name}: result {f['id']} ref={f['ref']}"
 
 
+def test_type_names_have_no_underscores():
+    import re
+    names = list(validator.index["events"]) + list(validator.index["actions"])
+    assert [n for n in names if not re.fullmatch(r"[a-z]+(\.[a-z]+)*", n)] == []
+
+
 def test_validate_data():
     assert validator.validate_data("event", "mic.grab", {"user": {"id": "someone"}}).valid
     assert not validator.validate_data("event", "mic.grab", {}).valid

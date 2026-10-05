@@ -96,6 +96,12 @@ test("every result answers an action in the same sample file, with the same type
   }
 });
 
+test("standard type names have no underscores (so mic_grab <-> mic.grab maps unambiguously)", () => {
+  const names = [...Object.keys(validator.index.events), ...Object.keys(validator.index.actions)];
+  const bad = names.filter((n) => !/^[a-z]+(\.[a-z]+)*$/.test(n));
+  assert.deepEqual(bad, []);
+});
+
 test("validateData works per type", () => {
   assert.equal(validator.validateData("event", "mic.grab", { user: { id: "someone" } }).valid, true);
   assert.equal(validator.validateData("event", "mic.grab", {}).valid, false);
