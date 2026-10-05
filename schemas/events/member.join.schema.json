@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/events/member.join.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/events/member.join.schema.json",
   "title": "event member.join: data",
   "description": "A user is in the room. initial=true marks the snapshot the platform sends when the bot itself joins (Camfrog 0x41 burst), so greeters can skip it.",
   "type": "object",

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/control/ack.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/control/ack.schema.json",
   "title": "ack (runtime -> connector)",
   "description": "Cumulative acknowledgement: the runtime has durably processed every event/result up to and including seq. The connector may drop them from its replay buffer.",
   "allOf": [{ "$ref": "../envelope.schema.json" }],

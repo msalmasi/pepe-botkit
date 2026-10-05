@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/events/inbox.notify.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/events/inbox.notify.schema.json",
   "title": "event inbox.notify: data",
   "description": "The platform signalled direct-message inbox activity without content (Camfrog s2c 0x57). Use inbox.read to see what changed.",
   "type": "object",

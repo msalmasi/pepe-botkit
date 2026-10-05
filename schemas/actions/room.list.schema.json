@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/actions/room.list.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/actions/room.list.schema.json",
   "title": "action room.list: data",
   "description": "Rooms the connector is in right now.",
   "type": "object",

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/events/cam.open.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/events/cam.open.schema.json",
   "title": "event cam.open: data",
   "description": "A user's camera is broadcasting and can be watched. Camfrog: s2c 0x0d stream setup (cam id, codec) or the user moving out of the lurkers group.",
   "type": "object",

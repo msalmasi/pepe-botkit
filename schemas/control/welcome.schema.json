@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/control/welcome.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/control/welcome.schema.json",
   "title": "welcome (runtime -> connector)",
   "description": "Accepts a hello. Fixes the negotiated version, session id, heartbeat, limits, the result of a resume request and the rooms this connector is bound to.",
   "allOf": [{ "$ref": "../envelope.schema.json" }],

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/results/cam.capture.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/results/cam.capture.schema.json",
   "title": "result cam.capture: data",
   "description": "cam.capture result.",
   "type": "object",

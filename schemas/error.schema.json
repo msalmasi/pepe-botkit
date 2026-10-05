@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/error.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/error.schema.json",
   "title": "PCP error",
   "description": "Error object carried by a failed result frame (ok=false) and by bye frames. See spec/PCP.md, Error model.",
   "type": "object",

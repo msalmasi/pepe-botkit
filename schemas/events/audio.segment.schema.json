@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/events/audio.segment.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/events/audio.segment.schema.json",
   "title": "event audio.segment: data",
   "description": "A chunk of room audio attributed to a speaker (audiohook). The audio is a media reference; STT runs downstream.",
   "type": "object",

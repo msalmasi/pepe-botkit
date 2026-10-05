@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/actions/ban.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/actions/ban.schema.json",
   "title": "action ban: data",
   "description": "Ban a user from the room (or guild).",
   "type": "object",

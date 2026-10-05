@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/actions/mute.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/actions/mute.schema.json",
   "title": "action mute: data",
   "description": "Stop a user from chatting for a while. Camfrog /punish (fixed duration chosen by the server), Discord timeout, Twitch /timeout.",
   "type": "object",

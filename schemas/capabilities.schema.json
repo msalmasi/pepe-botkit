@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/capabilities.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/capabilities.schema.json",
   "title": "PCP capabilities",
   "description": "What a connector (or one room of it) can do. Modules check these, never platform names. Declared in hello; a room.joined event may carry a narrower set for that room.",
   "type": "object",

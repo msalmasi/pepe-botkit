@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/actions/send.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/actions/send.schema.json",
   "title": "action send: data",
   "description": "Post a message in scope.room (or scope.thread). The connector splits text longer than limits.message_max_chars and renders unsupported elements as text.",
   "type": "object",

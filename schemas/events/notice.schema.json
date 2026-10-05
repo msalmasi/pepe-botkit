@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/events/notice.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/events/notice.schema.json",
   "title": "event notice: data",
   "description": "Text from the platform rather than a user: Camfrog server lines (0x06 with empty sender), Discord system messages, Twitch USERNOTICE. Connectors still emit a parsed moderation/room.update event when they recognise the line.",
   "type": "object",

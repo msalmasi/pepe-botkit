@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/events/message.private.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/events/message.private.schema.json",
   "title": "event message.private: data",
   "description": "A private message to the bot. Camfrog: s2c 0x60; PMs travel through a room, so scope.room is the room it arrived through and replies must go back through it. Discord: a DM channel (scope.room.kind=dm). Twitch: a whisper (no room).",
   "type": "object",

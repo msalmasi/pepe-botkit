@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/events/presence.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/events/presence.schema.json",
   "title": "event presence: data",
   "description": "Account-level online status (contact list, Discord presence). Room membership is member.join/leave, not presence.",
   "type": "object",

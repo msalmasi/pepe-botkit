@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/events/moderation.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/events/moderation.schema.json",
   "title": "event moderation: data",
   "description": "A moderation action was observed (by anyone, including the bot). Camfrog: parsed from server lines ('X blocked Y microphone', 'X kicked Y', 'X temporarily disabled Y for 1 day(s)', role changes) or from a room bot's lines.",
   "type": "object",

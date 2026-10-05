@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/actions/role.set.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/actions/role.set.schema.json",
   "title": "action role.set: data",
   "description": "Add or remove a room role (Camfrog /oplist add|remove <user> admin|moderator, /addfriend). Roles accepted are listed in features.roles.",
   "type": "object",

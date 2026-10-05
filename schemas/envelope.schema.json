@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/envelope.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/envelope.schema.json",
   "title": "PCP envelope",
   "description": "Fields common to every PCP frame. Each WebSocket text message carries exactly one frame (a JSON object).",
   "type": "object",

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/actions/room.join.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/actions/room.join.schema.json",
   "title": "action room.join: data",
   "description": "Join a room by id or display name. Camfrog drives the client's Join Room dialog; passwords and MOTD prompts are handled by the connector.",
   "type": "object",

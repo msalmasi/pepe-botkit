@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/results/none.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/results/none.schema.json",
   "title": "result none: data",
   "description": "Result data for actions that return nothing beyond success.",
   "type": "object"

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/actions/react.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/actions/react.schema.json",
   "title": "action react: data",
   "description": "Add or remove a reaction (needs features.reactions).",
   "type": "object",

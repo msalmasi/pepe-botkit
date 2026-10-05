@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/defs.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/defs.schema.json",
   "title": "PCP shared definitions",
   "description": "Types shared by every PCP frame: ids, timestamps, users, rooms, scopes, message content elements, media and sticker references, members. Objects allow unknown properties so that additive protocol changes never break older validators (see spec/PCP.md, Versioning).",
   "$defs": {

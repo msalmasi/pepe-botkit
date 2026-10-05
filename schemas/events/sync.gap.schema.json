@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/events/sync.gap.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/events/sync.gap.schema.json",
   "title": "event sync.gap: data",
   "description": "Events were lost (replay buffer overflow, refused resume, connector restart, or low-priority events dropped under backpressure). Modules holding derived state (mic holders, member lists) should re-snapshot (user.list).",
   "type": "object",

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/control/pong.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/control/pong.schema.json",
   "title": "pong (either direction)",
   "allOf": [{ "$ref": "../envelope.schema.json" }],
   "type": "object",

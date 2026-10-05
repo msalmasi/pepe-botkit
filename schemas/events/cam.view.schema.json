@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/events/cam.view.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/events/cam.view.schema.json",
   "title": "event cam.view: data",
   "description": "Someone started or stopped watching a camera; on Camfrog only the bot's own cam is observable (s2c 0x15 names the viewer).",
   "type": "object",

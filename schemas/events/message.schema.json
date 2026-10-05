@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/events/message.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/events/message.schema.json",
   "title": "event message: data",
   "description": "A chat line in a room, channel or thread. Camfrog: s2c 0x06 with a non-empty sender.",
   "type": "object",

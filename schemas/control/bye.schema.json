@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/control/bye.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/control/bye.schema.json",
   "title": "bye (either direction)",
   "description": "Sent just before closing the WebSocket, so the peer knows why and whether to reconnect. The WebSocket close code repeats the reason (spec/PCP.md, Close codes).",
   "allOf": [{ "$ref": "../envelope.schema.json" }],

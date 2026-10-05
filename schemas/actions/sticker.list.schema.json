@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/actions/sticker.list.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/actions/sticker.list.schema.json",
   "title": "action sticker.list: data",
   "description": "Stickers the bot can send (Camfrog: sets present in the local cache that the account owns).",
   "type": "object",

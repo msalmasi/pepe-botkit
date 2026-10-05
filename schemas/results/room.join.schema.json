@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/results/room.join.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/results/room.join.schema.json",
   "title": "result room.join: data",
   "description": "room.join result.",
   "type": "object",

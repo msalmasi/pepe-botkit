@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/control/flow.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/control/flow.schema.json",
   "title": "flow (either direction)",
   "description": "Backpressure. From a connector: slow down or stop sending actions (optionally only for one scope). From the runtime: stop sending low-priority events; the connector buffers or drops them per spec/PCP.md, Backpressure.",
   "allOf": [{ "$ref": "../envelope.schema.json" }],

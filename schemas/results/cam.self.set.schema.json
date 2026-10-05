@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/results/cam.self.set.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/results/cam.self.set.schema.json",
   "title": "result cam.self.set: data",
   "description": "cam.self.set result: the state after the change.",
   "type": "object",

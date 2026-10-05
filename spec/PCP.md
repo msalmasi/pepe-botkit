@@ -653,7 +653,7 @@ client version.
    posted:false`. Is that the right line, or should rejections be `platform_error`?
 5. **`mute.duration_s` on Camfrog** is ignored (server-fixed). Should the connector refuse with
    `unsupported` when a duration is given, or is "advisory" fine?
-6. **Schema `$id` base** is the placeholder `https://pepe-botkit.invalid/pcp/v1/`; pick the
+6. **Schema `$id` base** is the placeholder `https://github.com/msalmasi/pepe-botkit/pcp/v1/`; pick the
    published URL before the repo goes public (the ids are part of the contract).
 7. **Multiple bot accounts per platform** (e.g. two Discord bots) = two connector instances. Fine for
    Discord; on Camfrog it means two client installs. Confirm that is acceptable.

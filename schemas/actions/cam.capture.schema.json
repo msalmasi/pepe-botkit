@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/actions/cam.capture.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/actions/cam.capture.schema.json",
   "title": "action cam.capture: data",
   "description": "Grab one frame of a user's camera as an image. open_if_closed lets the connector open the cam first; wait_ready_ms waits past loading frames.",
   "type": "object",

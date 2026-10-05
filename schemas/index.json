@@ -1,7 +1,7 @@
 {
   "$comment": "Registry of every PCP type. scripts/gen-dispatch.mjs builds event/action/result.schema.json from it; validators load it.",
   "pcp": "1.0",
-  "base": "https://pepe-botkit.invalid/pcp/v1/",
+  "base": "https://github.com/msalmasi/pepe-botkit/pcp/v1/",
   "defs": "defs.schema.json",
   "envelope": "envelope.schema.json",
   "frame": "frame.schema.json",

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/results/sticker.send.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/results/sticker.send.schema.json",
   "title": "result sticker.send: data",
   "description": "sticker.send result. posted is null when the platform gave no confirmation (Camfrog room servers that never ack).",
   "type": "object",

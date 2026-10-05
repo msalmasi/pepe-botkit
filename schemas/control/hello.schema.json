@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/control/hello.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/control/hello.schema.json",
   "title": "hello (connector -> runtime)",
   "description": "First frame on a new connection. Identifies the connector, authenticates (if no Authorization header was sent), declares capabilities and optionally asks to resume a previous session.",
   "allOf": [{ "$ref": "../envelope.schema.json" }],

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/events/mic.release.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/events/mic.release.schema.json",
   "title": "event mic.release: data",
   "description": "A user lost or gave up a mic slot. Camfrog: s2c 0x25 is authoritative; silence (0x16 pausing) is NOT a release. reason=lost for the bot means a timeout or a block disarmed its audio pipeline.",
   "type": "object",

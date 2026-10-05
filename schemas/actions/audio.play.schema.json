@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/actions/audio.play.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/actions/audio.play.schema.json",
   "title": "action audio.play: data",
   "description": "Play audio into the room through the bot's mic (TTS, alerts, music drops). mic=auto grabs a slot if the platform needs one and waits up to wait_for_slot_ms for a free one. Long-running: the connector sends final=false results (queued, playing) before the final one.",
   "type": "object",

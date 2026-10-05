@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/actions/mic.grab.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/actions/mic.grab.schema.json",
   "title": "action mic.grab: data",
   "description": "Take a mic slot in scope.room. hold=true keeps it (reclaiming after a timeout). force=true may bump another holder where the platform allows it (Camfrog: blocks the longest holder; modules must gate this behind a permission).",
   "type": "object",

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/results/audio.play.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/results/audio.play.schema.json",
   "title": "result audio.play: data",
   "description": "audio.play result (interim results use the same shape with final=false).",
   "type": "object",

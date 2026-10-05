@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pepe-botkit.invalid/pcp/v1/events/room.left.schema.json",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/events/room.left.schema.json",
   "title": "event room.left: data",
   "description": "The bot is no longer in a room. Camfrog: the room socket closed; a preceding s2c 0x0A notice says kicked/banned and by whom.",
   "type": "object",
