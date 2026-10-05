@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/events/member.leave.schema.json",
+  "title": "event member.leave: data",
+  "description": "A user left the room.",
+  "type": "object",
+  "required": [
+    "user"
+  ],
+  "properties": {
+    "user": {
+      "$ref": "../defs.schema.json#/$defs/UserRef"
+    },
+    "reason": {
+      "enum": [
+        "left",
+        "kicked",
+        "banned",
+        "disconnected",
+        "unknown"
+      ]
+    },
+    "inferred": {
+      "type": "boolean",
+      "description": "Derived (e.g. from a user-list diff) rather than signalled by the platform."
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

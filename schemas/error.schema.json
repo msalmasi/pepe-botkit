@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/error.schema.json",
+  "title": "PCP error",
+  "description": "Error object carried by a failed result frame (ok=false) and by bye frames. See spec/PCP.md, Error model.",
+  "type": "object",
+  "required": ["code", "message", "retryable"],
+  "properties": {
+    "code": {
+      "description": "Machine-readable code. Unknown codes must be treated like 'internal' (respecting 'retryable').",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$",
+      "examples": [
+        "bad_request", "unauthorized", "forbidden", "not_found", "not_in_room", "unsupported",
+        "conflict", "rate_limited", "timeout", "unavailable", "payload_too_large", "cancelled",
+        "version_unsupported", "session_invalid", "platform_error", "internal"
+      ]
+    },
+    "message": { "description": "Human-readable, for logs. Not shown to end users verbatim.", "type": "string", "maxLength": 2000 },
+    "retryable": { "description": "True if repeating the same action (same id) later may succeed.", "type": "boolean" },
+    "retry_after_ms": { "$ref": "defs.schema.json#/$defs/DurationMs" },
+    "platform_code": { "description": "The platform's own error code/text, if any.", "type": "string", "maxLength": 256 },
+    "details": { "type": "object" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "code": { "const": "rate_limited" } }, "required": ["code"] },
+      "then": { "properties": { "retryable": { "const": true } } }
+    },
+    {
+      "if": { "properties": { "code": { "enum": ["bad_request", "unsupported", "version_unsupported", "payload_too_large"] } }, "required": ["code"] },
+      "then": { "properties": { "retryable": { "const": false } } }
+    }
+  ]
+}

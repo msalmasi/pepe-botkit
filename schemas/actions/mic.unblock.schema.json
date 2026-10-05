@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/actions/mic.unblock.schema.json",
+  "title": "action mic.unblock: data",
+  "description": "Unblock a user's mic (Camfrog /unblockmic).",
+  "type": "object",
+  "required": [
+    "user"
+  ],
+  "properties": {
+    "user": {
+      "$ref": "../defs.schema.json#/$defs/UserRef"
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

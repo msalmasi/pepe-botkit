@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/events/room.left.schema.json",
+  "title": "event room.left: data",
+  "description": "The bot is no longer in a room. Camfrog: the room socket closed; a preceding s2c 0x0A notice says kicked/banned and by whom.",
+  "type": "object",
+  "required": [
+    "room",
+    "reason"
+  ],
+  "properties": {
+    "room": {
+      "$ref": "../defs.schema.json#/$defs/RoomRef"
+    },
+    "reason": {
+      "enum": [
+        "requested",
+        "kicked",
+        "banned",
+        "disconnected",
+        "closed",
+        "unknown"
+      ]
+    },
+    "by": {
+      "$ref": "../defs.schema.json#/$defs/UserRef"
+    },
+    "detail": {
+      "type": "string",
+      "maxLength": 1024
+    },
+    "will_rejoin": {
+      "type": "boolean",
+      "description": "The connector will try to rejoin by itself (binding has rejoin_on_kick)."
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

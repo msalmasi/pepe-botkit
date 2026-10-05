@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/results/room.list.schema.json",
+  "title": "result room.list: data",
+  "description": "room.list result.",
+  "type": "object",
+  "required": [
+    "rooms"
+  ],
+  "properties": {
+    "rooms": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "room"
+        ],
+        "properties": {
+          "room": {
+            "$ref": "../defs.schema.json#/$defs/RoomRef"
+          },
+          "joined_at": {
+            "$ref": "../defs.schema.json#/$defs/Timestamp"
+          },
+          "member_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "active": {
+            "type": "boolean",
+            "description": "The room window/tab the connector currently drives (Camfrog)."
+          },
+          "audio": {
+            "type": "boolean",
+            "description": "The room the audio pipeline is bound to."
+          }
+        }
+      }
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

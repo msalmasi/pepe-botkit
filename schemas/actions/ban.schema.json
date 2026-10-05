@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/actions/ban.schema.json",
+  "title": "action ban: data",
+  "description": "Ban a user from the room (or guild).",
+  "type": "object",
+  "required": [
+    "user"
+  ],
+  "properties": {
+    "user": {
+      "$ref": "../defs.schema.json#/$defs/UserRef"
+    },
+    "reason": {
+      "type": "string",
+      "maxLength": 512
+    },
+    "duration_s": {
+      "$ref": "../defs.schema.json#/$defs/DurationS"
+    },
+    "delete_history_s": {
+      "$ref": "../defs.schema.json#/$defs/DurationS"
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

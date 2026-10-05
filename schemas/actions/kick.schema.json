@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/actions/kick.schema.json",
+  "title": "action kick: data",
+  "description": "Remove a user from the room.",
+  "type": "object",
+  "required": [
+    "user"
+  ],
+  "properties": {
+    "user": {
+      "$ref": "../defs.schema.json#/$defs/UserRef"
+    },
+    "reason": {
+      "type": "string",
+      "maxLength": 512
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

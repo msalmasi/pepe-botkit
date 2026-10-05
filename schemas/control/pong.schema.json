@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/control/pong.schema.json",
+  "title": "pong (either direction)",
+  "allOf": [{ "$ref": "../envelope.schema.json" }],
+  "type": "object",
+  "required": ["op", "ref"],
+  "properties": {
+    "op": { "const": "pong" },
+    "ref": { "description": "id of the ping.", "$ref": "../defs.schema.json#/$defs/Id" },
+    "data": {
+      "type": "object",
+      "properties": {
+        "platform_ok": { "description": "Connector only: the platform side (client/hook/API) is healthy.", "type": "boolean" },
+        "last_seq": { "description": "Connector only: highest seq sent so far.", "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

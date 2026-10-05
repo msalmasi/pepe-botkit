@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/actions/platform.command.schema.json",
+  "title": "action platform.command: data",
+  "description": "Escape hatch: run a platform-native command the connector allows (features.platform_commands), e.g. a Camfrog slash command, and collect the server lines that answer it for collect_ms.",
+  "type": "object",
+  "required": [
+    "command"
+  ],
+  "properties": {
+    "command": {
+      "type": "string",
+      "maxLength": 64,
+      "minLength": 1
+    },
+    "args": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 1024
+      }
+    },
+    "collect_ms": {
+      "$ref": "../defs.schema.json#/$defs/DurationMs"
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

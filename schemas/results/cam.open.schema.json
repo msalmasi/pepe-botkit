@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/results/cam.open.schema.json",
+  "title": "result cam.open: data",
+  "description": "cam.open result.",
+  "type": "object",
+  "required": [
+    "opened"
+  ],
+  "properties": {
+    "opened": {
+      "type": "boolean"
+    },
+    "method": {
+      "type": "string",
+      "maxLength": 64
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

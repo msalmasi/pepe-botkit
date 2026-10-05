@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/events/reaction.schema.json",
+  "title": "event reaction: data",
+  "description": "A reaction was added to or removed from a message (Discord, Telegram).",
+  "type": "object",
+  "required": [
+    "user",
+    "message_id",
+    "emoji",
+    "op"
+  ],
+  "properties": {
+    "user": {
+      "$ref": "../defs.schema.json#/$defs/UserRef"
+    },
+    "message_id": {
+      "$ref": "../defs.schema.json#/$defs/Id"
+    },
+    "emoji": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "maxLength": 128,
+          "minLength": 1
+        },
+        "id": {
+          "type": "string",
+          "maxLength": 128
+        }
+      }
+    },
+    "op": {
+      "enum": [
+        "add",
+        "remove"
+      ]
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

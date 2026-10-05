@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/events/mic.release.schema.json",
+  "title": "event mic.release: data",
+  "description": "A user lost or gave up a mic slot. Camfrog: s2c 0x25 is authoritative; silence (0x16 pausing) is NOT a release. reason=lost for the bot means a timeout or a block disarmed its audio pipeline.",
+  "type": "object",
+  "required": [
+    "user"
+  ],
+  "properties": {
+    "user": {
+      "$ref": "../defs.schema.json#/$defs/UserRef"
+    },
+    "reason": {
+      "enum": [
+        "released",
+        "blocked",
+        "timeout",
+        "lost",
+        "kicked",
+        "left",
+        "unknown"
+      ]
+    },
+    "held_ms": {
+      "$ref": "../defs.schema.json#/$defs/DurationMs"
+    },
+    "session": {
+      "$ref": "../defs.schema.json#/$defs/Id"
+    },
+    "holders": {
+      "type": "array",
+      "items": {
+        "$ref": "../defs.schema.json#/$defs/UserRef"
+      }
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

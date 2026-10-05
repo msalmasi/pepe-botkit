@@ -1,0 +1,213 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/defs.schema.json",
+  "title": "PCP shared definitions",
+  "description": "Types shared by every PCP frame: ids, timestamps, users, rooms, scopes, message content elements, media and sticker references, members. Objects allow unknown properties so that additive protocol changes never break older validators (see spec/PCP.md, Versioning).",
+  "$defs": {
+    "Id": {
+      "description": "Opaque identifier. Frame ids, message ids, session ids, blob ids. ULIDs recommended for frame ids.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:~\\-]*$"
+    },
+    "Timestamp": {
+      "description": "RFC 3339 date-time in UTC with millisecond precision recommended, e.g. 2026-10-05T18:04:11.532Z.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "TypeName": {
+      "description": "Event or action type. Dotted lowercase segments. Vendor extensions use the x.<platform>. prefix.",
+      "type": "string",
+      "maxLength": 64,
+      "pattern": "^(x\\.[a-z][a-z0-9_-]*\\.)?[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)*$"
+    },
+    "Platform": {
+      "description": "Platform name: camfrog, discord, twitch, telegram, patv, ...",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]{1,31}$"
+    },
+    "Seq": {
+      "description": "Per-session sequence number assigned by the connector to every event and result frame. Starts at 1, strictly increasing by 1.",
+      "type": "integer",
+      "minimum": 1
+    },
+    "DurationMs": { "type": "integer", "minimum": 0 },
+    "DurationS": { "type": "integer", "minimum": 0 },
+    "Ext": {
+      "description": "Platform-specific extras, keyed by platform name. Modules that do not know a key ignore it. Never required for correct behaviour.",
+      "type": "object",
+      "propertyNames": { "$ref": "#/$defs/Platform" },
+      "additionalProperties": { "type": "object" }
+    },
+    "UserRef": {
+      "description": "A user on one platform. Global identity key is (scope.platform, id). The identity service maps that pair to a PATV account.",
+      "type": "object",
+      "required": ["id"],
+      "properties": {
+        "id": {
+          "description": "Stable external id. Camfrog: the login lowercased. Discord: snowflake. Twitch: numeric user id.",
+          "type": "string", "minLength": 1, "maxLength": 256
+        },
+        "login": {
+          "description": "Account/login name as the platform spells it (Camfrog login, Discord username, Twitch login). Used for platform commands such as /kick.",
+          "type": "string", "minLength": 1, "maxLength": 256
+        },
+        "display": {
+          "description": "Human-facing display name, markup stripped. May differ from login and may change at any time; never use it as a key.",
+          "type": "string", "maxLength": 512
+        },
+        "display_raw": {
+          "description": "Display name exactly as the platform delivered it, including markup (Camfrog <b><n>..</n></b>).",
+          "type": "string", "maxLength": 2048
+        },
+        "is_self": { "description": "True when this is the connector's own bot account.", "type": "boolean" },
+        "is_bot": { "description": "True when the platform or connector knows this is an automated account (room bots).", "type": "boolean" },
+        "roles": { "type": "array", "items": { "type": "string", "maxLength": 64 } },
+        "avatar": { "type": "string", "format": "uri" },
+        "ext": { "$ref": "#/$defs/Ext" }
+      }
+    },
+    "RoomKind": {
+      "type": "string",
+      "enum": ["room", "channel", "thread", "dm", "group", "voice", "stage", "inbox"]
+    },
+    "RoomRef": {
+      "description": "A room, channel, thread or DM conversation.",
+      "type": "object",
+      "required": ["id"],
+      "properties": {
+        "id": {
+          "description": "Stable external id. Camfrog: the room id from the JOIN packet (not the window title). Discord: channel snowflake. Twitch: broadcaster user id.",
+          "type": "string", "minLength": 1, "maxLength": 256
+        },
+        "name": { "description": "Display name.", "type": "string", "maxLength": 512 },
+        "kind": { "$ref": "#/$defs/RoomKind" },
+        "parent_id": { "description": "Parent channel of a thread, or category of a channel.", "type": "string", "maxLength": 256 },
+        "ext": { "$ref": "#/$defs/Ext" }
+      }
+    },
+    "RoomTarget": {
+      "description": "A room named by id and/or display name (used by room.join, where the caller may only know the display name).",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "name": { "type": "string", "minLength": 1, "maxLength": 512 }
+      },
+      "anyOf": [{ "required": ["id"] }, { "required": ["name"] }]
+    },
+    "GuildRef": {
+      "description": "A server/workspace that contains rooms (Discord guild). Absent on platforms without one.",
+      "type": "object",
+      "required": ["id"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "name": { "type": "string", "maxLength": 512 }
+      }
+    },
+    "Scope": {
+      "description": "Where something happens. platform is always present. room is absent only for connector-wide events (presence, inbox, status).",
+      "type": "object",
+      "required": ["platform"],
+      "properties": {
+        "platform": { "$ref": "#/$defs/Platform" },
+        "guild": { "$ref": "#/$defs/GuildRef" },
+        "room": { "$ref": "#/$defs/RoomRef" },
+        "thread": { "$ref": "#/$defs/RoomRef" }
+      }
+    },
+    "MediaRef": {
+      "description": "Reference to binary media. Bytes never travel inside a PCP frame except tiny inline data; fetch url (or the connector blob endpoint for blob).",
+      "type": "object",
+      "required": ["kind"],
+      "properties": {
+        "kind": { "type": "string", "enum": ["image", "audio", "video", "file"] },
+        "mime": { "type": "string", "pattern": "^[a-z]+/[a-zA-Z0-9.+\\-]+$" },
+        "url": { "type": "string", "format": "uri" },
+        "blob": { "$ref": "#/$defs/Id" },
+        "data": {
+          "description": "Inline base64, at most 64 KiB decoded (87384 chars).",
+          "type": "string", "maxLength": 87384, "contentEncoding": "base64"
+        },
+        "name": { "type": "string", "maxLength": 512 },
+        "size": { "type": "integer", "minimum": 0 },
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 },
+        "duration_ms": { "$ref": "#/$defs/DurationMs" },
+        "sample_rate": { "type": "integer", "minimum": 1 },
+        "channels": { "type": "integer", "minimum": 1 },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "expires_at": { "$ref": "#/$defs/Timestamp" },
+        "ext": { "$ref": "#/$defs/Ext" }
+      },
+      "anyOf": [{ "required": ["url"] }, { "required": ["blob"] }, { "required": ["data"] }]
+    },
+    "StickerRef": {
+      "type": "object",
+      "required": ["id"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "set_id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 256 },
+        "animated": { "type": "boolean" },
+        "media": { "$ref": "#/$defs/MediaRef" },
+        "ext": { "$ref": "#/$defs/Ext" }
+      }
+    },
+    "Element": {
+      "description": "One message content element (Satori-style). Unknown element types are allowed and must carry a plain-text fallback in 'text' when they have a textual rendering.",
+      "type": "object",
+      "required": ["type"],
+      "properties": { "type": { "type": "string", "pattern": "^[a-z][a-z0-9_.]*$" } },
+      "allOf": [
+        { "if": { "properties": { "type": { "const": "text" } } },
+          "then": { "required": ["text"], "properties": { "text": { "type": "string" } } } },
+        { "if": { "properties": { "type": { "const": "mention" } } },
+          "then": { "required": ["user"], "properties": { "user": { "$ref": "#/$defs/UserRef" } } } },
+        { "if": { "properties": { "type": { "const": "mention_all" } } },
+          "then": { "properties": { "which": { "enum": ["everyone", "here", "room"] } } } },
+        { "if": { "properties": { "type": { "const": "emoji" } } },
+          "then": { "required": ["name"], "properties": { "name": { "type": "string", "minLength": 1 }, "id": { "type": "string" }, "media": { "$ref": "#/$defs/MediaRef" } } } },
+        { "if": { "properties": { "type": { "const": "link" } } },
+          "then": { "required": ["url"], "properties": { "url": { "type": "string", "format": "uri" }, "text": { "type": "string" } } } },
+        { "if": { "properties": { "type": { "const": "media" } } },
+          "then": { "required": ["media"], "properties": { "media": { "$ref": "#/$defs/MediaRef" } } } },
+        { "if": { "properties": { "type": { "const": "sticker" } } },
+          "then": { "required": ["sticker"], "properties": { "sticker": { "$ref": "#/$defs/StickerRef" } } } },
+        { "if": { "properties": { "type": { "const": "quote" } } },
+          "then": { "required": ["message_id"], "properties": { "message_id": { "$ref": "#/$defs/Id" } } } },
+        { "if": { "properties": { "type": { "const": "style" } } },
+          "then": { "required": ["styles", "children"], "properties": {
+            "styles": { "type": "array", "minItems": 1, "items": { "enum": ["bold", "italic", "underline", "strike", "code", "spoiler", "color"] } },
+            "color": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+            "children": { "type": "array", "items": { "$ref": "#/$defs/Element" } } } } }
+      ]
+    },
+    "Content": {
+      "type": "array",
+      "maxItems": 512,
+      "items": { "$ref": "#/$defs/Element" }
+    },
+    "MemberGroup": {
+      "description": "Where a member sits in the room's list. Camfrog: members (on cam) / lurkers (off cam) / viewing. Platforms without groups omit it.",
+      "type": "string", "maxLength": 64
+    },
+    "Member": {
+      "type": "object",
+      "required": ["user"],
+      "properties": {
+        "user": { "$ref": "#/$defs/UserRef" },
+        "group": { "$ref": "#/$defs/MemberGroup" },
+        "on_cam": { "type": "boolean" },
+        "on_mic": { "type": "boolean" },
+        "idle": { "type": "boolean" },
+        "joined_at": { "$ref": "#/$defs/Timestamp" },
+        "ext": { "$ref": "#/$defs/Ext" }
+      }
+    },
+    "Text": {
+      "description": "Plain text. Connectors split over-long outbound text according to limits.message_max_chars.",
+      "type": "string", "maxLength": 20000
+    }
+  }
+}

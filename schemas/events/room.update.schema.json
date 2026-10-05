@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/events/room.update.schema.json",
+  "title": "event room.update: data",
+  "description": "Room properties changed (topic, name).",
+  "type": "object",
+  "required": [
+    "room",
+    "changes"
+  ],
+  "properties": {
+    "room": {
+      "$ref": "../defs.schema.json#/$defs/RoomRef"
+    },
+    "changes": {
+      "type": "object",
+      "minProperties": 1,
+      "properties": {
+        "topic": {
+          "type": "string",
+          "maxLength": 1024
+        },
+        "name": {
+          "type": "string",
+          "maxLength": 512
+        }
+      }
+    },
+    "by": {
+      "$ref": "../defs.schema.json#/$defs/UserRef"
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

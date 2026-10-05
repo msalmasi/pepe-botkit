@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/control/welcome.schema.json",
+  "title": "welcome (runtime -> connector)",
+  "description": "Accepts a hello. Fixes the negotiated version, session id, heartbeat, limits, the result of a resume request and the rooms this connector is bound to.",
+  "allOf": [{ "$ref": "../envelope.schema.json" }],
+  "type": "object",
+  "required": ["op", "data", "ref"],
+  "properties": {
+    "op": { "const": "welcome" },
+    "ref": { "description": "id of the hello frame.", "$ref": "../defs.schema.json#/$defs/Id" },
+    "data": {
+      "type": "object",
+      "required": ["pcp", "session_id", "heartbeat_ms"],
+      "properties": {
+        "pcp": { "description": "Negotiated version: same MAJOR, MINOR = min(connector, runtime).", "type": "string", "pattern": "^[1-9][0-9]*\\.(0|[1-9][0-9]*)$" },
+        "session_id": { "$ref": "../defs.schema.json#/$defs/Id" },
+        "heartbeat_ms": { "description": "Each side sends a ping if it has sent nothing for this long; two missed pongs = dead connection.", "type": "integer", "minimum": 1000, "maximum": 300000 },
+        "runtime": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string", "maxLength": 128 },
+            "version": { "type": "string", "maxLength": 64 }
+          }
+        },
+        "resume": {
+          "description": "Present when the hello asked to resume.",
+          "type": "object",
+          "required": ["accepted"],
+          "properties": {
+            "accepted": { "type": "boolean" },
+            "last_seq": { "description": "Highest seq the runtime has processed. The connector replays everything after it, in order, before new frames.", "type": "integer", "minimum": 0 },
+            "reason": { "description": "Why a resume was refused (unknown/expired session).", "type": "string", "maxLength": 512 }
+          },
+          "if": { "properties": { "accepted": { "const": true } } },
+          "then": { "required": ["last_seq"] }
+        },
+        "limits": {
+          "type": "object",
+          "properties": {
+            "max_frame_bytes": { "type": "integer", "minimum": 1024 },
+            "max_inflight_actions": { "type": "integer", "minimum": 1 },
+            "replay_window_events": { "description": "Events the connector should keep for resume.", "type": "integer", "minimum": 0 },
+            "replay_window_ms": { "type": "integer", "minimum": 0 },
+            "ack_every_events": { "description": "Runtime acks at least this often (events).", "type": "integer", "minimum": 1 }
+          }
+        },
+        "bindings": {
+          "description": "Rooms this connector should be in for the bot instances bound to it (admin console). The connector joins missing ones; room passwords are never sent here (a room.join action carries them).",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["room"],
+            "properties": {
+              "room": { "$ref": "../defs.schema.json#/$defs/RoomTarget" },
+              "bot": { "description": "Bot instance id bound to this room.", "$ref": "../defs.schema.json#/$defs/Id" },
+              "rejoin_on_kick": { "type": "boolean" },
+              "audio": { "description": "This room is the one the audio pipeline listens to / speaks into.", "type": "boolean" }
+            }
+          }
+        },
+        "subscribe": {
+          "description": "Optional event filter: the connector may skip emitting event types not listed (saves bandwidth for audio.segment, presence). Absent = everything.",
+          "type": "array", "items": { "$ref": "../defs.schema.json#/$defs/TypeName" }
+        }
+      }
+    }
+  }
+}

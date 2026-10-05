@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/events/member.join.schema.json",
+  "title": "event member.join: data",
+  "description": "A user is in the room. initial=true marks the snapshot the platform sends when the bot itself joins (Camfrog 0x41 burst), so greeters can skip it.",
+  "type": "object",
+  "required": [
+    "user"
+  ],
+  "properties": {
+    "user": {
+      "$ref": "../defs.schema.json#/$defs/UserRef"
+    },
+    "initial": {
+      "type": "boolean",
+      "description": "Part of the join snapshot, not a fresh arrival."
+    },
+    "group": {
+      "$ref": "../defs.schema.json#/$defs/MemberGroup"
+    },
+    "on_cam": {
+      "type": "boolean"
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

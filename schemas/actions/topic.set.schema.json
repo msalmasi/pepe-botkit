@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/actions/topic.set.schema.json",
+  "title": "action topic.set: data",
+  "description": "Set the room topic.",
+  "type": "object",
+  "required": [
+    "topic"
+  ],
+  "properties": {
+    "topic": {
+      "type": "string",
+      "maxLength": 1024
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

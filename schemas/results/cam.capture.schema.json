@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/results/cam.capture.schema.json",
+  "title": "result cam.capture: data",
+  "description": "cam.capture result.",
+  "type": "object",
+  "required": [
+    "media",
+    "captured_at"
+  ],
+  "properties": {
+    "media": {
+      "$ref": "../defs.schema.json#/$defs/MediaRef"
+    },
+    "captured_at": {
+      "$ref": "../defs.schema.json#/$defs/Timestamp"
+    },
+    "opened": {
+      "type": "boolean",
+      "description": "The connector opened the cam to take this frame."
+    },
+    "ready_score": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Frame richness (v1: pixel std-dev; loading screens score low)."
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

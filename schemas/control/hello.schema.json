@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/control/hello.schema.json",
+  "title": "hello (connector -> runtime)",
+  "description": "First frame on a new connection. Identifies the connector, authenticates (if no Authorization header was sent), declares capabilities and optionally asks to resume a previous session.",
+  "allOf": [{ "$ref": "../envelope.schema.json" }],
+  "type": "object",
+  "required": ["op", "data"],
+  "properties": {
+    "op": { "const": "hello" },
+    "data": {
+      "type": "object",
+      "required": ["pcp", "connector", "capabilities"],
+      "properties": {
+        "pcp": {
+          "description": "Highest PCP version the connector speaks, MAJOR.MINOR. MAJOR must match the WebSocket subprotocol (pcp.v1 -> 1).",
+          "type": "string", "pattern": "^[1-9][0-9]*\\.(0|[1-9][0-9]*)$"
+        },
+        "connector": {
+          "type": "object",
+          "required": ["id", "platform", "name", "version"],
+          "properties": {
+            "id": { "description": "Stable connector instance id, configured in the admin console (one per platform account).", "$ref": "../defs.schema.json#/$defs/Id" },
+            "platform": { "$ref": "../defs.schema.json#/$defs/Platform" },
+            "kind": { "description": "chat (default) or audio (audiohook) or other.", "type": "string", "enum": ["chat", "audio", "bridge", "other"] },
+            "name": { "description": "Software name, e.g. cf-connector.", "type": "string", "maxLength": 128 },
+            "version": { "description": "Software version (semver).", "type": "string", "maxLength": 64 },
+            "platform_version": { "description": "Version of the platform client/API the connector drives (e.g. Camfrog client build).", "type": "string", "maxLength": 64 },
+            "host": { "description": "Free-form host label for logs. Never an address.", "type": "string", "maxLength": 128 }
+          }
+        },
+        "self": { "description": "The bot's own account on the platform, if known yet.", "$ref": "../defs.schema.json#/$defs/UserRef" },
+        "auth": {
+          "description": "Only when the transport could not send an Authorization header.",
+          "type": "object",
+          "required": ["token"],
+          "properties": { "token": { "type": "string", "minLength": 16, "maxLength": 4096, "writeOnly": true } }
+        },
+        "capabilities": { "$ref": "../capabilities.schema.json" },
+        "resume": {
+          "description": "Resume a previous session after a disconnect.",
+          "type": "object",
+          "required": ["session_id"],
+          "properties": {
+            "session_id": { "$ref": "../defs.schema.json#/$defs/Id" },
+            "last_seq_sent": { "description": "Highest seq the connector sent before the drop (informational).", "type": "integer", "minimum": 0 },
+            "buffer_from_seq": { "description": "Lowest seq still held in the connector's replay buffer.", "type": "integer", "minimum": 1 }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/results/mic.grab.schema.json",
+  "title": "result mic.grab: data",
+  "description": "mic.grab result.",
+  "type": "object",
+  "required": [
+    "held"
+  ],
+  "properties": {
+    "held": {
+      "type": "boolean"
+    },
+    "waited_ms": {
+      "$ref": "../defs.schema.json#/$defs/DurationMs"
+    },
+    "bumped": {
+      "$ref": "../defs.schema.json#/$defs/UserRef"
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/actions/send.private.schema.json",
+  "title": "action send.private: data",
+  "description": "Private message to a user. On platforms with features.private_messages=room (Camfrog) scope.room is required in practice: the PM goes through that room (connector answers not_in_room otherwise).",
+  "type": "object",
+  "required": [
+    "user"
+  ],
+  "properties": {
+    "user": {
+      "$ref": "../defs.schema.json#/$defs/UserRef"
+    },
+    "text": {
+      "$ref": "../defs.schema.json#/$defs/Text"
+    },
+    "content": {
+      "$ref": "../defs.schema.json#/$defs/Content"
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  },
+  "anyOf": [
+    {
+      "required": [
+        "text"
+      ]
+    },
+    {
+      "required": [
+        "content"
+      ]
+    }
+  ]
+}

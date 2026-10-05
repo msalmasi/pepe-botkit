@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/control/ping.schema.json",
+  "title": "ping (either direction)",
+  "description": "Application-level liveness check. The peer answers with pong (ref = this id). Unlike WebSocket ping frames, it proves the peer's event loop (and, for a connector, its platform hook) is alive.",
+  "allOf": [{ "$ref": "../envelope.schema.json" }],
+  "type": "object",
+  "required": ["op"],
+  "properties": {
+    "op": { "const": "ping" },
+    "data": { "type": "object" }
+  }
+}

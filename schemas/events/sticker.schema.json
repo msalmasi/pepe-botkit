@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/events/sticker.schema.json",
+  "title": "event sticker: data",
+  "description": "A sticker was posted. Camfrog: s2c 0x3f (sender, set id, sticker id); the connector exposes the locally cached image as media.",
+  "type": "object",
+  "required": [
+    "user",
+    "sticker"
+  ],
+  "properties": {
+    "user": {
+      "$ref": "../defs.schema.json#/$defs/UserRef"
+    },
+    "sticker": {
+      "$ref": "../defs.schema.json#/$defs/StickerRef"
+    },
+    "message_id": {
+      "$ref": "../defs.schema.json#/$defs/Id"
+    },
+    "self": {
+      "type": "boolean"
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

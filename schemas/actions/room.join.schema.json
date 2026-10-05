@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/actions/room.join.schema.json",
+  "title": "action room.join: data",
+  "description": "Join a room by id or display name. Camfrog drives the client's Join Room dialog; passwords and MOTD prompts are handled by the connector.",
+  "type": "object",
+  "required": [
+    "room"
+  ],
+  "properties": {
+    "room": {
+      "$ref": "../defs.schema.json#/$defs/RoomTarget"
+    },
+    "password": {
+      "type": "string",
+      "maxLength": 256,
+      "writeOnly": true,
+      "description": "Never logged by either side."
+    },
+    "accept_motd": {
+      "type": "boolean",
+      "description": "Accept a message-of-the-day prompt if the room shows one."
+    },
+    "wait_ms": {
+      "$ref": "../defs.schema.json#/$defs/DurationMs"
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/results/room.join.schema.json",
+  "title": "result room.join: data",
+  "description": "room.join result.",
+  "type": "object",
+  "required": [
+    "room",
+    "joined"
+  ],
+  "properties": {
+    "room": {
+      "$ref": "../defs.schema.json#/$defs/RoomRef"
+    },
+    "joined": {
+      "type": "boolean"
+    },
+    "topic": {
+      "type": "string",
+      "maxLength": 1024
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

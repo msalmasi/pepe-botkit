@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/capabilities.schema.json",
+  "title": "PCP capabilities",
+  "description": "What a connector (or one room of it) can do. Modules check these, never platform names. Declared in hello; a room.joined event may carry a narrower set for that room.",
+  "type": "object",
+  "required": ["events", "actions"],
+  "properties": {
+    "events": {
+      "description": "Event types this connector may emit.",
+      "type": "array", "uniqueItems": true,
+      "items": { "$ref": "defs.schema.json#/$defs/TypeName" }
+    },
+    "actions": {
+      "description": "Action types this connector executes. Anything else is answered with error code 'unsupported'.",
+      "type": "array", "uniqueItems": true,
+      "items": { "$ref": "defs.schema.json#/$defs/TypeName" }
+    },
+    "features": {
+      "description": "Finer-grained flags. Unknown flags are ignored.",
+      "type": "object",
+      "properties": {
+        "message_ids": { "description": "Platform gives stable message ids (needed for reply_to, react, quote).", "type": "boolean" },
+        "threads": { "type": "boolean" },
+        "reactions": { "type": "boolean" },
+        "edits": { "type": "boolean" },
+        "content_elements": {
+          "description": "Outbound element types the connector renders natively; others are flattened to text.",
+          "type": "array", "items": { "type": "string" }
+        },
+        "private_messages": {
+          "description": "room = PMs travel through a room (Camfrog); global = DM channels (Discord); none.",
+          "enum": ["room", "global", "none"]
+        },
+        "display_markup": { "description": "Display names may carry markup (see UserRef.display_raw).", "type": "boolean" },
+        "user_id_kind": { "description": "What UserRef.id is on this platform.", "enum": ["login", "numeric", "opaque"] },
+        "mic": {
+          "type": "object",
+          "properties": {
+            "slots": { "description": "Simultaneous mic holders allowed (0 = unknown).", "type": "integer", "minimum": 0 },
+            "self_state_observable": { "description": "Whether the connector can observe its own mic state, rather than inferring it from its own commands.", "type": "boolean" }
+          }
+        },
+        "cam": {
+          "type": "object",
+          "properties": {
+            "capture_requires_open": { "type": "boolean" },
+            "max_capture_width": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "sticker_send_ack": {
+          "description": "always | sometimes | never: whether sticker.send can confirm posting. Camfrog acks only on some room servers.",
+          "enum": ["always", "sometimes", "never"]
+        },
+        "roles": { "description": "Role names role.set accepts.", "type": "array", "items": { "type": "string" } },
+        "platform_commands": { "description": "Commands platform.command accepts (e.g. Camfrog slash commands).", "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "limits": {
+      "type": "object",
+      "properties": {
+        "message_max_chars": { "type": "integer", "minimum": 1 },
+        "send_per_minute": { "type": "integer", "minimum": 1 },
+        "max_rooms": { "type": "integer", "minimum": 1 },
+        "topic_max_chars": { "type": "integer", "minimum": 1 }
+      }
+    }
+  }
+}

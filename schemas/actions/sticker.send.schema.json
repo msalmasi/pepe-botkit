@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/actions/sticker.send.schema.json",
+  "title": "action sticker.send: data",
+  "description": "Post a sticker.",
+  "type": "object",
+  "required": [
+    "sticker"
+  ],
+  "properties": {
+    "sticker": {
+      "$ref": "../defs.schema.json#/$defs/StickerRef"
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

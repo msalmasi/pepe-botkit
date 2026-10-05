@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/events/message.schema.json",
+  "title": "event message: data",
+  "description": "A chat line in a room, channel or thread. Camfrog: s2c 0x06 with a non-empty sender.",
+  "type": "object",
+  "required": [
+    "user",
+    "text"
+  ],
+  "properties": {
+    "message_id": {
+      "$ref": "../defs.schema.json#/$defs/Id",
+      "description": "Platform message id, or a connector-generated one when the platform has none (Camfrog)."
+    },
+    "user": {
+      "$ref": "../defs.schema.json#/$defs/UserRef",
+      "description": "Author."
+    },
+    "text": {
+      "$ref": "../defs.schema.json#/$defs/Text",
+      "description": "Plain-text rendering of the whole message. Always present so simple modules never parse elements."
+    },
+    "content": {
+      "$ref": "../defs.schema.json#/$defs/Content",
+      "description": "Structured elements, when the platform gives more than text (mentions, emoji, media)."
+    },
+    "reply_to": {
+      "$ref": "../defs.schema.json#/$defs/Id",
+      "description": "message_id this replies to."
+    },
+    "self": {
+      "type": "boolean",
+      "description": "Sent by the connector's own account (echo of the bot's own line). Matchers ignore these by default."
+    },
+    "mentions_self": {
+      "type": "boolean",
+      "description": "The message addresses the bot (mention, reply to the bot, or platform-specific addressing)."
+    },
+    "edited": {
+      "type": "boolean"
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

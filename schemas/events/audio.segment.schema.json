@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/events/audio.segment.schema.json",
+  "title": "event audio.segment: data",
+  "description": "A chunk of room audio attributed to a speaker (audiohook). The audio is a media reference; STT runs downstream.",
+  "type": "object",
+  "required": [
+    "media",
+    "started_at",
+    "ended_at",
+    "attribution"
+  ],
+  "properties": {
+    "speaker": {
+      "$ref": "../defs.schema.json#/$defs/UserRef"
+    },
+    "media": {
+      "$ref": "../defs.schema.json#/$defs/MediaRef"
+    },
+    "started_at": {
+      "$ref": "../defs.schema.json#/$defs/Timestamp"
+    },
+    "ended_at": {
+      "$ref": "../defs.schema.json#/$defs/Timestamp"
+    },
+    "attribution": {
+      "enum": [
+        "mic_holder",
+        "diarized",
+        "single_speaker",
+        "unknown"
+      ],
+      "description": "How the speaker was decided. mic_holder = whoever held the mic (with one mixed stream, overlap goes to the first holder)."
+    },
+    "overlap": {
+      "type": "array",
+      "items": {
+        "$ref": "../defs.schema.json#/$defs/UserRef"
+      },
+      "description": "Other mic holders during the segment."
+    },
+    "part": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Chunk index when a long hold is split (v1 splits at 300 s)."
+    },
+    "final": {
+      "type": "boolean",
+      "description": "Last chunk of this hold."
+    },
+    "levels": {
+      "type": "object",
+      "properties": {
+        "rms": {
+          "type": "number",
+          "minimum": 0
+        },
+        "peak": {
+          "type": "number",
+          "minimum": 0
+        },
+        "clip_ratio": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "silent": {
+          "type": "boolean"
+        },
+        "tail_dropout": {
+          "type": "boolean",
+          "description": "Audio dropped out near the end (bad mic, not the speaker's fault)."
+        }
+      }
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

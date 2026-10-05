@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/results/platform.command.schema.json",
+  "title": "result platform.command: data",
+  "description": "platform.command result: server lines that answered within collect_ms.",
+  "type": "object",
+  "required": [
+    "lines"
+  ],
+  "properties": {
+    "lines": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 4000
+      }
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

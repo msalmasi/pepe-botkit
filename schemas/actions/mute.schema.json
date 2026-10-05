@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/actions/mute.schema.json",
+  "title": "action mute: data",
+  "description": "Stop a user from chatting for a while. Camfrog /punish (fixed duration chosen by the server), Discord timeout, Twitch /timeout.",
+  "type": "object",
+  "required": [
+    "user"
+  ],
+  "properties": {
+    "user": {
+      "$ref": "../defs.schema.json#/$defs/UserRef"
+    },
+    "duration_s": {
+      "$ref": "../defs.schema.json#/$defs/DurationS"
+    },
+    "reason": {
+      "type": "string",
+      "maxLength": 512
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

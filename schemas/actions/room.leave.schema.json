@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/actions/room.leave.schema.json",
+  "title": "action room.leave: data",
+  "description": "Leave scope.room.",
+  "type": "object",
+  "required": [],
+  "properties": {
+    "reason": {
+      "type": "string",
+      "maxLength": 512
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

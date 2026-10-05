@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/control/flow.schema.json",
+  "title": "flow (either direction)",
+  "description": "Backpressure. From a connector: slow down or stop sending actions (optionally only for one scope). From the runtime: stop sending low-priority events; the connector buffers or drops them per spec/PCP.md, Backpressure.",
+  "allOf": [{ "$ref": "../envelope.schema.json" }],
+  "type": "object",
+  "required": ["op", "data"],
+  "properties": {
+    "op": { "const": "flow" },
+    "data": {
+      "type": "object",
+      "required": ["state"],
+      "properties": {
+        "state": { "enum": ["slow", "pause", "resume"] },
+        "reason": { "enum": ["platform_rate_limit", "queue_full", "platform_down", "overloaded", "maintenance", "other"] },
+        "scope": { "description": "Limit the signal to one room. Absent = whole connection.", "$ref": "../defs.schema.json#/$defs/Scope" },
+        "action_types": { "description": "Limit the signal to these action types (e.g. only send).", "type": "array", "items": { "$ref": "../defs.schema.json#/$defs/TypeName" } },
+        "max_per_minute": { "description": "With state=slow: the rate the sender can sustain.", "type": "integer", "minimum": 1 },
+        "retry_after_ms": { "$ref": "../defs.schema.json#/$defs/DurationMs" },
+        "queue_depth": { "type": "integer", "minimum": 0 },
+        "detail": { "type": "string", "maxLength": 512 }
+      }
+    }
+  }
+}

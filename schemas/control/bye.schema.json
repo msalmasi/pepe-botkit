@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/control/bye.schema.json",
+  "title": "bye (either direction)",
+  "description": "Sent just before closing the WebSocket, so the peer knows why and whether to reconnect. The WebSocket close code repeats the reason (spec/PCP.md, Close codes).",
+  "allOf": [{ "$ref": "../envelope.schema.json" }],
+  "type": "object",
+  "required": ["op", "data"],
+  "properties": {
+    "op": { "const": "bye" },
+    "data": {
+      "type": "object",
+      "required": ["reconnect"],
+      "properties": {
+        "reconnect": { "description": "Whether the peer should reconnect (and try to resume).", "type": "boolean" },
+        "retry_after_ms": { "$ref": "../defs.schema.json#/$defs/DurationMs" },
+        "error": { "$ref": "../error.schema.json" }
+      }
+    }
+  }
+}

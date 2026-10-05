@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/events/cam.open.schema.json",
+  "title": "event cam.open: data",
+  "description": "A user's camera is broadcasting and can be watched. Camfrog: s2c 0x0d stream setup (cam id, codec) or the user moving out of the lurkers group.",
+  "type": "object",
+  "required": [
+    "user"
+  ],
+  "properties": {
+    "user": {
+      "$ref": "../defs.schema.json#/$defs/UserRef"
+    },
+    "stream": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "../defs.schema.json#/$defs/Id",
+          "description": "Opaque per-stream id the connector needs for cam.open/cam.capture."
+        },
+        "codec": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

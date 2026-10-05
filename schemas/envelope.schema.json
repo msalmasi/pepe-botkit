@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/envelope.schema.json",
+  "title": "PCP envelope",
+  "description": "Fields common to every PCP frame. Each WebSocket text message carries exactly one frame (a JSON object).",
+  "type": "object",
+  "required": ["op", "id", "ts"],
+  "properties": {
+    "op": {
+      "description": "Frame kind.",
+      "enum": ["hello", "welcome", "event", "action", "result", "ack", "ping", "pong", "flow", "bye"]
+    },
+    "id": { "description": "Unique id of this frame (per sender, per session). Results and pongs point back with 'ref'.", "$ref": "defs.schema.json#/$defs/Id" },
+    "ts": { "description": "When the sender created the frame.", "$ref": "defs.schema.json#/$defs/Timestamp" },
+    "traceparent": {
+      "description": "Optional W3C Trace Context header value, so an event and the actions it causes share one OpenTelemetry trace.",
+      "type": "string",
+      "pattern": "^[0-9a-f]{2}-[0-9a-f]{32}-[0-9a-f]{16}-[0-9a-f]{2}$"
+    }
+  }
+}

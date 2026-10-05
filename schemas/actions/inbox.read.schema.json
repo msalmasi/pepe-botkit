@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/actions/inbox.read.schema.json",
+  "title": "action inbox.read: data",
+  "description": "Read the direct-message inbox (Camfrog contact-list conversations, read from pixels by a vision model, so results carry a confidence).",
+  "type": "object",
+  "required": [],
+  "properties": {
+    "limit": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

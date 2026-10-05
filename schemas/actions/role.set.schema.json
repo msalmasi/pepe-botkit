@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/actions/role.set.schema.json",
+  "title": "action role.set: data",
+  "description": "Add or remove a room role (Camfrog /oplist add|remove <user> admin|moderator, /addfriend). Roles accepted are listed in features.roles.",
+  "type": "object",
+  "required": [
+    "user",
+    "role",
+    "op"
+  ],
+  "properties": {
+    "user": {
+      "$ref": "../defs.schema.json#/$defs/UserRef"
+    },
+    "role": {
+      "type": "string",
+      "maxLength": 64,
+      "minLength": 1
+    },
+    "op": {
+      "enum": [
+        "add",
+        "remove"
+      ]
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

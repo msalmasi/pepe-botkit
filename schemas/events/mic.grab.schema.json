@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/events/mic.grab.schema.json",
+  "title": "event mic.grab: data",
+  "description": "A user took a mic slot. Camfrog: the ONSET of the s2c 0x16 holder heartbeat (the ~6/s repeats are not forwarded). Rooms can be multi-mic; 'holders' is the full holder set after this grab. The bot's own grab is emitted by the connector from its own command (Camfrog never echoes it).",
+  "type": "object",
+  "required": [
+    "user"
+  ],
+  "properties": {
+    "user": {
+      "$ref": "../defs.schema.json#/$defs/UserRef"
+    },
+    "session": {
+      "$ref": "../defs.schema.json#/$defs/Id",
+      "description": "Platform mic-session id if any (Camfrog: 4-byte id, hex)."
+    },
+    "holders": {
+      "type": "array",
+      "items": {
+        "$ref": "../defs.schema.json#/$defs/UserRef"
+      },
+      "description": "Everyone holding a mic slot after this event."
+    },
+    "slots": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Mic slots in this room, if known."
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/results/sticker.list.schema.json",
+  "title": "result sticker.list: data",
+  "description": "sticker.list result.",
+  "type": "object",
+  "required": [
+    "stickers"
+  ],
+  "properties": {
+    "stickers": {
+      "type": "array",
+      "items": {
+        "$ref": "../defs.schema.json#/$defs/StickerRef"
+      }
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

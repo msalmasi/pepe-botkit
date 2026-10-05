@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/events/moderation.schema.json",
+  "title": "event moderation: data",
+  "description": "A moderation action was observed (by anyone, including the bot). Camfrog: parsed from server lines ('X blocked Y microphone', 'X kicked Y', 'X temporarily disabled Y for 1 day(s)', role changes) or from a room bot's lines.",
+  "type": "object",
+  "required": [
+    "kind"
+  ],
+  "properties": {
+    "kind": {
+      "enum": [
+        "kick",
+        "ban",
+        "unban",
+        "mute",
+        "unmute",
+        "mic.block",
+        "mic.unblock",
+        "role.add",
+        "role.remove",
+        "warn",
+        "delete",
+        "other"
+      ]
+    },
+    "actor": {
+      "$ref": "../defs.schema.json#/$defs/UserRef"
+    },
+    "target": {
+      "$ref": "../defs.schema.json#/$defs/UserRef"
+    },
+    "duration_s": {
+      "$ref": "../defs.schema.json#/$defs/DurationS"
+    },
+    "role": {
+      "type": "string",
+      "maxLength": 64
+    },
+    "reason": {
+      "type": "string",
+      "maxLength": 1024
+    },
+    "source": {
+      "enum": [
+        "server",
+        "room_bot",
+        "platform",
+        "connector"
+      ],
+      "description": "Who reported it. room_bot lines are less trustworthy than server lines."
+    },
+    "text": {
+      "type": "string",
+      "maxLength": 2000,
+      "description": "Original line, markup stripped."
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

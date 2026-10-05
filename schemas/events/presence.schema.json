@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/events/presence.schema.json",
+  "title": "event presence: data",
+  "description": "Account-level online status (contact list, Discord presence). Room membership is member.join/leave, not presence.",
+  "type": "object",
+  "required": [
+    "user",
+    "status"
+  ],
+  "properties": {
+    "user": {
+      "$ref": "../defs.schema.json#/$defs/UserRef"
+    },
+    "status": {
+      "enum": [
+        "online",
+        "idle",
+        "away",
+        "dnd",
+        "invisible",
+        "offline"
+      ]
+    },
+    "activity": {
+      "type": "string",
+      "maxLength": 512
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

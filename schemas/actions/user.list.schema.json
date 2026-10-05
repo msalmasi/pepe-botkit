@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/actions/user.list.schema.json",
+  "title": "action user.list: data",
+  "description": "Current members of scope.room, with list group / cam / mic state where known.",
+  "type": "object",
+  "required": [],
+  "properties": {
+    "refresh": {
+      "type": "boolean",
+      "description": "Bypass the connector's cache."
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

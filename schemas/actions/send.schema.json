@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/actions/send.schema.json",
+  "title": "action send: data",
+  "description": "Post a message in scope.room (or scope.thread). The connector splits text longer than limits.message_max_chars and renders unsupported elements as text.",
+  "type": "object",
+  "required": [],
+  "properties": {
+    "text": {
+      "$ref": "../defs.schema.json#/$defs/Text"
+    },
+    "content": {
+      "$ref": "../defs.schema.json#/$defs/Content"
+    },
+    "reply_to": {
+      "$ref": "../defs.schema.json#/$defs/Id"
+    },
+    "mention": {
+      "$ref": "../defs.schema.json#/$defs/UserRef",
+      "description": "Address the line to this user (connector picks the platform's convention)."
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  },
+  "anyOf": [
+    {
+      "required": [
+        "text"
+      ]
+    },
+    {
+      "required": [
+        "content"
+      ]
+    }
+  ]
+}

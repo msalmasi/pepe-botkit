@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/results/inbox.read.schema.json",
+  "title": "result inbox.read: data",
+  "description": "inbox.read result.",
+  "type": "object",
+  "required": [
+    "conversations",
+    "method"
+  ],
+  "properties": {
+    "conversations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "preview"
+        ],
+        "properties": {
+          "user": {
+            "$ref": "../defs.schema.json#/$defs/UserRef"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 512
+          },
+          "preview": {
+            "type": "string",
+            "maxLength": 2000
+          },
+          "unread": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "at": {
+            "$ref": "../defs.schema.json#/$defs/Timestamp"
+          }
+        }
+      }
+    },
+    "method": {
+      "enum": [
+        "api",
+        "vision"
+      ]
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "image": {
+      "$ref": "../defs.schema.json#/$defs/MediaRef"
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

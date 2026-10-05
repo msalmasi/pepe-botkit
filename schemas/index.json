@@ -1,0 +1,285 @@
+{
+  "$comment": "Registry of every PCP type. scripts/gen-dispatch.mjs builds event/action/result.schema.json from it; validators load it.",
+  "pcp": "1.0",
+  "base": "https://pepe-botkit.invalid/pcp/v1/",
+  "defs": "defs.schema.json",
+  "envelope": "envelope.schema.json",
+  "frame": "frame.schema.json",
+  "error": "error.schema.json",
+  "capabilities": "capabilities.schema.json",
+  "control": {
+    "hello": "control/hello.schema.json",
+    "welcome": "control/welcome.schema.json",
+    "ping": "control/ping.schema.json",
+    "pong": "control/pong.schema.json",
+    "ack": "control/ack.schema.json",
+    "flow": "control/flow.schema.json",
+    "bye": "control/bye.schema.json"
+  },
+  "events": {
+    "message": {
+      "schema": "events/message.schema.json",
+      "requires_room": true,
+      "priority": "normal"
+    },
+    "message.private": {
+      "schema": "events/message.private.schema.json",
+      "requires_room": false,
+      "priority": "normal"
+    },
+    "member.join": {
+      "schema": "events/member.join.schema.json",
+      "requires_room": true,
+      "priority": "normal"
+    },
+    "member.leave": {
+      "schema": "events/member.leave.schema.json",
+      "requires_room": true,
+      "priority": "normal"
+    },
+    "member.update": {
+      "schema": "events/member.update.schema.json",
+      "requires_room": true,
+      "priority": "normal"
+    },
+    "presence": {
+      "schema": "events/presence.schema.json",
+      "requires_room": false,
+      "priority": "low"
+    },
+    "mic.grab": {
+      "schema": "events/mic.grab.schema.json",
+      "requires_room": true,
+      "priority": "normal"
+    },
+    "mic.release": {
+      "schema": "events/mic.release.schema.json",
+      "requires_room": true,
+      "priority": "normal"
+    },
+    "cam.open": {
+      "schema": "events/cam.open.schema.json",
+      "requires_room": true,
+      "priority": "normal"
+    },
+    "cam.close": {
+      "schema": "events/cam.close.schema.json",
+      "requires_room": true,
+      "priority": "normal"
+    },
+    "cam.view": {
+      "schema": "events/cam.view.schema.json",
+      "requires_room": false,
+      "priority": "low"
+    },
+    "sticker": {
+      "schema": "events/sticker.schema.json",
+      "requires_room": true,
+      "priority": "normal"
+    },
+    "room.joined": {
+      "schema": "events/room.joined.schema.json",
+      "requires_room": true,
+      "priority": "critical"
+    },
+    "room.left": {
+      "schema": "events/room.left.schema.json",
+      "requires_room": true,
+      "priority": "critical"
+    },
+    "room.update": {
+      "schema": "events/room.update.schema.json",
+      "requires_room": true,
+      "priority": "normal"
+    },
+    "moderation": {
+      "schema": "events/moderation.schema.json",
+      "requires_room": true,
+      "priority": "critical"
+    },
+    "audio.segment": {
+      "schema": "events/audio.segment.schema.json",
+      "requires_room": true,
+      "priority": "low"
+    },
+    "notice": {
+      "schema": "events/notice.schema.json",
+      "requires_room": false,
+      "priority": "normal"
+    },
+    "reaction": {
+      "schema": "events/reaction.schema.json",
+      "requires_room": true,
+      "priority": "low"
+    },
+    "inbox.notify": {
+      "schema": "events/inbox.notify.schema.json",
+      "requires_room": false,
+      "priority": "normal"
+    },
+    "connector.status": {
+      "schema": "events/connector.status.schema.json",
+      "requires_room": false,
+      "priority": "critical"
+    },
+    "sync.gap": {
+      "schema": "events/sync.gap.schema.json",
+      "requires_room": false,
+      "priority": "critical"
+    }
+  },
+  "actions": {
+    "send": {
+      "schema": "actions/send.schema.json",
+      "requires_room": true,
+      "result": "send"
+    },
+    "send.private": {
+      "schema": "actions/send.private.schema.json",
+      "requires_room": false,
+      "result": "send"
+    },
+    "kick": {
+      "schema": "actions/kick.schema.json",
+      "requires_room": true,
+      "result": "none"
+    },
+    "ban": {
+      "schema": "actions/ban.schema.json",
+      "requires_room": true,
+      "result": "none"
+    },
+    "unban": {
+      "schema": "actions/unban.schema.json",
+      "requires_room": true,
+      "result": "none"
+    },
+    "mute": {
+      "schema": "actions/mute.schema.json",
+      "requires_room": true,
+      "result": "none"
+    },
+    "unmute": {
+      "schema": "actions/unmute.schema.json",
+      "requires_room": true,
+      "result": "none"
+    },
+    "mic.block": {
+      "schema": "actions/mic.block.schema.json",
+      "requires_room": true,
+      "result": "none"
+    },
+    "mic.unblock": {
+      "schema": "actions/mic.unblock.schema.json",
+      "requires_room": true,
+      "result": "none"
+    },
+    "role.set": {
+      "schema": "actions/role.set.schema.json",
+      "requires_room": true,
+      "result": "none"
+    },
+    "topic.set": {
+      "schema": "actions/topic.set.schema.json",
+      "requires_room": true,
+      "result": "none"
+    },
+    "room.join": {
+      "schema": "actions/room.join.schema.json",
+      "requires_room": false,
+      "result": "room.join"
+    },
+    "room.leave": {
+      "schema": "actions/room.leave.schema.json",
+      "requires_room": true,
+      "result": "none"
+    },
+    "room.list": {
+      "schema": "actions/room.list.schema.json",
+      "requires_room": false,
+      "result": "room.list"
+    },
+    "mic.grab": {
+      "schema": "actions/mic.grab.schema.json",
+      "requires_room": true,
+      "result": "mic.grab"
+    },
+    "mic.release": {
+      "schema": "actions/mic.release.schema.json",
+      "requires_room": true,
+      "result": "mic.release"
+    },
+    "audio.play": {
+      "schema": "actions/audio.play.schema.json",
+      "requires_room": true,
+      "result": "audio.play"
+    },
+    "cam.capture": {
+      "schema": "actions/cam.capture.schema.json",
+      "requires_room": true,
+      "result": "cam.capture"
+    },
+    "cam.open": {
+      "schema": "actions/cam.open.schema.json",
+      "requires_room": true,
+      "result": "cam.open"
+    },
+    "cam.close": {
+      "schema": "actions/cam.close.schema.json",
+      "requires_room": true,
+      "result": "none"
+    },
+    "cam.self.set": {
+      "schema": "actions/cam.self.set.schema.json",
+      "requires_room": false,
+      "result": "cam.self.set"
+    },
+    "user.list": {
+      "schema": "actions/user.list.schema.json",
+      "requires_room": true,
+      "result": "user.list"
+    },
+    "sticker.send": {
+      "schema": "actions/sticker.send.schema.json",
+      "requires_room": true,
+      "result": "sticker.send"
+    },
+    "sticker.list": {
+      "schema": "actions/sticker.list.schema.json",
+      "requires_room": false,
+      "result": "sticker.list"
+    },
+    "inbox.read": {
+      "schema": "actions/inbox.read.schema.json",
+      "requires_room": false,
+      "result": "inbox.read"
+    },
+    "react": {
+      "schema": "actions/react.schema.json",
+      "requires_room": true,
+      "result": "none"
+    },
+    "platform.command": {
+      "schema": "actions/platform.command.schema.json",
+      "requires_room": false,
+      "result": "platform.command"
+    }
+  },
+  "results": {
+    "none": "results/none.schema.json",
+    "send": "results/send.schema.json",
+    "room.join": "results/room.join.schema.json",
+    "room.list": "results/room.list.schema.json",
+    "mic.grab": "results/mic.grab.schema.json",
+    "mic.release": "results/mic.release.schema.json",
+    "audio.play": "results/audio.play.schema.json",
+    "cam.capture": "results/cam.capture.schema.json",
+    "cam.open": "results/cam.open.schema.json",
+    "cam.self.set": "results/cam.self.set.schema.json",
+    "user.list": "results/user.list.schema.json",
+    "sticker.send": "results/sticker.send.schema.json",
+    "sticker.list": "results/sticker.list.schema.json",
+    "inbox.read": "results/inbox.read.schema.json",
+    "platform.command": "results/platform.command.schema.json"
+  }
+}

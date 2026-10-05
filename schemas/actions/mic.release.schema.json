@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/actions/mic.release.schema.json",
+  "title": "action mic.release: data",
+  "description": "Give up the bot's mic slot.",
+  "type": "object",
+  "required": [],
+  "properties": {
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

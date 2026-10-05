@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/events/room.joined.schema.json",
+  "title": "event room.joined: data",
+  "description": "The bot is now in a room (fully: Camfrog emits it after the server's logged-in line, not at the JOIN packet). May carry room-level capabilities that narrow the connector's.",
+  "type": "object",
+  "required": [
+    "room"
+  ],
+  "properties": {
+    "room": {
+      "$ref": "../defs.schema.json#/$defs/RoomRef"
+    },
+    "topic": {
+      "type": "string",
+      "maxLength": 1024
+    },
+    "member_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "self": {
+      "$ref": "../defs.schema.json#/$defs/UserRef"
+    },
+    "motd": {
+      "type": "string",
+      "maxLength": 4000
+    },
+    "rejoin": {
+      "type": "boolean",
+      "description": "This is an automatic rejoin (after a kick or drop)."
+    },
+    "capabilities": {
+      "$ref": "../capabilities.schema.json",
+      "description": "Room-level override: only what works in this room."
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

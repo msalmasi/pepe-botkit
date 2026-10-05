@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pepe-botkit.invalid/pcp/v1/actions/cam.self.set.schema.json",
+  "title": "action cam.self.set: data",
+  "description": "Change the bot's own camera: HQ mode, paused.",
+  "type": "object",
+  "required": [],
+  "properties": {
+    "hq": {
+      "type": "boolean"
+    },
+    "paused": {
+      "type": "boolean"
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  },
+  "minProperties": 1
+}
