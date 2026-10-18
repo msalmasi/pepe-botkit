@@ -1,0 +1,187 @@
+{
+  "description": "Whispers between a hub user and room users: send.private with a whisper block (never falls back to a room line), replies through the bot as message.private with whisper.reply_to (the 'reply' command) or whisper.to (a named hub user), and a whisper to someone who left (not_found, not_present).",
+  "grounding": "Camfrog PMs carry the sender's real login, so whisper replies are login-resolved. Whisper text is treated like off-the-record lines: never logged or remembered by the connector.",
+  "frames": [
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action",
+        "id": "whisper:0192fb10-0c2e-7a11-9b4d-0000000000a0:bnd-cf-lilypond",
+        "ts": "2026-10-18T18:20:00.040Z",
+        "type": "send.private",
+        "scope": {
+          "platform": "camfrog",
+          "room": {
+            "id": "LilyPond.Room",
+            "name": "The Lily Pond",
+            "kind": "room"
+          }
+        },
+        "data": {
+          "user": {
+            "id": "pondskipper",
+            "login": "PondSkipper"
+          },
+          "text": "🌐 Mia (web) whispers: you on mic later? · Reply: !r <text> · Stop: !whispers off",
+          "whisper": {
+            "id": "0192fb10-0c2e-7a11-9b4d-0000000000a0",
+            "from": {
+              "acct": "acct-9f2c",
+              "name": "Mia",
+              "name_src": "display",
+              "handle": "frogqueen",
+              "tag": "web"
+            }
+          }
+        },
+        "origin": {
+          "bot": "hub",
+          "module": "whisper"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result",
+        "id": "c-3701",
+        "ts": "2026-10-18T18:20:00.080Z",
+        "seq": 60,
+        "ref": "whisper:0192fb10-0c2e-7a11-9b4d-0000000000a0:bnd-cf-lilypond",
+        "type": "send.private",
+        "ok": true,
+        "data": {
+          "message_ids": [
+            "cf-pm-3f9a2c1d7e4b-88301"
+          ],
+          "parts": 1,
+          "t": {
+            "wait_ms": 380,
+            "send_ms": 22
+          }
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event",
+        "id": "c-3702",
+        "ts": "2026-10-18T18:20:00.120Z",
+        "seq": 61,
+        "type": "message.private",
+        "connector": "cf-main",
+        "scope": {
+          "platform": "camfrog",
+          "room": {
+            "id": "LilyPond.Room",
+            "name": "The Lily Pond",
+            "kind": "room"
+          }
+        },
+        "data": {
+          "message_id": "cf-pm-3f9a2c1d7e4b-88302",
+          "user": {
+            "id": "pondskipper",
+            "login": "PondSkipper",
+            "display": "Skip",
+            "resolved_by": "login"
+          },
+          "text": "!r yeah after 9",
+          "whisper": {
+            "reply_to": "0192fb10-0c2e-7a11-9b4d-0000000000a0"
+          }
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event",
+        "id": "c-3703",
+        "ts": "2026-10-18T18:20:00.160Z",
+        "seq": 62,
+        "type": "message.private",
+        "connector": "cf-main",
+        "scope": {
+          "platform": "camfrog",
+          "room": {
+            "id": "LilyPond.Room",
+            "name": "The Lily Pond",
+            "kind": "room"
+          }
+        },
+        "data": {
+          "message_id": "cf-pm-3f9a2c1d7e4b-88303",
+          "user": {
+            "id": "bogwalker",
+            "login": "bogwalker",
+            "resolved_by": "login"
+          },
+          "text": "!w frogqueen nice set",
+          "whisper": {
+            "to": "frogqueen"
+          }
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action",
+        "id": "whisper:0192fb10-0c2e-7a11-9b4d-0000000000a1:bnd-cf-lilypond",
+        "ts": "2026-10-18T18:20:00.200Z",
+        "type": "send.private",
+        "scope": {
+          "platform": "camfrog",
+          "room": {
+            "id": "LilyPond.Room",
+            "name": "The Lily Pond",
+            "kind": "room"
+          }
+        },
+        "data": {
+          "user": {
+            "id": "newt",
+            "login": "Newt"
+          },
+          "text": "🌐 Mia (web) whispers: welcome!",
+          "whisper": {
+            "id": "0192fb10-0c2e-7a11-9b4d-0000000000a1",
+            "from": {
+              "acct": "acct-9f2c",
+              "name": "Mia",
+              "name_src": "display",
+              "handle": "frogqueen",
+              "tag": "web"
+            }
+          }
+        },
+        "origin": {
+          "bot": "hub",
+          "module": "whisper"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result",
+        "id": "c-3704",
+        "ts": "2026-10-18T18:20:00.240Z",
+        "seq": 63,
+        "ref": "whisper:0192fb10-0c2e-7a11-9b4d-0000000000a1:bnd-cf-lilypond",
+        "type": "send.private",
+        "ok": false,
+        "error": {
+          "code": "not_found",
+          "message": "Newt is not in the room",
+          "retryable": false,
+          "details": {
+            "code": "not_present"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/actions/message.delete.schema.json",
+  "title": "action message.delete: data",
+  "description": "(1.1) Delete a message (features.deletes: own or any). Fails with unsupported past features.delete_window_s.",
+  "type": "object",
+  "required": [
+    "message_id"
+  ],
+  "properties": {
+    "message_id": {
+      "$ref": "../defs.schema.json#/$defs/Id"
+    },
+    "reason": {
+      "type": "string",
+      "maxLength": 512
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

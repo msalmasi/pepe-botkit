@@ -1,0 +1,30 @@
+{
+  "description": "send.private.whisper needs its id",
+  "expect_path": "/data/whisper",
+  "frame": {
+    "op": "action",
+    "id": "r-bad-34",
+    "ts": "2026-10-18T18:00:00.000Z",
+    "type": "send.private",
+    "scope": {
+      "platform": "camfrog",
+      "room": {
+        "id": "LilyPond.Room",
+        "name": "The Lily Pond",
+        "kind": "room"
+      }
+    },
+    "data": {
+      "user": {
+        "id": "pondskipper"
+      },
+      "text": "hi",
+      "whisper": {
+        "from": {
+          "name": "Mia",
+          "name_src": "display"
+        }
+      }
+    }
+  }
+}

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pcp-schemas"
-version = "0.1.0"
+version = "0.2.0"
 description = "JSON Schemas and a validator for PCP (Pepe Connector Protocol) frames."
 requires-python = ">=3.10"
 license = "MIT"

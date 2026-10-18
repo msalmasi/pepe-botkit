@@ -1,0 +1,399 @@
+{
+  "description": "Policy and privacy: a full policy.sync with hidden identities as HMAC ids (and the key id), a delta acked by v, anonymous and unresolved presence-only users, privacy.request of every kind from a login-resolved user, privacy.forget / privacy.export for the connector's own logs, and a hub relay refused while the mirror is stale.",
+  "grounding": "Hidden identities never leave a connector that declares privacy_edge_filter: their lines are dropped at the edge and they appear only as anonymous presence. HMAC ids are hex(HMAC-SHA256(key, platform:external_id))[:20].",
+  "frames": [
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action",
+        "id": "r-3301",
+        "ts": "2026-10-18T18:02:00.040Z",
+        "type": "policy.sync",
+        "scope": {
+          "platform": "camfrog",
+          "room": {
+            "id": "LilyPond.Room",
+            "name": "The Lily Pond",
+            "kind": "room"
+          }
+        },
+        "data": {
+          "v": 41,
+          "full": true,
+          "bans": [
+            {
+              "user": {
+                "id": "spamfrog",
+                "login": "spamfrog"
+              },
+              "feature": "chat",
+              "expires_at": "2026-10-19T18:00:00.000Z"
+            }
+          ],
+          "lockdown": "off",
+          "hidden": [
+            "3fa91c0b7d2e4a6c8e10",
+            "aa01bb02cc03dd04ee05"
+          ],
+          "hidden_kid": "k-2026q4",
+          "caption_optout": [],
+          "transcripts_optout": [
+            "0f1e2d3c4b5a69788796"
+          ],
+          "switches": {
+            "relay": true,
+            "transcripts": true,
+            "captions": false,
+            "clips": true,
+            "whispers": true
+          },
+          "cmd_deny": [
+            "roast"
+          ]
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result",
+        "id": "c-3301",
+        "ts": "2026-10-18T18:02:00.080Z",
+        "seq": 20,
+        "ref": "r-3301",
+        "type": "policy.sync",
+        "ok": true,
+        "data": {
+          "v": 41
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "note": "A delta: each present field replaces that field; absent fields stay.",
+      "frame": {
+        "op": "action",
+        "id": "r-3302",
+        "ts": "2026-10-18T18:02:00.120Z",
+        "type": "policy.sync",
+        "scope": {
+          "platform": "camfrog",
+          "room": {
+            "id": "LilyPond.Room",
+            "name": "The Lily Pond",
+            "kind": "room"
+          }
+        },
+        "data": {
+          "v": 42,
+          "hidden_kid": "k-2026q4",
+          "hidden": [
+            "3fa91c0b7d2e4a6c8e10",
+            "aa01bb02cc03dd04ee05",
+            "5b6c7d8e9f0a1b2c3d4e"
+          ]
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result",
+        "id": "c-3302",
+        "ts": "2026-10-18T18:02:00.160Z",
+        "seq": 21,
+        "ref": "r-3302",
+        "type": "policy.sync",
+        "ok": true,
+        "data": {
+          "v": 42
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "A hidden user in the room: anonymous presence only, a token that changes on every connector restart.",
+      "frame": {
+        "op": "event",
+        "id": "c-3303",
+        "ts": "2026-10-18T18:02:00.200Z",
+        "seq": 22,
+        "type": "member.join",
+        "connector": "cf-main",
+        "scope": {
+          "platform": "camfrog",
+          "room": {
+            "id": "LilyPond.Room",
+            "name": "The Lily Pond",
+            "kind": "room"
+          }
+        },
+        "data": {
+          "user": {
+            "id": "anon-7c1e4f",
+            "anonymous": true
+          },
+          "group": "lurkers"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "A display name the connector could not tie to a login: presence and rendering only, never an identity.",
+      "frame": {
+        "op": "event",
+        "id": "c-3304",
+        "ts": "2026-10-18T18:02:00.240Z",
+        "seq": 23,
+        "type": "member.join",
+        "connector": "cf-main",
+        "scope": {
+          "platform": "camfrog",
+          "room": {
+            "id": "LilyPond.Room",
+            "name": "The Lily Pond",
+            "kind": "room"
+          }
+        },
+        "data": {
+          "user": {
+            "id": "~frogfan#s3f9a",
+            "display": "frogfan",
+            "unresolved": true,
+            "resolved_by": "unresolved"
+          }
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "The user typed a privacy command in the room; the hub answers privately with send.private.",
+      "frame": {
+        "op": "event",
+        "id": "c-3305",
+        "ts": "2026-10-18T18:02:00.280Z",
+        "seq": 24,
+        "type": "privacy.request",
+        "connector": "cf-main",
+        "scope": {
+          "platform": "camfrog"
+        },
+        "data": {
+          "identity": {
+            "id": "toadstool77",
+            "login": "toadstool77",
+            "display": "mossy",
+            "resolved_by": "login"
+          },
+          "kind": "export"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event",
+        "id": "c-3306",
+        "ts": "2026-10-18T18:02:00.320Z",
+        "seq": 25,
+        "type": "privacy.request",
+        "connector": "cf-main",
+        "scope": {
+          "platform": "camfrog"
+        },
+        "data": {
+          "identity": {
+            "id": "toadstool77",
+            "login": "toadstool77",
+            "display": "mossy",
+            "resolved_by": "login"
+          },
+          "kind": "forget_public"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event",
+        "id": "c-3307",
+        "ts": "2026-10-18T18:02:00.360Z",
+        "seq": 26,
+        "type": "privacy.request",
+        "connector": "cf-main",
+        "scope": {
+          "platform": "camfrog"
+        },
+        "data": {
+          "identity": {
+            "id": "toadstool77",
+            "login": "toadstool77",
+            "display": "mossy",
+            "resolved_by": "login"
+          },
+          "kind": "prove",
+          "code": "HUB-7Q4M2K"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event",
+        "id": "c-3308",
+        "ts": "2026-10-18T18:02:00.400Z",
+        "seq": 27,
+        "type": "privacy.request",
+        "connector": "cf-main",
+        "scope": {
+          "platform": "camfrog"
+        },
+        "data": {
+          "identity": {
+            "id": "toadstool77",
+            "login": "toadstool77",
+            "display": "mossy",
+            "resolved_by": "login"
+          },
+          "kind": "flag",
+          "flag": "transcripts_optout",
+          "value": true
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action",
+        "id": "r-3303",
+        "ts": "2026-10-18T18:02:00.440Z",
+        "type": "privacy.forget",
+        "data": {
+          "identities": [
+            {
+              "id": "toadstool77",
+              "login": "toadstool77"
+            }
+          ]
+        },
+        "origin": {
+          "bot": "hub",
+          "module": "privacy"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result",
+        "id": "c-3309",
+        "ts": "2026-10-18T18:02:00.480Z",
+        "seq": 28,
+        "ref": "r-3303",
+        "type": "privacy.forget",
+        "ok": true,
+        "data": {
+          "purged": 37
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action",
+        "id": "r-3304",
+        "ts": "2026-10-18T18:02:00.520Z",
+        "type": "privacy.export",
+        "data": {
+          "identities": [
+            {
+              "id": "toadstool77",
+              "login": "toadstool77"
+            }
+          ]
+        },
+        "origin": {
+          "bot": "hub",
+          "module": "privacy"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result",
+        "id": "c-3310",
+        "ts": "2026-10-18T18:02:00.560Z",
+        "seq": 29,
+        "ref": "r-3304",
+        "type": "privacy.export",
+        "ok": true,
+        "data": {
+          "records": 12,
+          "media": {
+            "kind": "file",
+            "mime": "application/json",
+            "blob": "exp-toadstool77-01JA4C",
+            "size": 4180
+          }
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action",
+        "id": "relay:0192f3c4-7a1e-7c2b-9d10-5e6f7a8b9d30:bnd-cf-lilypond",
+        "ts": "2026-10-18T18:02:00.600Z",
+        "type": "send",
+        "scope": {
+          "platform": "camfrog",
+          "room": {
+            "id": "LilyPond.Room",
+            "name": "The Lily Pond",
+            "kind": "room"
+          }
+        },
+        "data": {
+          "text": "🌐 Mia (web): hi",
+          "relay": {
+            "msg_id": "0192f3c4-7a1e-7c2b-9d10-5e6f7a8b9d30",
+            "binding": "bnd-cf-lilypond",
+            "author": {
+              "acct": "acct-9f2c",
+              "name": "Mia",
+              "name_src": "display",
+              "display": "Mia",
+              "tag": "web",
+              "verified": true,
+              "identities": {
+                "camfrog": "mia_k"
+              }
+            },
+            "hops": 0,
+            "presplit": true
+          }
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "Hub-originated work fails closed on a stale mirror; the bot's native commands keep running.",
+      "frame": {
+        "op": "result",
+        "id": "c-3311",
+        "ts": "2026-10-18T18:02:00.640Z",
+        "seq": 30,
+        "ref": "relay:0192f3c4-7a1e-7c2b-9d10-5e6f7a8b9d30:bnd-cf-lilypond",
+        "type": "send",
+        "ok": false,
+        "error": {
+          "code": "stale_policy",
+          "message": "policy mirror is 11 min old",
+          "retryable": true,
+          "retry_after_ms": 5000
+        }
+      }
+    }
+  ]
+}

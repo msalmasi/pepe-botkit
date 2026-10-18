@@ -26,8 +26,9 @@ export interface PcpIndex {
   error: string;
   capabilities: string;
   control: Record<string, string>;
-  events: Record<string, { schema: string; requires_room: boolean; priority: "low" | "normal" | "critical" }>;
-  actions: Record<string, { schema: string; requires_room: boolean; result: string }>;
+  /** since = the minor version that added the type ("1.1"); absent for 1.0 types. */
+  events: Record<string, { schema: string; requires_room: boolean; priority: "low" | "normal" | "critical"; since?: string }>;
+  actions: Record<string, { schema: string; requires_room: boolean; result: string; since?: string }>;
   results: Record<string, string>;
 }
 

@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/events/transcript.schema.json",
+  "title": "event transcript: data",
+  "description": "(1.1) A final transcript of one mic turn (utterance), produced at the connector. t0/t1 are the turn's own start and end. Receivers dedupe on (room, utt_id). Never sent for users or rooms that opted out (spec/PCP.md, Security and privacy).",
+  "type": "object",
+  "required": [
+    "utt_id",
+    "t0",
+    "t1",
+    "text"
+  ],
+  "properties": {
+    "utt_id": {
+      "$ref": "../defs.schema.json#/$defs/Id",
+      "description": "Utterance id, unique per connector."
+    },
+    "speaker": {
+      "$ref": "../defs.schema.json#/$defs/UserRef"
+    },
+    "lang": {
+      "type": "string",
+      "pattern": "^[A-Za-z]{2,8}(-[A-Za-z0-9]{1,8})*$"
+    },
+    "prob": {
+      "description": "Language detection probability.",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "t0": {
+      "$ref": "../defs.schema.json#/$defs/Timestamp"
+    },
+    "t1": {
+      "$ref": "../defs.schema.json#/$defs/Timestamp"
+    },
+    "text": {
+      "$ref": "../defs.schema.json#/$defs/Text"
+    },
+    "source": {
+      "description": "What was transcribed (open), e.g. mic, clip.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{0,31}$"
+    },
+    "attribution": {
+      "description": "How the speaker was attributed (open), e.g. track, mic_holder, diarized, unknown.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{0,31}$"
+    },
+    "confidence": {
+      "description": "Confidence of the speaker attribution.",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

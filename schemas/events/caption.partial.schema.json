@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/events/caption.partial.schema.json",
+  "title": "event caption.partial: data",
+  "description": "(1.1) A live partial caption of a turn in progress (low priority; may be dropped). Replaced by later partials with the same utt_id and finally by transcript, if transcripts are on.",
+  "type": "object",
+  "required": [
+    "utt_id",
+    "text"
+  ],
+  "properties": {
+    "utt_id": {
+      "$ref": "../defs.schema.json#/$defs/Id"
+    },
+    "speaker": {
+      "$ref": "../defs.schema.json#/$defs/UserRef"
+    },
+    "lang": {
+      "type": "string",
+      "pattern": "^[A-Za-z]{2,8}(-[A-Za-z0-9]{1,8})*$"
+    },
+    "text": {
+      "$ref": "../defs.schema.json#/$defs/Text"
+    },
+    "t0": {
+      "$ref": "../defs.schema.json#/$defs/Timestamp"
+    },
+    "media_ts": {
+      "$ref": "../defs.schema.json#/$defs/Timestamp",
+      "description": "Capture time of the audio the caption covers, for syncing with delayed streams."
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

@@ -77,6 +77,10 @@ function actionSchema() {
         description: "If the connector cannot START the action within this many ms of receiving it, it gives up and returns error 'timeout' (retryable).",
         type: "integer", minimum: 1,
       },
+      target: {
+        ...def("BindingTarget"),
+        description: "(1.1) On a bridge hub with several bindings in one scope: which binding the action is for, or \"native\" for the hub's own room. Absent = the scope's only binding.",
+      },
       origin: {
         description: "Who caused this action, for audit logs and platform-side attribution (module, bot instance, triggering event).",
         type: "object",

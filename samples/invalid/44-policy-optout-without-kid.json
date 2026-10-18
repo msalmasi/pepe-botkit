@@ -1,0 +1,24 @@
+{
+  "description": "an identity list names its HMAC key (hidden_kid)",
+  "expect_path": "/data",
+  "frame": {
+    "op": "action",
+    "id": "r-bad-44",
+    "ts": "2026-10-18T18:02:00.040Z",
+    "type": "policy.sync",
+    "scope": {
+      "platform": "camfrog",
+      "room": {
+        "id": "LilyPond.Room",
+        "name": "The Lily Pond",
+        "kind": "room"
+      }
+    },
+    "data": {
+      "v": 43,
+      "caption_optout": [
+        "3fa91c0b7d2e4a6c8e10"
+      ]
+    }
+  }
+}

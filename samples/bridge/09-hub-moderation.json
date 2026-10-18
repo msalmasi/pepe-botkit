@@ -1,0 +1,340 @@
+{
+  "description": "A bridge hub as a connector to a bot runtime: moderation actions for rooms it hosts (message.hide, ban.feature.set, lockdown.set), and action routing with target (\"native\" = the hub's own room; {binding} = one bound remote room only). Then, from a bound Camfrog connector: a room owner's binding.request and a bridge.status degraded -> ok cycle with flow pause/resume.",
+  "grounding": "A connector speaks only for its own platform and bindings. A binding.request is applied only when the hub has proof the user owns the remote room.",
+  "frames": [
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "hello",
+        "id": "h-3901",
+        "ts": "2026-10-18T18:40:00.040Z",
+        "data": {
+          "pcp": "1.1",
+          "connector": {
+            "id": "hub-1",
+            "platform": "patv",
+            "kind": "bridge",
+            "name": "rooms-hub",
+            "version": "0.1.0"
+          },
+          "self": {
+            "id": "u:pepe",
+            "login": "pepe",
+            "display": "Pepe",
+            "is_self": true,
+            "is_bot": true
+          },
+          "capabilities": {
+            "events": [
+              "message",
+              "member.join",
+              "member.leave",
+              "moderation",
+              "connector.status",
+              "sync.gap",
+              "bridge.status"
+            ],
+            "actions": [
+              "send",
+              "message.delete",
+              "message.hide",
+              "ban.feature.set",
+              "lockdown.set",
+              "mute",
+              "kick"
+            ],
+            "features": {
+              "message_ids": true,
+              "message_id_scope": "stable",
+              "edits_own": true,
+              "deletes": "any",
+              "components": true,
+              "privacy_edge_filter": true
+            },
+            "limits": {
+              "message_max_chars": 4000
+            }
+          },
+          "bridge": {
+            "echo_correlation": "nonce",
+            "delivery_ack": "on_wire",
+            "history_backfill": true,
+            "policy_ttl_ms": 600000,
+            "result_cache": "durable"
+          }
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "welcome",
+        "id": "hr-3901",
+        "ts": "2026-10-18T18:40:00.080Z",
+        "ref": "h-3901",
+        "data": {
+          "pcp": "1.1",
+          "session_id": "sess-01JA4E0000HUB",
+          "heartbeat_ms": 30000
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action",
+        "id": "hr-3902",
+        "ts": "2026-10-18T18:40:00.120Z",
+        "type": "message.hide",
+        "scope": {
+          "platform": "patv",
+          "room": {
+            "id": "the-lily-pond",
+            "name": "The Lily Pond",
+            "kind": "room"
+          }
+        },
+        "data": {
+          "message_id": "0192fb30-0000-7000-8000-000000000001",
+          "reason": "automod: link spam"
+        },
+        "target": "native",
+        "origin": {
+          "bot": "bot-pepe",
+          "module": "automod"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result",
+        "id": "h-3902",
+        "ts": "2026-10-18T18:40:00.160Z",
+        "seq": 1,
+        "ref": "hr-3902",
+        "type": "message.hide",
+        "ok": true,
+        "data": {}
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action",
+        "id": "hr-3903",
+        "ts": "2026-10-18T18:40:00.200Z",
+        "type": "ban.feature.set",
+        "scope": {
+          "platform": "patv",
+          "room": {
+            "id": "the-lily-pond",
+            "name": "The Lily Pond",
+            "kind": "room"
+          }
+        },
+        "data": {
+          "user": {
+            "id": "u:spamfrog",
+            "login": "spamfrog"
+          },
+          "feature": "media",
+          "on": true,
+          "duration_s": 86400,
+          "reason": "repeated link spam"
+        },
+        "origin": {
+          "bot": "bot-pepe",
+          "module": "automod"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result",
+        "id": "h-3903",
+        "ts": "2026-10-18T18:40:00.240Z",
+        "seq": 2,
+        "ref": "hr-3903",
+        "type": "ban.feature.set",
+        "ok": true,
+        "data": {}
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action",
+        "id": "hr-3904",
+        "ts": "2026-10-18T18:40:00.280Z",
+        "type": "lockdown.set",
+        "scope": {
+          "platform": "patv",
+          "room": {
+            "id": "the-lily-pond",
+            "name": "The Lily Pond",
+            "kind": "room"
+          }
+        },
+        "data": {
+          "level": "new_accounts",
+          "duration_s": 1800,
+          "reason": "raid: 20 new identities in 60 s"
+        },
+        "origin": {
+          "bot": "bot-pepe",
+          "module": "automod"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result",
+        "id": "h-3904",
+        "ts": "2026-10-18T18:40:00.320Z",
+        "seq": 3,
+        "ref": "hr-3904",
+        "type": "lockdown.set",
+        "ok": true,
+        "data": {}
+      }
+    },
+    {
+      "dir": "r2c",
+      "note": "Posted only into the bound Camfrog room, not on the hub's own room.",
+      "frame": {
+        "op": "action",
+        "id": "hr-3905",
+        "ts": "2026-10-18T18:40:00.360Z",
+        "type": "send",
+        "scope": {
+          "platform": "patv",
+          "room": {
+            "id": "the-lily-pond",
+            "name": "The Lily Pond",
+            "kind": "room"
+          }
+        },
+        "data": {
+          "text": "Camfrog folks: the stream starts at 9."
+        },
+        "target": {
+          "binding": "bnd-cf-lilypond"
+        },
+        "origin": {
+          "bot": "bot-pepe",
+          "module": "notes"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result",
+        "id": "h-3905",
+        "ts": "2026-10-18T18:40:00.400Z",
+        "seq": 4,
+        "ref": "hr-3905",
+        "type": "send",
+        "ok": true,
+        "data": {
+          "message_ids": [
+            "cf-m-3f9a2c1d7e4b-LilyPond.Room-88400"
+          ],
+          "parts": 1
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "From the Camfrog connector's own session: the room owner typed a bridge command.",
+      "frame": {
+        "op": "event",
+        "id": "c-3901",
+        "ts": "2026-10-18T18:41:00.040Z",
+        "seq": 90,
+        "type": "binding.request",
+        "connector": "cf-main",
+        "scope": {
+          "platform": "camfrog",
+          "room": {
+            "id": "LilyPond.Room",
+            "name": "The Lily Pond",
+            "kind": "room"
+          }
+        },
+        "data": {
+          "binding": "bnd-cf-lilypond",
+          "mode": "ingest",
+          "user": {
+            "id": "lilypadlou",
+            "login": "LilyPadLou",
+            "resolved_by": "login"
+          }
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "The bot behind the connector stopped ticking; the connector stays connected and pauses actions.",
+      "frame": {
+        "op": "event",
+        "id": "c-3902",
+        "ts": "2026-10-18T18:41:00.080Z",
+        "seq": 91,
+        "type": "bridge.status",
+        "connector": "cf-main",
+        "scope": {
+          "platform": "camfrog"
+        },
+        "data": {
+          "state": "degraded",
+          "reason": "edge_stalled"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "flow",
+        "id": "c-3903",
+        "ts": "2026-10-18T18:41:00.120Z",
+        "data": {
+          "state": "pause",
+          "reason": "platform_down",
+          "detail": "bot process not ticking"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event",
+        "id": "c-3904",
+        "ts": "2026-10-18T18:41:00.160Z",
+        "seq": 92,
+        "type": "bridge.status",
+        "connector": "cf-main",
+        "scope": {
+          "platform": "camfrog"
+        },
+        "data": {
+          "state": "ok"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "flow",
+        "id": "c-3905",
+        "ts": "2026-10-18T18:41:00.200Z",
+        "data": {
+          "state": "resume"
+        }
+      }
+    }
+  ]
+}

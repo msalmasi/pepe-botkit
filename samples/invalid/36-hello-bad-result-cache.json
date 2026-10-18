@@ -1,0 +1,30 @@
+{
+  "description": "hello.bridge.result_cache is durable or volatile",
+  "expect_path": "/data/bridge/result_cache",
+  "frame": {
+    "op": "hello",
+    "id": "c-bad-36",
+    "ts": "2026-10-18T18:00:00.000Z",
+    "data": {
+      "pcp": "1.1",
+      "connector": {
+        "id": "cf-main",
+        "platform": "camfrog",
+        "kind": "bridge",
+        "name": "cf-connector",
+        "version": "0.2.0"
+      },
+      "capabilities": {
+        "events": [
+          "message"
+        ],
+        "actions": [
+          "send"
+        ]
+      },
+      "bridge": {
+        "result_cache": "maybe"
+      }
+    }
+  }
+}

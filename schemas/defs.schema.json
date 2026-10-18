@@ -65,6 +65,19 @@
         "is_bot": { "description": "True when the platform or connector knows this is an automated account (room bots).", "type": "boolean" },
         "roles": { "type": "array", "items": { "type": "string", "maxLength": 64 } },
         "avatar": { "type": "string", "format": "uri" },
+        "resolved_by": {
+          "description": "(1.1) How the connector tied this user to the account: login (an in-packet login, or one confirmed in the same tick), display (matched by display name), memory (remembered from earlier), unresolved. Open: an unknown value means 'not login-resolved'. Only login-resolved users may act as an account at a hub (spec/PCP.md, Users).",
+          "type": "string", "pattern": "^[a-z][a-z0-9_]{0,31}$",
+          "examples": ["login", "display", "memory", "unresolved"]
+        },
+        "unresolved": {
+          "description": "(1.1) The connector has only a display name. id is then a session-scoped opaque token (e.g. ~<display>#<session>), never a login: presence and rendering only; receivers never create or match identities on it.",
+          "type": "boolean"
+        },
+        "anonymous": {
+          "description": "(1.1) A user reported only as anonymous presence (privacy edge filter). id is a short-lived opaque token (e.g. anon-<hex>): presence only, never an identity.",
+          "type": "boolean"
+        },
         "ext": { "$ref": "#/$defs/Ext" }
       }
     },
@@ -180,7 +193,76 @@
           "then": { "required": ["styles", "children"], "properties": {
             "styles": { "type": "array", "minItems": 1, "items": { "enum": ["bold", "italic", "underline", "strike", "code", "spoiler", "color"] } },
             "color": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
-            "children": { "type": "array", "items": { "$ref": "#/$defs/Element" } } } } }
+            "children": { "type": "array", "items": { "$ref": "#/$defs/Element" } } } } },
+        { "$comment": "(1.1) elements below. Each carries a plain-text rendering in 'text', so 1.0 receivers and connectors that do not render them natively show that instead." },
+        { "if": { "properties": { "type": { "const": "code_block" } } },
+          "then": { "required": ["text"], "properties": { "text": { "type": "string" }, "lang": { "type": "string", "pattern": "^[A-Za-z0-9_+.#-]{1,32}$" } } } },
+        { "if": { "properties": { "type": { "const": "custom_emoji" } } },
+          "then": { "required": ["id", "name", "text"], "properties": {
+            "id": { "type": "string", "minLength": 1, "maxLength": 128 },
+            "name": { "type": "string", "minLength": 1, "maxLength": 64 },
+            "pack": { "type": "string", "maxLength": 64 },
+            "animated": { "type": "boolean" },
+            "media": { "$ref": "#/$defs/MediaRef" },
+            "text": { "type": "string" } } } },
+        { "if": { "properties": { "type": { "const": "timestamp" } } },
+          "then": { "required": ["at", "text"], "properties": {
+            "at": { "$ref": "#/$defs/Timestamp" },
+            "fmt": { "description": "Display style hint (Discord-style letters: t T d D f F R). Open.", "type": "string", "pattern": "^[A-Za-z]{1,8}$" },
+            "text": { "type": "string" } } } },
+        { "if": { "properties": { "type": { "const": "pad_ref" } } },
+          "then": { "required": ["slug", "text"], "properties": {
+            "slug": { "description": "A room on a bridge hub, by its public slug.", "type": "string", "minLength": 1, "maxLength": 128 },
+            "text": { "type": "string" } } } },
+        { "if": { "properties": { "type": { "const": "user_ref" } } },
+          "then": { "required": ["user", "text"], "properties": { "user": { "$ref": "#/$defs/UserRef" }, "text": { "type": "string" } } } },
+        { "if": { "properties": { "type": { "enum": ["tip", "gift", "boost"] } } },
+          "then": { "required": ["amount", "text"], "properties": {
+            "amount": { "$ref": "#/$defs/Points" },
+            "from": { "description": "Absent for an anonymous giver.", "$ref": "#/$defs/UserRef" },
+            "to": { "$ref": "#/$defs/UserRef" },
+            "tx": { "description": "The hub's ledger reference.", "type": "string", "pattern": "^[A-Za-z0-9:_-]{1,64}$" },
+            "ref": { "description": "Opaque reference of an anonymous gift or tip.", "type": "string", "pattern": "^[A-Za-z0-9_-]{8,64}$" },
+            "item": { "type": "string", "maxLength": 64 },
+            "pad": { "type": "string", "maxLength": 128 },
+            "note": { "type": "string", "maxLength": 80 },
+            "text": { "type": "string" } } } },
+        { "if": { "properties": { "type": { "enum": ["tip", "gift"] } } },
+          "then": { "required": ["to"] } },
+        { "$comment": "(1.1) An anonymous giver has only an opaque ref: no from and no tx. A named giver has from and tx and no ref.",
+          "if": { "properties": { "type": { "enum": ["tip", "gift", "boost"] } }, "required": ["type"] },
+          "then": {
+            "if": { "required": ["ref"] },
+            "then": { "not": { "anyOf": [{ "required": ["from"] }, { "required": ["tx"] }] } },
+            "else": { "required": ["from", "tx"] } } },
+        { "if": { "properties": { "type": { "enum": ["card", "poll"] } } },
+          "then": { "required": ["ref", "text"], "properties": {
+            "ref": { "description": "Card id at the hub; card.update names it.", "type": "string", "pattern": "^[A-Za-z0-9:_.-]{1,64}$" },
+            "v": { "description": "Card version; card.update carries a higher one.", "type": "integer", "minimum": 0 },
+            "cl": { "description": "Card layout language version (1 = the first one). A renderer that does not know it shows text.", "type": "integer", "minimum": 1, "maximum": 99 },
+            "layout": { "description": "Declarative layout, at most 6 KB serialised. Opaque to PCP.", "type": "object" },
+            "state": { "description": "Current state the layout binds to, at most 2 KB serialised. Opaque to PCP.", "type": "object" },
+            "text": { "type": "string" } } } },
+        { "if": { "properties": { "type": { "const": "actions" } } },
+          "then": { "required": ["rows", "text"], "properties": {
+            "rows": { "type": "array", "minItems": 1, "maxItems": 2,
+              "items": { "type": "array", "minItems": 1, "maxItems": 5, "items": { "$ref": "#/$defs/Input" } } },
+            "ttl_s": { "type": "integer", "minimum": 1, "maximum": 86400 },
+            "text": { "description": "Text path for platforms without components, e.g. the command to type.", "type": "string" } } } },
+        { "if": { "properties": { "type": { "const": "embed" } } },
+          "then": { "required": ["url", "text"], "properties": {
+            "url": { "type": "string", "format": "uri" },
+            "kind": { "type": "string", "pattern": "^[a-z][a-z0-9_]{0,31}$", "examples": ["link", "youtube", "twitch", "post", "clip"] },
+            "title": { "type": "string", "maxLength": 256 },
+            "desc": { "type": "string", "maxLength": 1000 },
+            "site": { "type": "string", "maxLength": 64 },
+            "thumb": { "$ref": "#/$defs/MediaRef" },
+            "text": { "type": "string" } } } },
+        { "if": { "properties": { "type": { "const": "system" } } },
+          "then": { "required": ["key", "text"], "properties": {
+            "key": { "description": "Dotted key of a hub system line (e.g. topic.set); receivers that do not know it show text.", "type": "string", "maxLength": 64, "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)*$" },
+            "args": { "type": "object" },
+            "text": { "type": "string" } } } }
       ]
     },
     "Content": {
@@ -208,6 +290,96 @@
     "Text": {
       "description": "Plain text. Connectors split over-long outbound text according to limits.message_max_chars.",
       "type": "string", "maxLength": 20000
+    },
+    "Points": {
+      "description": "(1.1) A whole number of a hub's points (tips, prices), as a decimal string so no JSON number precision is lost. Points, not money.",
+      "type": "string", "pattern": "^(0|[1-9][0-9]{0,18})$"
+    },
+    "Emoji": {
+      "description": "A reaction emoji: unicode name/character, plus the platform id of a custom one.",
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "id": { "type": "string", "maxLength": 128 }
+      }
+    },
+    "HmacId": {
+      "description": "(1.1) A pseudonymous identity reference: the first 20 lowercase hex characters of HMAC-SHA256(key, UTF-8 of platform + \":\" + id), where id is the UserRef.id exactly as the connector reports it (no normalisation) and the key is the one named by the carrying frame's hidden_kid (spec/PCP.md, Privacy edge filter; the section has a test vector).",
+      "type": "string", "pattern": "^[0-9a-f]{20}$"
+    },
+    "BindingMode": {
+      "description": "(1.1) How a bridge hub uses a remote room: ingest (remote -> hub only), relay (both ways), mirror (hub -> remote only), off, bot_only (no hub room; bots only).",
+      "enum": ["ingest", "relay", "mirror", "off", "bot_only"]
+    },
+    "NameSource": {
+      "description": "(1.1) Where a relayed author's name comes from: the hub display name, the author's linked login on the target platform, or the author's unique hub handle.",
+      "enum": ["display", "login", "handle"]
+    },
+    "RelayAuthor": {
+      "description": "(1.1) The person a relay action speaks for. Connectors render {name} from name only, never from display.",
+      "type": "object",
+      "required": ["name", "name_src"],
+      "properties": {
+        "acct": { "description": "The author's account id at the hub (opaque).", "type": "string", "minLength": 1, "maxLength": 128 },
+        "name": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "name_src": { "$ref": "#/$defs/NameSource" },
+        "display": { "type": "string", "maxLength": 512 },
+        "handle": { "description": "The author's unique hub handle (what a block or reply command takes).", "type": "string", "minLength": 1, "maxLength": 64 },
+        "tag": { "description": "Short origin tag rendered beside the name (e.g. web, discord).", "type": "string", "maxLength": 32 },
+        "avatar_url": { "type": "string", "format": "uri" },
+        "verified": { "type": "boolean" },
+        "identities": {
+          "description": "At most one entry: the author's linked identity on the receiving connector's own platform (its external id there), so the connector can apply its own per-user checks (ignore lists, timeouts). Hubs MUST NOT send links to other platforms (spec/PCP.md, Relay).",
+          "type": "object",
+          "maxProperties": 1,
+          "propertyNames": { "$ref": "#/$defs/Platform" },
+          "additionalProperties": { "type": "string", "minLength": 1, "maxLength": 256 }
+        },
+        "ext": { "$ref": "#/$defs/Ext" }
+      }
+    },
+    "BindingTarget": {
+      "description": "(1.1) Action routing on a bridge hub with several bindings: a binding id, or \"native\" for the hub's own room.",
+      "oneOf": [
+        { "const": "native" },
+        { "type": "object", "required": ["binding"], "properties": { "binding": { "$ref": "#/$defs/Id" } } }
+      ]
+    },
+    "Phase": {
+      "description": "(1.1) Progress of a long-running action in interim results (queued, waiting, playing, live, ...). Open: unknown values mean 'still running'.",
+      "type": "string", "pattern": "^[a-z][a-z0-9_]{0,31}$"
+    },
+    "CmdInvocation": {
+      "description": "(1.1) The text path of an interactive input: the command a platform without components types instead.",
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string", "pattern": "^[a-z][a-z0-9_-]{0,31}$" },
+        "sub": { "type": "string", "pattern": "^[a-z][a-z0-9_-]{0,31}$" },
+        "opts": { "type": "object", "maxProperties": 25 }
+      }
+    },
+    "Input": {
+      "description": "(1.1) One input of an actions element: button, select or amount (open; unknown kinds render as their cmd). custom_id is 1-64 printable ASCII characters, so at most 64 bytes (module:entity:verb:version). A select needs at least one option.",
+      "type": "object",
+      "required": ["b", "custom_id", "cmd"],
+      "properties": {
+        "b": { "type": "string", "pattern": "^[a-z][a-z0-9_]{0,31}$", "examples": ["button", "select", "amount"] },
+        "custom_id": { "$ref": "#/$defs/CustomId" },
+        "cmd": { "$ref": "#/$defs/CmdInvocation" },
+        "label_key": { "description": "Catalog key of the label; label is the rendered text.", "type": "string", "maxLength": 96 },
+        "label": { "type": "string", "maxLength": 80 },
+        "style": { "type": "string", "maxLength": 16 },
+        "price": { "$ref": "#/$defs/Points" },
+        "options": { "type": "array", "maxItems": 25, "items": { "type": "object", "required": ["value"], "properties": { "value": { "type": "string", "minLength": 1, "maxLength": 100 }, "label": { "type": "string", "maxLength": 100 }, "label_key": { "type": "string", "maxLength": 96 } } } }
+      },
+      "if": { "properties": { "b": { "const": "select" } }, "required": ["b"] },
+      "then": { "required": ["options"], "properties": { "options": { "minItems": 1 } } }
+    },
+    "CustomId": {
+      "description": "(1.1) Id of an interactive input: 1-64 printable ASCII characters (module:entity:verb:version), so characters equal bytes and the id passes Telegram callback_data (64 bytes) unchanged.",
+      "type": "string", "pattern": "^[!-~]{1,64}$"
     }
   }
 }

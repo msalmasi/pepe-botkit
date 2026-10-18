@@ -1,0 +1,51 @@
+{
+  "description": "custom_id is printable ASCII only, so 64 characters are 64 bytes (Telegram callback_data)",
+  "expect_path": "/data/content/0/rows/0/0/custom_id",
+  "frame": {
+    "op": "action",
+    "id": "r-bad-42",
+    "ts": "2026-10-18T18:12:00.240Z",
+    "type": "send",
+    "scope": {
+      "platform": "discord",
+      "guild": {
+        "id": "1100000000000000001",
+        "name": "Frog Pond"
+      },
+      "room": {
+        "id": "1100000000000000010",
+        "name": "lounge",
+        "kind": "channel"
+      }
+    },
+    "data": {
+      "text": "vote: /poll vote yes",
+      "content": [
+        {
+          "type": "actions",
+          "text": "vote: /poll vote yes",
+          "rows": [
+            [
+              {
+                "b": "button",
+                "custom_id": "poll:p1:vote:1:ゆ",
+                "cmd": {
+                  "name": "poll",
+                  "sub": "vote",
+                  "opts": {
+                    "v": "yes"
+                  }
+                },
+                "label": "yes"
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    "origin": {
+      "bot": "hub",
+      "module": "raffle"
+    }
+  }
+}

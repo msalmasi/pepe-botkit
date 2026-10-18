@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/events/message.delete.schema.json",
+  "title": "event message.delete: data",
+  "description": "(1.1) A message was deleted on the platform. verified=true when the connector confirmed who deleted it (e.g. from an audit log); only a verified author delete is treated as the author's own.",
+  "type": "object",
+  "required": [
+    "message_id"
+  ],
+  "properties": {
+    "message_id": {
+      "$ref": "../defs.schema.json#/$defs/Id"
+    },
+    "user": {
+      "$ref": "../defs.schema.json#/$defs/UserRef",
+      "description": "The message's author, if known."
+    },
+    "deleted_by": {
+      "$ref": "../defs.schema.json#/$defs/UserRef",
+      "description": "Who deleted it, if known."
+    },
+    "verified": {
+      "type": "boolean",
+      "description": "deleted_by was confirmed by the platform rather than guessed."
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

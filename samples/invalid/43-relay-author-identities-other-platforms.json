@@ -1,0 +1,59 @@
+{
+  "description": "relay.author.identities holds only the receiving connector's own platform",
+  "expect_path": "/data/relay/author/identities",
+  "frame": {
+    "op": "action",
+    "id": "r-bad-43",
+    "ts": "2026-10-18T18:01:00.040Z",
+    "type": "send",
+    "scope": {
+      "platform": "camfrog",
+      "room": {
+        "id": "LilyPond.Room",
+        "name": "The Lily Pond",
+        "kind": "room"
+      }
+    },
+    "data": {
+      "text": "🌐 Mia (web): the first half of a long line, split by the hub at a sentence boundary so each part fits one Camfrog line.",
+      "relay": {
+        "msg_id": "0192f3c4-7a1e-7c2b-9d10-5e6f7a8b9c0d",
+        "binding": "bnd-cf-lilypond",
+        "author": {
+          "acct": "acct-9f2c",
+          "name": "Mia",
+          "name_src": "display",
+          "display": "Mia",
+          "tag": "web",
+          "verified": true,
+          "identities": {
+            "camfrog": "mia_k",
+            "discord": "1300000000000000002",
+            "twitch": "700000099"
+          }
+        },
+        "otr": false,
+        "hops": 0,
+        "render": "prefix",
+        "presplit": true,
+        "part": {
+          "n": 1,
+          "of": 2
+        },
+        "deadline_ms": 29360
+      }
+    },
+    "timeout_ms": 29360,
+    "origin": {
+      "bot": "hub",
+      "module": "relay",
+      "user": {
+        "id": "mia_k",
+        "login": "mia_k",
+        "display": "Mia",
+        "resolved_by": "login"
+      }
+    },
+    "traceparent": "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01"
+  }
+}

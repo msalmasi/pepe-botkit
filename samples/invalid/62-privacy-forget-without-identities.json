@@ -1,0 +1,15 @@
+{
+  "description": "privacy.forget names the identities to purge",
+  "expect_path": "/data",
+  "frame": {
+    "op": "action",
+    "id": "r-bad-62",
+    "ts": "2026-10-18T18:02:00.440Z",
+    "type": "privacy.forget",
+    "data": {},
+    "origin": {
+      "bot": "hub",
+      "module": "privacy"
+    }
+  }
+}

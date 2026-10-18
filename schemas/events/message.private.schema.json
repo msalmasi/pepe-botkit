@@ -40,6 +40,32 @@
     "edited": {
       "type": "boolean"
     },
+    "whisper": {
+      "description": "(1.1) A reply to a hub whisper: reply_to = the whisper id answered (the user's 'reply' command), or to = the hub user named (handle or display name as typed).",
+      "type": "object",
+      "properties": {
+        "reply_to": {
+          "$ref": "../defs.schema.json#/$defs/Id"
+        },
+        "to": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "reply_to"
+          ]
+        },
+        {
+          "required": [
+            "to"
+          ]
+        }
+      ]
+    },
     "ext": {
       "$ref": "../defs.schema.json#/$defs/Ext"
     }

@@ -1,0 +1,21 @@
+{
+  "description": "bridge.status carries a state",
+  "expect_path": "/data",
+  "frame": {
+    "op": "event",
+    "id": "c-bad-53",
+    "ts": "2026-10-18T18:00:00.120Z",
+    "seq": 1,
+    "type": "bridge.status",
+    "connector": "cf-main",
+    "scope": {
+      "platform": "camfrog"
+    },
+    "data": {
+      "binding": "bnd-cf-lilypond",
+      "effective": {
+        "relay": "on"
+      }
+    }
+  }
+}

@@ -1,0 +1,495 @@
+{
+  "description": "A 1.1 Discord bridge connector: message_id_scope stable, edits, deletes, durable per-user reactions (message.reaction in place of reaction, because the hub's welcome.subscribe asks for it by name), typing. An inbound reply to an older message (remote_reply_to), an edit, reactions with counts, a verified author delete; then the hub's own relayed line (webhook_id, relay_ref) edited and deleted through message.edit / message.delete.",
+  "grounding": "Discord tells who deleted a message only through the audit log, so verified=true means the connector checked. Webhook lines are the hub's own masquerade, recognised by webhook_id and relay_ref.",
+  "frames": [
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "hello",
+        "id": "d-3501",
+        "ts": "2026-10-18T18:10:00.040Z",
+        "data": {
+          "pcp": "1.1",
+          "connector": {
+            "id": "dc-main",
+            "platform": "discord",
+            "kind": "bridge",
+            "name": "discord-connector",
+            "version": "0.2.0",
+            "platform_version": "gateway-v10"
+          },
+          "self": {
+            "id": "1290000000000000001",
+            "login": "pepe",
+            "display": "Pepe",
+            "is_self": true,
+            "is_bot": true
+          },
+          "capabilities": {
+            "events": [
+              "message",
+              "message.update",
+              "message.delete",
+              "message.reaction",
+              "reaction",
+              "typing",
+              "interaction",
+              "member.join",
+              "member.leave",
+              "room.joined",
+              "moderation",
+              "connector.status",
+              "sync.gap",
+              "bridge.status",
+              "registry.put"
+            ],
+            "actions": [
+              "send",
+              "send.private",
+              "message.edit",
+              "message.delete",
+              "react",
+              "kick",
+              "ban",
+              "mute",
+              "interaction.defer",
+              "interaction.respond",
+              "interaction.followup",
+              "card.update",
+              "policy.sync",
+              "privacy.forget",
+              "privacy.export"
+            ],
+            "features": {
+              "message_ids": true,
+              "message_id_scope": "stable",
+              "threads": true,
+              "reactions": true,
+              "edits": true,
+              "edits_own": true,
+              "deletes": "any",
+              "reply_refs": true,
+              "masquerade": true,
+              "relay_prefix": false,
+              "reactions_custom": true,
+              "reactions_durable": true,
+              "typing": true,
+              "components": true,
+              "interactions": true,
+              "privacy_edge_filter": true,
+              "content_elements": [
+                "text",
+                "mention",
+                "emoji",
+                "link",
+                "media",
+                "quote",
+                "style",
+                "code_block",
+                "timestamp",
+                "card",
+                "poll",
+                "actions"
+              ],
+              "private_messages": "global",
+              "user_id_kind": "numeric",
+              "media": {
+                "inline_max_bytes": 8388608
+              },
+              "pacing": {
+                "room_burst": 30,
+                "room_window_ms": 60000,
+                "webhook_burst": 5,
+                "webhook_window_ms": 2000
+              }
+            },
+            "limits": {
+              "message_max_chars": 2000,
+              "send_per_minute": 50
+            }
+          },
+          "bridge": {
+            "echo_correlation": "nonce",
+            "delivery_ack": "on_wire",
+            "history_backfill": true,
+            "policy_ttl_ms": 600000,
+            "result_cache": "durable"
+          }
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "welcome",
+        "id": "dr-3501",
+        "ts": "2026-10-18T18:10:00.080Z",
+        "ref": "d-3501",
+        "data": {
+          "pcp": "1.1",
+          "session_id": "sess-01JA4D0000DSC",
+          "heartbeat_ms": 30000,
+          "bindings": [
+            {
+              "room": {
+                "id": "1100000000000000010",
+                "name": "lounge"
+              },
+              "binding": "bnd-dc-lounge",
+              "pad": "the-lily-pond",
+              "mode": "relay",
+              "render": {
+                "style": "masquerade"
+              },
+              "whispers": false
+            }
+          ],
+          "subscribe": [
+            "message",
+            "message.update",
+            "message.delete",
+            "message.reaction",
+            "typing",
+            "interaction",
+            "member.join",
+            "member.leave",
+            "room.joined",
+            "moderation",
+            "connector.status",
+            "sync.gap",
+            "bridge.status",
+            "registry.put"
+          ]
+        }
+      },
+      "note": "The hub subscribes to message.reaction by name and not to reaction, so this connector sends message.reaction in place of reaction. Without that, it would keep sending the 1.0 reaction (§2.1)."
+    },
+    {
+      "dir": "c2r",
+      "note": "The reply target is older than this session, so it is given as remote_reply_to.",
+      "frame": {
+        "op": "event",
+        "id": "d-3502",
+        "ts": "2026-10-18T18:10:00.120Z",
+        "seq": 1,
+        "type": "message",
+        "connector": "dc-main",
+        "scope": {
+          "platform": "discord",
+          "guild": {
+            "id": "1100000000000000001",
+            "name": "Frog Pond"
+          },
+          "room": {
+            "id": "1100000000000000010",
+            "name": "lounge",
+            "kind": "channel"
+          }
+        },
+        "data": {
+          "message_id": "1400000000000000100",
+          "user": {
+            "id": "1300000000000000002",
+            "login": "dave",
+            "display": "Dave",
+            "resolved_by": "login"
+          },
+          "text": "who's in for poker",
+          "remote_reply_to": "1400000000000000007"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "Low priority: dropped first under backpressure.",
+      "frame": {
+        "op": "event",
+        "id": "d-3503",
+        "ts": "2026-10-18T18:10:00.160Z",
+        "seq": 2,
+        "type": "typing",
+        "connector": "dc-main",
+        "scope": {
+          "platform": "discord",
+          "guild": {
+            "id": "1100000000000000001",
+            "name": "Frog Pond"
+          },
+          "room": {
+            "id": "1100000000000000010",
+            "name": "lounge",
+            "kind": "channel"
+          }
+        },
+        "data": {
+          "user": {
+            "id": "1300000000000000003",
+            "login": "lou"
+          }
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event",
+        "id": "d-3504",
+        "ts": "2026-10-18T18:10:00.200Z",
+        "seq": 3,
+        "type": "message.update",
+        "connector": "dc-main",
+        "scope": {
+          "platform": "discord",
+          "guild": {
+            "id": "1100000000000000001",
+            "name": "Frog Pond"
+          },
+          "room": {
+            "id": "1100000000000000010",
+            "name": "lounge",
+            "kind": "channel"
+          }
+        },
+        "data": {
+          "message_id": "1400000000000000100",
+          "user": {
+            "id": "1300000000000000002",
+            "login": "dave",
+            "display": "Dave",
+            "resolved_by": "login"
+          },
+          "text": "who's in for poker at 9",
+          "edited_at": "2026-10-18T18:10:20.000Z"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "reactions_durable: normal priority, one event per user, count after the change.",
+      "frame": {
+        "op": "event",
+        "id": "d-3505",
+        "ts": "2026-10-18T18:10:00.240Z",
+        "seq": 4,
+        "type": "message.reaction",
+        "connector": "dc-main",
+        "scope": {
+          "platform": "discord",
+          "guild": {
+            "id": "1100000000000000001",
+            "name": "Frog Pond"
+          },
+          "room": {
+            "id": "1100000000000000010",
+            "name": "lounge",
+            "kind": "channel"
+          }
+        },
+        "data": {
+          "message_id": "1400000000000000100",
+          "emoji": {
+            "name": "🐸"
+          },
+          "user": {
+            "id": "1300000000000000003",
+            "login": "lou"
+          },
+          "op": "add",
+          "count": 3
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event",
+        "id": "d-3506",
+        "ts": "2026-10-18T18:10:00.280Z",
+        "seq": 5,
+        "type": "message.reaction",
+        "connector": "dc-main",
+        "scope": {
+          "platform": "discord",
+          "guild": {
+            "id": "1100000000000000001",
+            "name": "Frog Pond"
+          },
+          "room": {
+            "id": "1100000000000000010",
+            "name": "lounge",
+            "kind": "channel"
+          }
+        },
+        "data": {
+          "message_id": "1400000000000000100",
+          "emoji": {
+            "name": "frogwave",
+            "id": "1500000000000000001"
+          },
+          "user": {
+            "id": "1300000000000000002",
+            "login": "dave",
+            "display": "Dave",
+            "resolved_by": "login"
+          },
+          "op": "remove",
+          "count": 0
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event",
+        "id": "d-3507",
+        "ts": "2026-10-18T18:10:00.320Z",
+        "seq": 6,
+        "type": "message.delete",
+        "connector": "dc-main",
+        "scope": {
+          "platform": "discord",
+          "guild": {
+            "id": "1100000000000000001",
+            "name": "Frog Pond"
+          },
+          "room": {
+            "id": "1100000000000000010",
+            "name": "lounge",
+            "kind": "channel"
+          }
+        },
+        "data": {
+          "message_id": "1400000000000000100",
+          "user": {
+            "id": "1300000000000000002",
+            "login": "dave",
+            "display": "Dave",
+            "resolved_by": "login"
+          },
+          "deleted_by": {
+            "id": "1300000000000000002",
+            "login": "dave",
+            "display": "Dave",
+            "resolved_by": "login"
+          },
+          "verified": true
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event",
+        "id": "d-3508",
+        "ts": "2026-10-18T18:10:00.360Z",
+        "seq": 7,
+        "type": "message",
+        "connector": "dc-main",
+        "scope": {
+          "platform": "discord",
+          "guild": {
+            "id": "1100000000000000001",
+            "name": "Frog Pond"
+          },
+          "room": {
+            "id": "1100000000000000010",
+            "name": "lounge",
+            "kind": "channel"
+          }
+        },
+        "data": {
+          "message_id": "1400000000000000101",
+          "user": {
+            "id": "1600000000000000001",
+            "display": "Mia · hub",
+            "is_bot": true
+          },
+          "text": "yes!",
+          "webhook_id": "1700000000000000001",
+          "self": true,
+          "relay_ref": "relay:0192f3c4-7a1e-7c2b-9d10-5e6f7a8b9c0d:bnd-dc-lounge"
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action",
+        "id": "relay:0192f3c4-7a1e-7c2b-9d10-5e6f7a8b9c0d:bnd-dc-lounge:edit1",
+        "ts": "2026-10-18T18:10:00.400Z",
+        "type": "message.edit",
+        "scope": {
+          "platform": "discord",
+          "guild": {
+            "id": "1100000000000000001",
+            "name": "Frog Pond"
+          },
+          "room": {
+            "id": "1100000000000000010",
+            "name": "lounge",
+            "kind": "channel"
+          }
+        },
+        "data": {
+          "message_id": "1400000000000000101",
+          "text": "yes! (9 works)"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result",
+        "id": "d-3509",
+        "ts": "2026-10-18T18:10:00.440Z",
+        "seq": 8,
+        "ref": "relay:0192f3c4-7a1e-7c2b-9d10-5e6f7a8b9c0d:bnd-dc-lounge:edit1",
+        "type": "message.edit",
+        "ok": true,
+        "data": {
+          "message_ids": [
+            "1400000000000000101"
+          ]
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action",
+        "id": "relay:0192f3c4-7a1e-7c2b-9d10-5e6f7a8b9c0d:bnd-dc-lounge:del",
+        "ts": "2026-10-18T18:10:00.480Z",
+        "type": "message.delete",
+        "scope": {
+          "platform": "discord",
+          "guild": {
+            "id": "1100000000000000001",
+            "name": "Frog Pond"
+          },
+          "room": {
+            "id": "1100000000000000010",
+            "name": "lounge",
+            "kind": "channel"
+          }
+        },
+        "data": {
+          "message_id": "1400000000000000101",
+          "reason": "author deleted it on the hub"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result",
+        "id": "d-3510",
+        "ts": "2026-10-18T18:10:00.520Z",
+        "seq": 9,
+        "ref": "relay:0192f3c4-7a1e-7c2b-9d10-5e6f7a8b9c0d:bnd-dc-lounge:del",
+        "type": "message.delete",
+        "ok": true,
+        "data": {}
+      }
+    }
+  ]
+}

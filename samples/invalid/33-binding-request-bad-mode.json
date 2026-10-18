@@ -1,0 +1,26 @@
+{
+  "description": "binding.request.mode is ingest/relay/mirror/off/bot_only",
+  "expect_path": "/data/mode",
+  "frame": {
+    "op": "event",
+    "id": "c-bad-33",
+    "ts": "2026-10-18T18:00:00.000Z",
+    "seq": 33,
+    "type": "binding.request",
+    "connector": "cf-main",
+    "scope": {
+      "platform": "camfrog",
+      "room": {
+        "id": "LilyPond.Room",
+        "name": "The Lily Pond",
+        "kind": "room"
+      }
+    },
+    "data": {
+      "mode": "sideways",
+      "user": {
+        "id": "lilypadlou"
+      }
+    }
+  }
+}

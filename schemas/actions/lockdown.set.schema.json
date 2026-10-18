@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/actions/lockdown.set.schema.json",
+  "title": "action lockdown.set: data",
+  "description": "(1.1) Set a room's lockdown level (who may speak: hub-defined levels, open; off lifts it).",
+  "type": "object",
+  "required": [
+    "level"
+  ],
+  "properties": {
+    "level": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{0,31}$",
+      "examples": [
+        "off",
+        "new_accounts",
+        "verified",
+        "members",
+        "mods"
+      ]
+    },
+    "duration_s": {
+      "$ref": "../defs.schema.json#/$defs/DurationS"
+    },
+    "reason": {
+      "type": "string",
+      "maxLength": 512
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

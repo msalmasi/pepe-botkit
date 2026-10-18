@@ -1,6 +1,6 @@
 {
-  "$comment": "Registry of every PCP type. scripts/gen-dispatch.mjs builds event/action/result.schema.json from it; validators load it.",
-  "pcp": "1.0",
+  "$comment": "Registry of every PCP type. scripts/gen-dispatch.mjs builds event/action/result.schema.json from it; validators load it. since = the minor version that added the type (absent = 1.0).",
+  "pcp": "1.1",
   "base": "https://github.com/msalmasi/pepe-botkit/pcp/v1/",
   "defs": "defs.schema.json",
   "envelope": "envelope.schema.json",
@@ -126,6 +126,78 @@
       "schema": "events/sync.gap.schema.json",
       "requires_room": false,
       "priority": "critical"
+    },
+    "message.update": {
+      "schema": "events/message.update.schema.json",
+      "requires_room": true,
+      "priority": "normal",
+      "since": "1.1"
+    },
+    "message.delete": {
+      "schema": "events/message.delete.schema.json",
+      "requires_room": true,
+      "priority": "normal",
+      "since": "1.1"
+    },
+    "message.reaction": {
+      "schema": "events/message.reaction.schema.json",
+      "requires_room": true,
+      "priority": "normal",
+      "since": "1.1"
+    },
+    "privacy.request": {
+      "schema": "events/privacy.request.schema.json",
+      "requires_room": false,
+      "priority": "normal",
+      "since": "1.1"
+    },
+    "room.state": {
+      "schema": "events/room.state.schema.json",
+      "requires_room": true,
+      "priority": "normal",
+      "since": "1.1"
+    },
+    "binding.request": {
+      "schema": "events/binding.request.schema.json",
+      "requires_room": true,
+      "priority": "normal",
+      "since": "1.1"
+    },
+    "registry.put": {
+      "schema": "events/registry.put.schema.json",
+      "requires_room": false,
+      "priority": "normal",
+      "since": "1.1"
+    },
+    "interaction": {
+      "schema": "events/interaction.schema.json",
+      "requires_room": true,
+      "priority": "normal",
+      "since": "1.1"
+    },
+    "typing": {
+      "schema": "events/typing.schema.json",
+      "requires_room": true,
+      "priority": "low",
+      "since": "1.1"
+    },
+    "transcript": {
+      "schema": "events/transcript.schema.json",
+      "requires_room": true,
+      "priority": "normal",
+      "since": "1.1"
+    },
+    "caption.partial": {
+      "schema": "events/caption.partial.schema.json",
+      "requires_room": true,
+      "priority": "low",
+      "since": "1.1"
+    },
+    "bridge.status": {
+      "schema": "events/bridge.status.schema.json",
+      "requires_room": false,
+      "priority": "critical",
+      "since": "1.1"
     }
   },
   "actions": {
@@ -263,6 +335,84 @@
       "schema": "actions/platform.command.schema.json",
       "requires_room": false,
       "result": "platform.command"
+    },
+    "message.edit": {
+      "schema": "actions/message.edit.schema.json",
+      "requires_room": true,
+      "result": "message.edit",
+      "since": "1.1"
+    },
+    "message.delete": {
+      "schema": "actions/message.delete.schema.json",
+      "requires_room": true,
+      "result": "none",
+      "since": "1.1"
+    },
+    "message.hide": {
+      "schema": "actions/message.hide.schema.json",
+      "requires_room": true,
+      "result": "none",
+      "since": "1.1"
+    },
+    "ban.feature.set": {
+      "schema": "actions/ban.feature.set.schema.json",
+      "requires_room": true,
+      "result": "none",
+      "since": "1.1"
+    },
+    "lockdown.set": {
+      "schema": "actions/lockdown.set.schema.json",
+      "requires_room": true,
+      "result": "none",
+      "since": "1.1"
+    },
+    "policy.sync": {
+      "schema": "actions/policy.sync.schema.json",
+      "requires_room": true,
+      "result": "policy.sync",
+      "since": "1.1"
+    },
+    "modcaps.query": {
+      "schema": "actions/modcaps.query.schema.json",
+      "requires_room": true,
+      "result": "modcaps.query",
+      "since": "1.1"
+    },
+    "interaction.defer": {
+      "schema": "actions/interaction.defer.schema.json",
+      "requires_room": false,
+      "result": "none",
+      "since": "1.1"
+    },
+    "interaction.respond": {
+      "schema": "actions/interaction.respond.schema.json",
+      "requires_room": false,
+      "result": "interaction.respond",
+      "since": "1.1"
+    },
+    "interaction.followup": {
+      "schema": "actions/interaction.followup.schema.json",
+      "requires_room": false,
+      "result": "interaction.respond",
+      "since": "1.1"
+    },
+    "card.update": {
+      "schema": "actions/card.update.schema.json",
+      "requires_room": true,
+      "result": "none",
+      "since": "1.1"
+    },
+    "privacy.forget": {
+      "schema": "actions/privacy.forget.schema.json",
+      "requires_room": false,
+      "result": "privacy.forget",
+      "since": "1.1"
+    },
+    "privacy.export": {
+      "schema": "actions/privacy.export.schema.json",
+      "requires_room": false,
+      "result": "privacy.export",
+      "since": "1.1"
     }
   },
   "results": {
@@ -280,6 +430,12 @@
     "sticker.send": "results/sticker.send.schema.json",
     "sticker.list": "results/sticker.list.schema.json",
     "inbox.read": "results/inbox.read.schema.json",
-    "platform.command": "results/platform.command.schema.json"
+    "platform.command": "results/platform.command.schema.json",
+    "message.edit": "results/message.edit.schema.json",
+    "interaction.respond": "results/interaction.respond.schema.json",
+    "policy.sync": "results/policy.sync.schema.json",
+    "modcaps.query": "results/modcaps.query.schema.json",
+    "privacy.forget": "results/privacy.forget.schema.json",
+    "privacy.export": "results/privacy.export.schema.json"
   }
 }

@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/actions/card.update.schema.json",
+  "title": "action card.update: data",
+  "description": "(1.1) Update a posted card element (by ref) to version v, with a JSON Merge Patch of its state or a new layout. Connectors with features.components edit the platform message; others may ignore it until the card closes. Edits SHOULD be coalesced to one per card per 5 s.",
+  "type": "object",
+  "required": [
+    "ref",
+    "v"
+  ],
+  "properties": {
+    "ref": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9:_.-]{1,64}$"
+    },
+    "v": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "patch": {
+      "type": "object"
+    },
+    "layout": {
+      "type": "object"
+    },
+    "text": {
+      "$ref": "../defs.schema.json#/$defs/Text"
+    },
+    "closed": {
+      "type": "boolean",
+      "description": "The card is final; text platforms post text now."
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  },
+  "oneOf": [
+    {
+      "required": [
+        "patch"
+      ]
+    },
+    {
+      "required": [
+        "layout"
+      ]
+    }
+  ]
+}

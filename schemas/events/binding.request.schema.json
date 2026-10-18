@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/events/binding.request.schema.json",
+  "title": "event binding.request: data",
+  "description": "(1.1) A user asked, on the platform, to change how a bridge hub uses this room (e.g. a room owner typing a bridge command). The hub applies it only if user is the room's proven owner.",
+  "type": "object",
+  "required": [
+    "mode",
+    "user"
+  ],
+  "properties": {
+    "binding": {
+      "$ref": "../defs.schema.json#/$defs/Id"
+    },
+    "mode": {
+      "$ref": "../defs.schema.json#/$defs/BindingMode"
+    },
+    "user": {
+      "$ref": "../defs.schema.json#/$defs/UserRef",
+      "description": "Who asked."
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

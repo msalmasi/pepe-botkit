@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/events/interaction.schema.json",
+  "title": "event interaction: data",
+  "description": "(1.1) A user ran a command or used a component through the platform's UI (slash command, button, select, modal). The runtime answers with interaction.defer / interaction.respond / interaction.followup before deadline_ms.",
+  "type": "object",
+  "required": [
+    "interaction_id",
+    "kind",
+    "user"
+  ],
+  "properties": {
+    "interaction_id": {
+      "$ref": "../defs.schema.json#/$defs/Id",
+      "description": "Platform interaction id (unique per connector)."
+    },
+    "kind": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{0,31}$",
+      "examples": [
+        "command",
+        "component",
+        "modal",
+        "autocomplete"
+      ]
+    },
+    "command": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "maxLength": 64,
+          "minLength": 1
+        },
+        "sub": {
+          "type": "string",
+          "maxLength": 64
+        }
+      }
+    },
+    "options": {
+      "type": "object",
+      "maxProperties": 25
+    },
+    "custom_id": {
+      "$ref": "../defs.schema.json#/$defs/CustomId"
+    },
+    "values": {
+      "type": "array",
+      "maxItems": 25,
+      "items": {
+        "type": "string",
+        "maxLength": 100
+      }
+    },
+    "message_id": {
+      "$ref": "../defs.schema.json#/$defs/Id",
+      "description": "The message a component belongs to."
+    },
+    "user": {
+      "$ref": "../defs.schema.json#/$defs/UserRef"
+    },
+    "deadline_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Time left to acknowledge (defer or respond) before the platform shows a failure."
+    },
+    "expect": {
+      "description": "What the user saw when acting (e.g. a price), so the runtime refuses if it changed.",
+      "type": "object",
+      "properties": {
+        "price": {
+          "$ref": "../defs.schema.json#/$defs/Points"
+        }
+      }
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

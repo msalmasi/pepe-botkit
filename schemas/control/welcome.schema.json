@@ -55,7 +55,32 @@
               "room": { "$ref": "../defs.schema.json#/$defs/RoomTarget" },
               "bot": { "description": "Bot instance id bound to this room.", "$ref": "../defs.schema.json#/$defs/Id" },
               "rejoin_on_kick": { "type": "boolean" },
-              "audio": { "description": "This room is the one the audio pipeline listens to / speaks into.", "type": "boolean" }
+              "audio": { "description": "This room is the one the audio pipeline listens to / speaks into.", "type": "boolean" },
+              "binding": { "description": "(1.1) Bridge hubs: the binding id (actions may target it, spec/PCP.md, Actions).", "$ref": "../defs.schema.json#/$defs/Id" },
+              "pad": { "description": "(1.1) Bridge hubs: the hub room this remote room is bound to, by slug.", "type": "string", "minLength": 1, "maxLength": 128 },
+              "mode": { "$ref": "../defs.schema.json#/$defs/BindingMode" },
+              "render": {
+                "description": "(1.1) How relayed lines are rendered: style (prefix, masquerade, ...), prefix template with {name} and {tag}, font (a connector-defined font name), tags (origin platform -> tag text).",
+                "type": "object",
+                "properties": {
+                  "style": { "type": "string", "maxLength": 32 },
+                  "prefix": { "type": "string", "maxLength": 128 },
+                  "font": { "type": "string", "maxLength": 64 },
+                  "tags": { "type": "object", "additionalProperties": { "type": "string", "maxLength": 32 } }
+                }
+              },
+              "filters": {
+                "description": "(1.1) What flows in each direction (hub-defined keys, e.g. messages, joins, stickers).",
+                "type": "object",
+                "properties": { "in": { "type": "object" }, "out": { "type": "object" } }
+              },
+              "policy_v": { "description": "(1.1) Version of the policy.sync mirror the hub holds for this binding.", "type": "integer", "minimum": 0 },
+              "transcripts": { "description": "(1.1) Speech in this room may be transcribed and stored.", "type": "boolean" },
+              "captions": { "description": "(1.1) Speech in this room may be captioned live (not stored).", "type": "boolean" },
+              "clips": { "type": "boolean" },
+              "mic_relay": { "description": "(1.1) Hub speakers may be relayed onto this room's mic.", "type": "boolean" },
+              "room_audio": { "description": "(1.1) Where this room's audio goes at the hub (hub-defined values; off = nowhere). The 1.0 boolean audio is unchanged.", "type": "string", "pattern": "^[a-z][a-z0-9_]{0,31}$" },
+              "whispers": { "description": "(1.1) Private whispers between hub users and this room's users are allowed.", "type": "boolean" }
             }
           }
         },

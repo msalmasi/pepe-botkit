@@ -22,6 +22,18 @@
     "truncated": {
       "type": "boolean"
     },
+    "t": {
+      "description": "(1.1) Timing: wait_ms in the connector's queue, send_ms on the platform call.",
+      "type": "object",
+      "properties": {
+        "wait_ms": {
+          "$ref": "../defs.schema.json#/$defs/DurationMs"
+        },
+        "send_ms": {
+          "$ref": "../defs.schema.json#/$defs/DurationMs"
+        }
+      }
+    },
     "ext": {
       "$ref": "../defs.schema.json#/$defs/Ext"
     }

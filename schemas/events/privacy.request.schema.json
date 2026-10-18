@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/events/privacy.request.schema.json",
+  "title": "event privacy.request: data",
+  "description": "(1.1) A user asked, on the platform, for a privacy action at the hub: set a flag (incognito, bridge_hide, caption_optout, transcripts_optout), export their data, forget their public lines, or prove an identity link with a code. Sent only for login-resolved users. The hub answers privately (send.private).",
+  "type": "object",
+  "required": [
+    "identity",
+    "kind"
+  ],
+  "properties": {
+    "identity": {
+      "$ref": "../defs.schema.json#/$defs/UserRef",
+      "description": "The requesting user (login-resolved)."
+    },
+    "kind": {
+      "enum": [
+        "flag",
+        "export",
+        "forget_public",
+        "prove"
+      ]
+    },
+    "flag": {
+      "enum": [
+        "incognito",
+        "bridge_hide",
+        "caption_optout",
+        "transcripts_optout"
+      ]
+    },
+    "value": {
+      "type": "boolean",
+      "description": "With kind=flag: on or off."
+    },
+    "code": {
+      "type": "string",
+      "maxLength": 64,
+      "minLength": 1,
+      "description": "With kind=prove: the code the user typed."
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "flag"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      "then": {
+        "required": [
+          "flag",
+          "value"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "prove"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      "then": {
+        "required": [
+          "code"
+        ]
+      }
+    }
+  ]
+}

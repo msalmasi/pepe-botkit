@@ -1,0 +1,116 @@
+{
+  "description": "message_id_scope session goes with message_ids false: a 1.0 reader takes message_ids true for durable ids",
+  "expect_path": "/data/capabilities/features/message_ids",
+  "frame": {
+    "op": "hello",
+    "id": "c-bad-45",
+    "ts": "2026-10-18T18:00:00.040Z",
+    "data": {
+      "pcp": "1.1",
+      "connector": {
+        "id": "cf-main",
+        "platform": "camfrog",
+        "kind": "bridge",
+        "name": "cf-connector",
+        "version": "0.2.0",
+        "platform_version": "8.5.0"
+      },
+      "self": {
+        "id": "pepebot",
+        "login": "PepeBot",
+        "display": "Pepe",
+        "is_self": true
+      },
+      "capabilities": {
+        "events": [
+          "message",
+          "message.private",
+          "notice",
+          "member.join",
+          "member.leave",
+          "member.update",
+          "mic.grab",
+          "mic.release",
+          "sticker",
+          "room.joined",
+          "room.left",
+          "room.update",
+          "moderation",
+          "connector.status",
+          "sync.gap",
+          "room.state",
+          "privacy.request",
+          "binding.request",
+          "registry.put",
+          "transcript",
+          "caption.partial",
+          "bridge.status"
+        ],
+        "actions": [
+          "send",
+          "send.private",
+          "kick",
+          "ban",
+          "unban",
+          "mute",
+          "unmute",
+          "mic.block",
+          "mic.unblock",
+          "topic.set",
+          "room.join",
+          "room.leave",
+          "mic.grab",
+          "mic.release",
+          "audio.play",
+          "cam.capture",
+          "user.list",
+          "policy.sync",
+          "modcaps.query",
+          "privacy.forget",
+          "privacy.export"
+        ],
+        "features": {
+          "message_ids": true,
+          "message_id_scope": "session",
+          "threads": false,
+          "reactions": false,
+          "edits": false,
+          "edits_own": false,
+          "deletes": "none",
+          "content_elements": [
+            "text"
+          ],
+          "private_messages": "room",
+          "display_markup": true,
+          "user_id_kind": "login",
+          "relay_prefix": true,
+          "typing": false,
+          "components": false,
+          "privacy_edge_filter": true,
+          "mic": {
+            "slots": 2,
+            "self_state_observable": true
+          },
+          "pacing": {
+            "room_gap_ms": 500,
+            "global_gap_ms": 400,
+            "room_burst": 40,
+            "room_window_ms": 60000
+          }
+        },
+        "limits": {
+          "message_max_chars": 490,
+          "send_per_minute": 40,
+          "max_rooms": 5
+        }
+      },
+      "bridge": {
+        "echo_correlation": "label",
+        "delivery_ack": "on_echo",
+        "history_backfill": false,
+        "policy_ttl_ms": 600000,
+        "result_cache": "durable"
+      }
+    }
+  }
+}

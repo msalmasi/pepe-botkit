@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/events/bridge.status.schema.json",
+  "title": "event bridge.status: data",
+  "description": "(1.1) The state of one binding, or of the connector's hub link as a whole when binding is absent. effective carries the values in force, connector-local overrides included (hub-defined keys).",
+  "type": "object",
+  "required": [
+    "state"
+  ],
+  "properties": {
+    "binding": {
+      "$ref": "../defs.schema.json#/$defs/Id"
+    },
+    "state": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{0,31}$",
+      "examples": [
+        "ok",
+        "degraded",
+        "down",
+        "paused"
+      ]
+    },
+    "reason": {
+      "type": "string",
+      "maxLength": 128
+    },
+    "effective": {
+      "type": "object"
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

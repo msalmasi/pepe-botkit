@@ -1,0 +1,34 @@
+{
+  "description": "message.reaction.op is add or remove",
+  "expect_path": "/data/op",
+  "frame": {
+    "op": "event",
+    "id": "c-bad-40",
+    "ts": "2026-10-18T18:00:00.000Z",
+    "seq": 40,
+    "type": "message.reaction",
+    "connector": "dc-main",
+    "scope": {
+      "platform": "discord",
+      "guild": {
+        "id": "1100000000000000001",
+        "name": "Frog Pond"
+      },
+      "room": {
+        "id": "1100000000000000010",
+        "name": "lounge",
+        "kind": "channel"
+      }
+    },
+    "data": {
+      "message_id": "1400000000000000100",
+      "emoji": {
+        "name": "🐸"
+      },
+      "user": {
+        "id": "1300000000000000003"
+      },
+      "op": "toggle"
+    }
+  }
+}

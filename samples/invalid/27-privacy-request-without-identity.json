@@ -1,0 +1,18 @@
+{
+  "description": "privacy.request needs the requesting identity",
+  "expect_path": "/data",
+  "frame": {
+    "op": "event",
+    "id": "c-bad-27",
+    "ts": "2026-10-18T18:00:00.000Z",
+    "seq": 27,
+    "type": "privacy.request",
+    "connector": "cf-main",
+    "scope": {
+      "platform": "camfrog"
+    },
+    "data": {
+      "kind": "export"
+    }
+  }
+}

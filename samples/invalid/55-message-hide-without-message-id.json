@@ -1,0 +1,26 @@
+{
+  "description": "message.hide names the message",
+  "expect_path": "/data",
+  "frame": {
+    "op": "action",
+    "id": "r-bad-55",
+    "ts": "2026-10-18T18:40:00.120Z",
+    "type": "message.hide",
+    "scope": {
+      "platform": "patv",
+      "room": {
+        "id": "the-lily-pond",
+        "name": "The Lily Pond",
+        "kind": "room"
+      }
+    },
+    "data": {
+      "reason": "automod: link spam"
+    },
+    "target": "native",
+    "origin": {
+      "bot": "bot-pepe",
+      "module": "automod"
+    }
+  }
+}

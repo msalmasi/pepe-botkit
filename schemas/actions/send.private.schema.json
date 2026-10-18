@@ -17,6 +17,23 @@
     "content": {
       "$ref": "../defs.schema.json#/$defs/Content"
     },
+    "whisper": {
+      "description": "(1.1) A hub user's private whisper to this user. Never falls back to a room send: a user who is not present fails with not_found (details.code not_present). The text is never logged or remembered by the connector.",
+      "type": "object",
+      "required": [
+        "id",
+        "from"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "../defs.schema.json#/$defs/Id",
+          "description": "Whisper id at the hub; message.private.whisper.reply_to names it."
+        },
+        "from": {
+          "$ref": "../defs.schema.json#/$defs/RelayAuthor"
+        }
+      }
+    },
     "ext": {
       "$ref": "../defs.schema.json#/$defs/Ext"
     }

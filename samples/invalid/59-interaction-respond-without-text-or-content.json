@@ -1,0 +1,19 @@
+{
+  "description": "interaction.respond carries text or content",
+  "expect_path": "/data",
+  "frame": {
+    "op": "action",
+    "id": "r-bad-59",
+    "ts": "2026-10-18T18:12:00.160Z",
+    "type": "interaction.respond",
+    "data": {
+      "interaction_id": "1800000000000000001",
+      "ephemeral": true
+    },
+    "origin": {
+      "bot": "hub",
+      "module": "raffle",
+      "event": "d-3601"
+    }
+  }
+}

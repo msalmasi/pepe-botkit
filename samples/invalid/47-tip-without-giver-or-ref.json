@@ -1,0 +1,39 @@
+{
+  "description": "a tip names its giver (from + tx) or is anonymous (ref)",
+  "expect_path": "/data/content/0",
+  "frame": {
+    "op": "action",
+    "id": "r-bad-47",
+    "ts": "2026-10-18T18:12:00.240Z",
+    "type": "send",
+    "scope": {
+      "platform": "discord",
+      "guild": {
+        "id": "1100000000000000001",
+        "name": "Frog Pond"
+      },
+      "room": {
+        "id": "1100000000000000010",
+        "name": "lounge",
+        "kind": "channel"
+      }
+    },
+    "data": {
+      "text": "💸 tip for Lou",
+      "content": [
+        {
+          "type": "tip",
+          "amount": "100",
+          "to": {
+            "id": "1300000000000000003"
+          },
+          "text": "💸 tip for Lou"
+        }
+      ]
+    },
+    "origin": {
+      "bot": "hub",
+      "module": "raffle"
+    }
+  }
+}

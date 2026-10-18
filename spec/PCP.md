@@ -1,8 +1,11 @@
-# PCP — Pepe Connector Protocol, version 1.0
+# PCP — Pepe Connector Protocol, version 1.1 (draft)
 
-Status: **draft 1.0** (work package F-4 of the v2 rebuild). Normative words (MUST, SHOULD, MAY) are
-used in the RFC 2119 sense. The JSON Schemas in [`../schemas`](../schemas) are normative for frame
-shape; this document is normative for behaviour. Where they disagree, file a bug.
+Status: **draft 1.1**. 1.1 is an additive minor version of 1.0 (work package F-4 of the v2
+rebuild): every 1.0 frame is still valid 1.1, and 1.0 peers keep working through version
+negotiation (§2.1). Each 1.1 addition is marked **(1.1)** where it is introduced; the
+[changelog](../CHANGELOG.md) lists them. Normative words (MUST, SHOULD, MAY) are used in the
+RFC 2119 sense. The JSON Schemas in [`../schemas`](../schemas) are normative for frame shape; this
+document is normative for behaviour. Where they disagree, file a bug.
 
 PCP connects a **connector** (a process that speaks one chat platform: Camfrog, Discord, Twitch,
 Telegram, the PATV rooms service, or an audio pipeline) to a **bot runtime** (matcher + modules).
@@ -14,6 +17,16 @@ see platform protocols, only PCP, and they check **capabilities**, never platfor
  (Camfrog client,         (cf-connector,                        (botkit / NoneBot2 adapter)
   Discord gateway, ...)    audiohook, discord-connector, ...)
 ```
+
+**(1.1)** A **bridge hub** is a runtime that also hosts rooms of its own and relays lines between
+them and bound rooms on other platforms (the PATV rooms service is one). Connectors that talk to a
+hub declare `connector.kind: "bridge"`. A hub can itself act as a connector towards a bot runtime,
+exposing its own rooms (platform `patv` for PATV). The 1.1 additions are mostly what such hubs
+need: relay with provenance, policy and privacy mirroring, room state, interactions, edits and
+deletes. A plain bot runtime can ignore them: nothing a 1.0 runtime relies on changes. New
+event types replace a 1.0 event only when the runtime asks for them by name in
+`welcome.subscribe` (`message.reaction`, §5), and new actions and fields are sent only by peers
+that use them.
 
 Contents
 
@@ -35,6 +48,28 @@ Contents
 16. [Worked examples](#16-worked-examples)
 17. [Camfrog (cf-connector) mapping](#17-camfrog-cf-connector-mapping)
 18. [Open questions](#18-open-questions)
+
+**What's new in 1.1** (all additive; [changelog](../CHANGELOG.md)):
+
+- Bridge sessions: `hello.data.bridge`, 1.1 `welcome.bindings[]` fields, the
+  [compatibility rules](#21-version-negotiation-and-10-compatibility) and action `target` (§2, §3).
+- `UserRef.resolved_by`, `unresolved`, `anonymous` (§4.1).
+- Events `message.update`, `message.delete`, `message.reaction`, `privacy.request`, `room.state`,
+  `binding.request`, `registry.put`, `interaction`, `typing`, `transcript`, `caption.partial`,
+  `bridge.status`; `message` gains `relay_ref`, `webhook_id`, `remote_reply_to`;
+  `message.private` gains `whisper` (§5).
+- Actions `message.edit`, `message.delete`, `message.hide`, `ban.feature.set`, `lockdown.set`,
+  `policy.sync`, `modcaps.query`, `interaction.defer`, `interaction.respond`,
+  `interaction.followup`, `card.update`, `privacy.forget`, `privacy.export`; `send.relay`,
+  `send.private.whisper`, `mic.grab.lane` (§6).
+- Errors `relay_refused`, `flood_risk`, `binding_off`, `stale_policy`; `send` result `t`; interim
+  `phase` on `audio.play` and `mic.grab` (§7).
+- Features `message_id_scope`, `edits_own`, `deletes`, `delete_window_s`, `reply_refs`,
+  `masquerade`, `relay_prefix`, `reactions_custom`, `reactions_durable`, `typing`, `components`,
+  `interactions`, `privacy_edge_filter`, `media`, `pacing`; limit `message_max_bytes` (§8).
+- Elements `code_block`, `custom_emoji`, `timestamp`, `pad_ref`, `user_ref`, `tip`, `gift`,
+  `boost`, `poll`, `card`, `actions`, `embed`, `system` (§9).
+- Open question 1 (blob store) settled (§11); the privacy amendment to §15.
 
 ---
 
@@ -78,6 +113,17 @@ connector id/platform/kind/software version, the bot's own account if known (`se
 capability declaration (§8), and optionally `resume` (§13). If no hello arrives within 10 s the
 runtime closes with `4004`.
 
+**(1.1) Bridge connectors** (`connector.kind: "bridge"`, talking to a bridge hub) add
+`hello.data.bridge`:
+
+| field | values | meaning |
+|---|---|---|
+| `echo_correlation` | `job` \| `label` \| `nonce` | how the connector ties a platform echo of a relayed line back to its action: an intermediate queue's job id, a platform request label (IRCv3 `labeled-response`), or a platform send nonce. Echoes are always correlated by id, never by text (§6.1). |
+| `delivery_ack` | `on_wire` \| `on_echo` | whether a `send` result is final when the line is written to the platform or when the platform echoes it |
+| `history_backfill` | bool | the connector can fetch platform history after an outage |
+| `policy_ttl_ms` | int | age after which its `policy.sync` mirror is stale (§15.1) |
+| `result_cache` | `durable` \| `volatile` | whether the action result cache (§6 rule 2) survives a connector restart for the replay window. A `durable` connector may resume after a restart; a `volatile` one starts a new session instead, so every accepted resume is safe for the hub's re-send (§13 steps 4 and 6). |
+
 **welcome** (runtime → connector, [`control/welcome.schema.json`](../schemas/control/welcome.schema.json)):
 
 | field | meaning |
@@ -90,9 +136,21 @@ runtime closes with `4004`.
 | `bindings` | rooms this connector should be in (from bot-instance bindings in the admin console), with `rejoin_on_kick` and which room is the `audio` room. Passwords are never sent here; a password room is joined by a `room.join` action. |
 | `subscribe` | optional: event types the runtime wants; the connector MAY skip others (bandwidth, e.g. `audio.segment`) |
 
+**(1.1) Binding fields.** A bridge hub generates `bindings[]` from its own binding table and adds:
+`binding` (the binding id; actions may name it in `target`, §3), `pad` (the hub room it feeds, by
+slug), `mode` (`ingest` remote → hub only, `relay` both ways, `mirror` hub → remote only, `off`,
+`bot_only` no hub room, bots only), `render{style, prefix, font, tags{}}` (how relayed lines look:
+a prefix template with `{name}` and `{tag}`, a connector-defined font name, origin platform → tag
+text), `filters{in{}, out{}}` (hub-defined keys), `policy_v` (the hub's `policy.sync` version),
+the switches `transcripts`, `captions`, `clips`, `mic_relay`, `whispers` (booleans), and
+`room_audio` (where the room's audio goes at the hub, hub-defined values, `off` = nowhere). The 1.0
+boolean `audio` keeps its meaning; `room_audio` is a new field rather than a new type for `audio`
+(§14).
+
 **Version negotiation.** The subprotocol fixes MAJOR. `hello.data.pcp` is the connector's highest
 `MAJOR.MINOR`; the runtime answers `MINOR = min(connector, runtime)`. Both sides then MUST NOT send
-fields or types introduced after the negotiated minor (receivers ignore them anyway, §14).
+fields or types introduced after the negotiated minor (receivers ignore them anyway, §14). §2.1
+spells out what that means for 1.0 peers.
 
 **One live connection per connector id.** If a connector id connects while another connection with
 the same id is live, the runtime closes the OLD one with `4009` (replaced) and continues with the new
@@ -100,6 +158,53 @@ one (resuming if asked).
 
 **bye** (either side, [`control/bye.schema.json`](../schemas/control/bye.schema.json)) explains a
 deliberate close: `reconnect` (should the peer come back), `retry_after_ms`, and an `error`.
+
+### 2.1 Version negotiation and 1.0 compatibility
+
+(1.1) [`index.json`](../schemas/index.json) records `since: "1.1"` on every type 1.1 added; types
+without `since` are 1.0. Fields added in 1.1 are marked "(1.1)" in their schema descriptions.
+
+A **1.1 runtime or hub on a session negotiated at 1.0** (the connector said `pcp: "1.0"`):
+
+1. MUST NOT send 1.1 action types, 1.1 fields (`send.relay`, `send.private.whisper`, `target`,
+   `mic.grab.lane`, …) or 1.1 elements. A relayed line goes as a plain 1.0 `send` whose `text` is
+   already within `limits.message_max_chars`, or is left for the connector to split (1.0 rule);
+   there is no `presplit`.
+2. MUST treat the connector as `privacy_edge_filter: false` (§15.1) and read `message_id_scope`
+   from the 1.0 boolean: `message_ids: true` → `stable`, otherwise `none`.
+3. MUST NOT expect durable reactions (`message.reaction`), `room.state`, `typing` or any other 1.1
+   event. Resume follows 1.0 §13 steps 1-5 unchanged: after every accepted resume the runtime
+   re-sends the session's unfinished actions with the same ids (step 4).
+
+A **1.1 connector on a session negotiated at 1.0** (the runtime said `pcp: "1.0"`):
+
+1. MUST NOT send 1.1 event types or fields. It falls back to the 1.0 equivalent where one exists
+   (`reaction` instead of `message.reaction`), and otherwise omits the event (`typing`,
+   `room.state`, `transcript`, …).
+2. Still applies everything it promised in its own declaration that makes it safer (an edge
+   privacy filter keeps filtering), but reports filtered users with 1.0 fields only (no
+   `anonymous` flag: it omits them).
+
+**Replacement events are opt-in on the runtime side.** A 1.1 event that stands in for a 1.0 one
+replaces it only when the runtime asks for it by name. A connector declaring
+`features.reactions_durable` sends `message.reaction` in place of `reaction` only on a session
+negotiated at 1.1 whose `welcome.subscribe` lists `message.reaction` and does not list `reaction`;
+if `subscribe` lists both it sends both, and otherwise (no `subscribe`, or one without
+`message.reaction`) it keeps sending the 1.0 `reaction`. A runtime that ignores 1.1 events
+therefore never loses reactions.
+
+Declarations in `hello` (capabilities, features, the `bridge` block) are sent before negotiation
+and may name 1.1 types and features; a 1.0 runtime ignores what it doesn't know (§14).
+
+The hub-side mapping of 1.1 fields that replace 1.0 ones:
+
+| 1.0 field | 1.1 field | rule |
+|---|---|---|
+| `features.message_ids` (bool) | `features.message_id_scope` (`stable`\|`session`\|`none`) | a 1.1 connector sends both, and sends `message_ids: true` only with `message_id_scope: stable`: a `session` or `none` scope goes with `message_ids: false`, so a 1.0 reader never takes session ids for durable ones. A reader prefers the 1.1 field. |
+| `features.edits` (bool, can see edits) | `features.edits_own` (can edit its own) | different questions, both kept |
+| `features.reactions` (bool) | `features.reactions_custom`, `features.reactions_durable` | `reactions` still gates `react` and `reaction`; `reaction` stays the default event (below) |
+| `welcome.bindings[].audio` (bool) | `welcome.bindings[].room_audio` (string) | both kept |
+| `audio.play` result `status` (closed enum) | result `phase` (open) | `status` stays; `phase` adds `waiting` and future steps |
 
 ## 3. Frames and the envelope
 
@@ -117,7 +222,7 @@ Op-specific fields:
 | op | direction | extra fields |
 |---|---|---|
 | `event` | c → r | `seq`, `type`, `connector`, `scope`, `data` |
-| `action` | r → c | `type`, `scope?`, `data`, `timeout_ms?`, `origin?` |
+| `action` | r → c | `type`, `scope?`, `data`, `timeout_ms?`, `origin?`, `target?` (1.1) |
 | `result` | c → r | `seq`, `ref` (action id), `type` (action type, echoed), `ok`, `final?`, `data` or `error` |
 | `ack` | r → c | `seq` (cumulative) |
 | `ping` / `pong` | both | `pong.ref` = ping id; connector pongs carry `platform_ok`, `last_seq` |
@@ -129,6 +234,13 @@ increases by exactly 1, never reused within the session. It drives acks, replay 
 
 `origin` on an action records who caused it (`bot` instance id, `module`, triggering `event` frame
 id, the `user` on whose behalf) for audit logs and for platforms that attribute actions.
+`origin.event` is the triggering event frame's id and `origin.user` a `UserRef` in the **target
+platform's** namespace (a linked login there, or an opaque hub token).
+
+**(1.1) `target`** routes an action on a bridge hub that serves several bindings in one scope:
+`{"binding": "<binding id>"}` acts on that bound remote room only, `"native"` on the hub's own room
+only. Absent = the scope's only binding (or the room itself on a plain connector). No new `op`s
+were added in 1.1.
 
 Unknown top-level fields MUST be ignored. An unknown `op` MUST be ignored (and logged).
 
@@ -160,6 +272,23 @@ Rules:
   non-identity field instead (`inbox.read` → `conversations[].name`).
 - `is_self: true` marks the bot. Connectors MUST report the bot's own messages/stickers/mic grabs
   with `self`/`is_self` rather than suppress them silently; matchers ignore self events by default.
+
+**(1.1) How a user was resolved.** Three optional fields say how much a `UserRef` can be trusted:
+
+| field | meaning |
+|---|---|
+| `resolved_by` | `login` (an in-packet login, or one confirmed by the platform's user list in the same tick), `display` (matched by display name), `memory` (remembered from earlier), `unresolved`. Open: an unknown value means "not login-resolved". |
+| `unresolved: true` | the connector has only a display name |
+| `anonymous: true` | a user reported only as presence (privacy edge filter, §15.1) |
+
+- **Only login-resolved users may act as an account at a hub**: run charged or moderation
+  commands, interactions, payments or anything attributed to the person. Lines resolved by display
+  name or memory are shown as unverified and may run only free, read-only commands.
+- For `unresolved` and `anonymous` users, the connector still fills `id` (it is required), with a
+  **session-scoped opaque token**: `~<display>#<session>` for unresolved names, `anon-<hex>` for
+  anonymous presence. These tokens are not identities. Receivers MUST NOT create, link or match
+  identities on them, and use them for presence and rendering only. This is the 1.0 rule ("never
+  invent an `id` from a display name") made explicit for presence.
 
 ### 4.2 Rooms, channels, threads, DMs
 
@@ -221,6 +350,44 @@ dropped, `normal` events are never dropped within the replay window, `low` event
 | `inbox.notify` | normal | – | unread, at, user | Content-free DM activity ping (Camfrog 0x57). |
 | `connector.status` | critical | – | **state**, detail, components | ready / degraded / platform_down / recovering. |
 | `sync.gap` | critical | – | **reason**, from_seq, to_seq, dropped_types, scopes | Events were lost; modules with derived state (mic holders, member lists) re-snapshot via `user.list`. |
+| `message.update` (1.1) | normal | ✓ | **message_id**, **text**, user, content, edited_at | An author edited a message on the platform (needs `features.edits`). `text`/`content` are the new full message. |
+| `message.delete` (1.1) | normal | ✓ | **message_id**, user, deleted_by, verified | `verified: true` when the connector confirmed who deleted it (Discord: the audit log). Only a verified author delete counts as the author's own. |
+| `message.reaction` (1.1) | normal | ✓ | **message_id**, **emoji**, **user**, **op**, count | Needs `features.reactions_durable`. Sent in place of `reaction` only when `welcome.subscribe` lists `message.reaction` and not `reaction` (both when it lists both); otherwise the connector keeps sending `reaction` (§2.1). `count` = the platform's total for that emoji after the change. |
+| `privacy.request` (1.1) | normal | – | **identity**, **kind**, flag, value, code | A user asked, on the platform, for a hub privacy action: `flag` (`incognito`, `bridge_hide`, `caption_optout`, `transcripts_optout`, with `value`), `export`, `forget_public`, `prove` (with the `code` they typed). Login-resolved users only; the hub answers privately with `send.private`. |
+| `room.state` (1.1) | normal | ✓ | **v**, full, switches, menu, bot_menu, roster_fresh, stage, settings, masters_off, lang | Room state the connector applies (below). |
+| `binding.request` (1.1) | normal | ✓ | **mode**, **user**, binding | A user asked on the platform to change how the hub uses this room (a room owner typing a bridge command). The hub applies it only if `user` is the proven owner of the remote room. |
+| `registry.put` (1.1) | normal | – | **commands**, full | The connector's command menu as untyped manifests (`name`, `aliases`, `summary`, `usage`, `price`, `roles`, `hidden`), so a hub can offer them in its own UI. |
+| `interaction` (1.1) | normal | ✓ | **interaction_id**, **kind**, **user**, command, options, custom_id, values, message_id, deadline_ms, expect | A user ran a command or used a component through the platform UI (slash command, button, select, modal). Answered with `interaction.*` actions before `deadline_ms`. `expect.price` is what the user saw, so a changed price is refused. |
+| `typing` (1.1) | low | ✓ | **user**, on | Needs `features.typing`. |
+| `transcript` (1.1) | normal | ✓ | **utt_id**, **t0**, **t1**, **text**, speaker, lang, prob, source, attribution, confidence | Final transcript of one mic turn, made at the connector. `t0`/`t1` are the turn's own times; receivers dedupe on (room, `utt_id`). Subject to §15.1. |
+| `caption.partial` (1.1) | low | ✓ | **utt_id**, **text**, speaker, lang, t0, media_ts | Live partial caption; later partials with the same `utt_id` replace it. `media_ts` = capture time of the audio, for delayed streams. Subject to §15.1. |
+| `bridge.status` (1.1) | critical | – | **state**, binding, reason, effective | State of one binding, or of the hub link as a whole without `binding` (`ok`, `degraded`, `down`, `paused`; open). `effective` = the values in force, connector-local overrides included (hub-defined keys). |
+
+**(1.1) Fields added to 1.0 events.**
+
+- `message`: `relay_ref` (on a self line: the id of the relay action, or the job, this echo
+  answers; §6.1), `webhook_id` (sent through a platform webhook; hubs drop lines from their own
+  webhooks), `remote_reply_to` (the platform's reply target when it is not a `message_id` this
+  session reported, e.g. an older message; the hub resolves it through its id map). Platform
+  extras such as a Camfrog line's font go in `ext.<platform>` (§17).
+- `message.private`: `whisper{reply_to | to}`: a reply to a hub whisper (§10.1), naming either the
+  whisper answered (`reply_to`, the user's "reply" command) or the hub user (`to`, a handle or
+  display name as typed).
+
+**(1.1) `room.state`** replaces ad-hoc state reports for bound rooms. `full: true` is a complete
+snapshot; otherwise the data is an RFC 7386 JSON Merge Patch of the previous state (`null` removes
+a key). `v` increases by exactly 1 per room; a receiver that sees a gap ignores patches until the
+next full snapshot. The connector sends a full snapshot on `room.joined`, on session start and
+resume, and at least every 30 s. Fields: `switches{name: bool}` (feature switches as the connector
+applies them; hub-defined names), `menu{command: price}` and `bot_menu{action: {on, price}}`
+(prices are points as decimal strings, `"0"` = free), `roster_fresh{list_at, list_fresh,
+list_stale_after, seen_ttl}` (how fresh the member list is; durations in seconds), `stage`
+(connector-defined), `settings{key: {v, by}}`, `masters_off[]` (settings the room owner locked
+off), `lang{chat, stt, tts, tts_effective}`. A hub that disagrees with an echoed consent switch for
+more than 60 s treats it as off.
+
+**Vendor events.** Connectors may also emit `x.<vendor>.*` events (unchanged §14 rule), for
+example a hub's live-cam state or a connector-level room list, with no standard schema.
 
 `moderation.kind`: `kick`, `ban`, `unban`, `mute` (Camfrog punish / Discord & Twitch timeout, with
 `duration_s`), `unmute`, `mic.block`, `mic.unblock`, `role.add`, `role.remove` (with `role`), `warn`,
@@ -283,6 +450,19 @@ Actions flow runtime → connector. Rules:
 | `inbox.read` | – | limit | **conversations**, **method**, confidence, image | Conversations window + vision |
 | `react` | ✓ | **message_id**, **emoji**, **op** | – | (Discord/Telegram) |
 | `platform.command` | – | **command**, args, collect_ms | **lines** | any allowed slash command + server-line tap |
+| `message.edit` (1.1) | ✓ | **message_id**, **text** or **content** | message_ids | needs `features.edits_own` (not Camfrog) |
+| `message.delete` (1.1) | ✓ | **message_id**, reason | – | `features.deletes` `own`/`any`; past `delete_window_s` → `unsupported` |
+| `message.hide` (1.1) | ✓ | **message_id**, on, reason | – | rooms the connector hosts (a hub's own rooms): reversible hide |
+| `ban.feature.set` (1.1) | ✓ | **user**, **feature**, **on**, duration_s, reason | – | rooms the connector hosts: ban from one feature (`chat`, `commands`, `voice`, `media`, …; open) or lift it |
+| `lockdown.set` (1.1) | ✓ | **level**, duration_s, reason | – | rooms the connector hosts: who may speak (`off`, `new_accounts`, `verified`, `members`, `mods`; open) |
+| `policy.sync` (1.1) | ✓ | **v**, full, bans, lockdown, hidden, hidden_kid, caption_optout, transcripts_optout, switches, cmd_deny | **v** | the hub's policy mirror for one bound room (§15.1) |
+| `modcaps.query` (1.1) | ✓ | **users** (≤ 60 ids) | **caps** {id: {actions, roles, admin, blocked, …}} | which of the given platform users have moderation powers in the room; users without powers are omitted |
+| `interaction.defer` (1.1) | – | **interaction_id**, ephemeral | – | acknowledge now, answer later |
+| `interaction.respond` (1.1) | – | **interaction_id**, **text** or **content**, ephemeral | message_ids | the answer |
+| `interaction.followup` (1.1) | – | **interaction_id**, **text** or **content**, ephemeral | message_ids | a further message |
+| `card.update` (1.1) | ✓ | **ref**, **v**, **patch** or **layout**, text, closed | – | edit a posted `card`/`poll` element (§9) |
+| `privacy.forget` (1.1) | – | **identities** | **purged** | purge the connector's own logs, caches and memory for these users |
+| `privacy.export` (1.1) | – | **identities** | **records**, media | collect what the connector holds about them (a blob, §11) |
 
 \* `send.private` on a platform with `features.private_messages = "room"` (Camfrog) needs
 `scope.room` in practice; without one the connector uses the room where the user was last seen or
@@ -306,6 +486,74 @@ Actions added beyond the §11.2 list, and why:
 | `inbox.read` | v1 `!dms` reads the contact-list inbox. |
 | `react` | Discord/Telegram reactions (capability example in §11.2). |
 | `platform.command` | escape hatch for slash commands with no PCP equivalent (`/watchlist`) and their server-line answers; keeps PCP small. Allowed commands are listed in `features.platform_commands`. |
+
+**(1.1) Fields added to 1.0 actions.**
+
+- `send.relay`: present when a bridge hub relays a person's line (§6.1).
+- `send.private.whisper{id, from}`: a hub user's whisper to this user (§10.1).
+- `mic.grab.lane: true`: the grab carries a hub speaker's live audio (a mic lane) rather than the
+  bot's own. Interim results report `phase` (`queued`, `waiting`, `live`, `lost`, `grab_pending`,
+  `grab_failed`; open), `position`, `eta_ms` and, on failure, `reason`. A grab takes only a slot
+  that has been free for a moment, and a connector that sees repeated lost races or swallowed
+  clicks reports `grab_failed` with its cool-down reason instead of retrying blindly.
+- `audio.play` interim results add `phase` (`queued`, `waiting` for a free slot, `playing`,
+  `played`, `dropped`; open) beside the 1.0 `status`. Hubs cap `wait_for_slot_ms` and
+  `mic.grab.wait_ms` at 240 000 ms; that ceiling is hub policy, not a schema limit (narrowing a
+  1.0 field would not be additive).
+
+Moderation actions (`message.hide`, `ban.feature.set`, `lockdown.set`) are standard types for any
+connector that hosts rooms itself, typically a bridge hub acting as a connector towards a bot
+runtime; they are declared in capabilities like every action. Room control keeps the 1.0
+`room.join` (`password` is `writeOnly` and used once) and `room.leave`; anything platform-specific
+(desired-state pushes, owner settings) is an `x.<vendor>.*` action.
+
+**(1.1) Interactions.** An `interaction` event MUST be acknowledged (`interaction.defer` or
+`interaction.respond`) before its `deadline_ms`; the connector shows the platform's failure state
+otherwise. Runtimes refuse interactions whose `expect.price` no longer matches, and never run
+interactions from lines that are late or replayed (§13). `custom_id`s are
+`module:entity:verb:version` in 1-64 printable ASCII characters (`!` to `~`), so characters equal
+bytes and they pass Telegram `callback_data` (64 bytes) unchanged.
+
+### 6.1 Relay (1.1)
+
+A bridge hub relays a person's line as a `send` with a `relay` block:
+
+| field | meaning |
+|---|---|
+| **msg_id**, **binding** | the line's id at the hub, and the binding |
+| **author** | `{acct, name, name_src, display, handle, tag, avatar_url, verified, identities{}}`: `name_src` is `display` (the hub display name), `login` (the author's linked login on this platform) or `handle` (their unique hub handle); `identities` = at most one entry, the author's linked identity on the receiving connector's own platform (`{"<platform>": "<external id>"}`), so the connector can apply its own per-user checks (ignore lists, timeouts). Hubs MUST NOT send an author's links to other platforms (§15.1). |
+| otr | off the record |
+| hops | 0 = native line, 1 = already bridged once (never relayed further) |
+| render | render style (open): `prefix`, `masquerade`, `bot` |
+| presplit, part{n, of} | the hub split the line; one action per part, `1 ≤ n ≤ of` |
+| deadline_ms | give up (`timeout`) if not sent within this time of receipt |
+| reply_to_remote | platform message id to reply to natively (`features.reply_refs`) |
+
+Rules:
+
+1. **Ids correlate.** A relay action's id is `relay:<msg_id>:<binding>[:p<n>]`; a bot action
+   executed on a platform is `bot:<action id>`. The platform echo comes back as `message` with
+   `self: true` and `relay_ref` = that id (correlated through `hello.bridge.echo_correlation`).
+   A hub marks a `relay:` echo delivered and does not ingest it. A self line **without**
+   `relay_ref` is the bot's own native output.
+2. **Names.** The connector renders `{name}` from `author.name` only, never from
+   `author.display`: the hub has already checked the name for collisions.
+3. **Splitting.** With `presplit: true` the hub has split the line and each part fits one platform
+   line, prefix included; the connector MUST NOT split again. A part over the limit is refused with
+   `relay_refused` (`details.code: "too_long"`). Bot-authored `send`s (no `relay`) keep 1.0's
+   connector-side split.
+4. **Pacing has one owner, the hub.** It releases one relay action per room at a time in fair
+   order, from the connector's declared `features.pacing`. The connector executes actions FIFO per
+   room (§6 rule 5), applies only its global gap and flood guard, never re-orders, never applies its
+   own per-sender fairness or a second expiry, and sends no interim "paced" results.
+5. **Off the record.** A connector receiving `otr: true` MUST NOT write the line to its logs or
+   memory.
+6. **Refusals.** A connector that applies its own side of a check (the author is ignored or timed
+   out there) answers `relay_refused` with its reason in `details.code` (e.g. `account`).
+7. **Outcomes.** `binding_off`: relay is switched off for that room; `flood_risk`: sending now
+   would trip the platform's flood protection; `stale_policy`: the policy mirror is stale (§15.1).
+   A timeout after the platform may have accepted the line is ambiguous; hubs record it as
+   unconfirmed and never re-send it.
 
 ## 7. Results and the error model
 
@@ -336,6 +584,14 @@ A result ([`result.schema.json`](../schemas/result.schema.json)) is either `ok: 
 | `session_invalid` | no | resume refused / unknown session (runtime-side completion of orphaned actions) |
 | `platform_error` | per case | the platform refused for another reason; see `platform_code` |
 | `internal` | per case | connector bug |
+| `relay_refused` (1.1) | never | the connector refused a relayed line or whisper on its own side; `details.code` says why (`too_long` for an oversized presplit part, `account` for an author it won't carry, …) |
+| `flood_risk` (1.1) | yes | sending now would trip the platform's flood protection |
+| `binding_off` (1.1) | yes | relay is switched off for this room on the connector's side |
+| `stale_policy` (1.1) | yes | the connector's `policy.sync` mirror is older than `policy_ttl_ms`; hub-originated work is refused until it is refreshed (§15.1) |
+
+**(1.1)** The `send` result keeps 1.0's `message_ids[]` (one per platform message) and `parts`,
+and adds `t{wait_ms, send_ms}` (time in the connector's queue, time of the platform call). A
+whisper to a user who is not present fails with `not_found` and `details.code: "not_present"`.
 
 `retryable` is authoritative (the table gives defaults; the schemas pin the "always"/"never" rows).
 Unknown codes are treated as `internal`, honouring `retryable`. A platform that **accepted** the
@@ -355,6 +611,27 @@ never confirms). Errors are for "the action could not be carried out".
   `mic.self_state_observable`, `cam.capture_requires_open`, `sticker_send_ack`
   (`always`/`sometimes`/`never`), `roles`, `platform_commands`.
 - `limits`: `message_max_chars`, `send_per_minute`, `max_rooms`, `topic_max_chars`.
+
+**(1.1) Features and limits:**
+
+| key | meaning |
+|---|---|
+| `message_id_scope` | `stable` (durable platform ids), `session` (unique only within one connector session, e.g. Camfrog's `cf-m-<session>-<room>-<seq>`), `none`. Hubs dedupe inbound lines on `message_id` only when `stable`; otherwise on the event key. |
+| `edits_own` | the bot can edit its own messages (`message.edit`) |
+| `deletes` | `own` \| `any` \| `none`: what `message.delete` can remove |
+| `delete_window_s` | older messages can't be deleted (Telegram: 172 800) |
+| `reply_refs` | `reply_to` / `relay.reply_to_remote` produce native replies |
+| `masquerade` | relayed lines can carry the author's name and avatar natively (Discord webhooks) |
+| `relay_prefix` | relayed lines are rendered with a text prefix (`render.prefix`) |
+| `reactions_custom` | custom emoji can be used in reactions |
+| `reactions_durable` | the connector can report reactions per user as `message.reaction` (normal priority). It does so in place of `reaction` only when the runtime subscribes to `message.reaction` and not to `reaction` (§2.1); otherwise it keeps sending `reaction`. |
+| `typing` | the connector emits `typing` |
+| `components` | `card` and `actions` elements render natively (buttons, selects) |
+| `interactions` | the connector emits `interaction` and executes `interaction.*` |
+| `privacy_edge_filter` | the connector applies §15.1. Absent = false. |
+| `media.inline_max_bytes` | largest attachment posted natively; bigger media goes as a link |
+| `pacing{gap_ms, burst, window_ms, room_gap_ms, room_burst, room_window_ms, global_gap_ms, webhook_burst, webhook_window_ms, dup_window_ms}` | the platform's send limits, so a hub can pace relayed lines (§6.1 rule 4): per sender (`gap_ms`, `burst` per `window_ms`), per room, per account, per webhook, and `dup_window_ms` (the platform drops a line identical to one sent within it) |
+| `limits.message_max_bytes` | line limit in UTF-8 bytes, for platforms that count bytes (IRC); hubs size relay parts with it |
 
 **Room-level narrowing.** `room.joined.data.capabilities` MAY list a subset that applies in that
 room (a Camfrog room whose server never acks stickers, a single-mic room, a room where the bot is
@@ -393,6 +670,34 @@ Messages carry `text` (always, plain) and optionally `content`: an array of Sato
 | `quote` | `message_id` |
 | `style` | `styles[]` (bold, italic, underline, strike, code, spoiler, color), `color?`, `children[]` |
 
+**(1.1) Elements.** Each carries a plain-text rendering in `text` (required), so 1.0 receivers and
+connectors that do not render the type natively show that instead:
+
+| element | fields |
+|---|---|
+| `code_block` | `text`, `lang?` |
+| `custom_emoji` | `id`, `name`, `pack?`, `animated?`, `media?` |
+| `timestamp` | `at` (RFC 3339), `fmt?` (display hint: `t T d D f F R`, open) |
+| `pad_ref` | `slug`: a room on a bridge hub |
+| `user_ref` | `user` (UserRef): a link to a user's card |
+| `tip`, `gift`, `boost` | `amount` (points, decimal string), `to` (tip, gift), `from` + `tx` (giver and ledger reference) **or** `ref` (an anonymous giver: an opaque reference, and then no `from` and no `tx`), `item?`, `pad?`, `note?` |
+| `card`, `poll` | `ref` (card id), `v` (version), `cl` (layout language version, 1 = first), `layout` (≤ 6 KB), `state` (≤ 2 KB); `layout` and `state` are opaque to PCP |
+| `actions` | `rows` (≤ 2 rows of ≤ 5 inputs `{b: button\|select\|amount, custom_id, cmd{name, sub?, opts?}, label_key?, label?, style?, price?, options?}`; a `select` has at least one option; `custom_id` as in §6), `ttl_s?` |
+| `embed` | `url`, `kind?`, `title?`, `desc?`, `site?`, `thumb?` (MediaRef) |
+| `system` | `key` (dotted, e.g. `topic.set`), `args` |
+
+- Every `actions` input carries `cmd`, the command a platform without components types instead,
+  and the element's `text` names it. Connectors with `features.components` render `card` and
+  `actions` natively (and edit them on `card.update`); others post `text` and ignore `actions`.
+- Card edits SHOULD be coalesced to one per card per 5 s; text-only platforms get a card only
+  when it is posted and when it closes (`card.update.closed`).
+- Hubs MAY emit simpler 1.0 elements where those render better on the target (for example an
+  `embed` as a `link`, a `custom_emoji` as `emoji` with `name: ":name:"`); `embed` and
+  `custom_emoji` are defined for other runtimes and for inbound use.
+- Stickers keep `StickerRef`; platform details go in `ext.<platform>` (a Camfrog sticker:
+  `ext.camfrog{pack, id, desc}`, §17).
+- Amounts are **points** (a hub's in-chat unit), never money.
+
 Unknown element types are allowed (forward compatibility); receivers render them via their `text`
 field if present, else skip them.
 
@@ -416,6 +721,22 @@ and is emitted once as `message` with `self: true`.
 - **Inbox** (Camfrog contact-list DMs) is a different channel: `inbox.notify` (content-free ping)
   and `inbox.read` (on demand; Camfrog reads it from pixels, so results carry `confidence` and may
   lack user ids). Replying to the inbox is not in v1.
+
+### 10.1 Whispers (1.1)
+
+A **whisper** is a private message between a hub user and a user in a bound room, carried by the
+bot as a PM.
+
+- **Hub → platform:** `send.private` with `whisper{id, from}` (`from` is a relay author: `name`,
+  `name_src`, `handle`, `tag`, `acct`; its `identities`, if any, hold only the connector's own
+  platform, as in §6.1). The action id is `whisper:<id>:<binding>`. It rides the
+  room's lane like a relay line. It **never falls back to a room send**: a target who is not
+  present fails with `not_found` (`details.code: "not_present"`) and nothing is queued.
+- **Platform → hub:** a user replies through the bot (on Camfrog, a PM to the bot with a "reply"
+  or "whisper to" command). The connector forwards it as `message.private` with
+  `whisper{reply_to}` (the whisper answered) or `whisper{to}` (the hub user named, as typed). PM
+  packets carry the real login, so these are login-resolved.
+- The connector treats whisper text like `otr`: never written to logs, memory or any room.
 
 ## 11. Media
 
@@ -444,6 +765,11 @@ Plus optional `size`, `width`, `height`, `duration_ms`, `sample_rate`, `channels
 Runtime → connector media (TTS for `audio.play`) is a `url` or a `blob` the connector downloads from
 the same blob endpoint (`GET`).
 
+**(1.1) Blob store (open question 1, settled).** The runtime, or a bridge hub acting as runtime,
+hosts the blob store at `PUT/GET {runtime}/pcp/v1/blobs/{id}`, authenticated by the connector
+token and backed by object storage. Connectors upload clips, snapshots and exports there; receivers
+get short-lived signed `MediaRef.url`s and never raw storage URLs.
+
 ## 12. Rate limits and backpressure
 
 Three mechanisms:
@@ -463,6 +789,13 @@ Three mechanisms:
      `sync.gap` `dropped_low_priority`). `normal` and `critical` events and results keep flowing.
 
 Connectors SHOULD bound their action queues (v1 caps TTS at 6 queued jobs and refuses beyond).
+
+**(1.1)** A hub that releases one relay action per room at a time (§6.1) gets no interim "paced"
+results: the connector's queue never holds more than one relay line per room. Interim results
+remain for long actions (`audio.play`, `mic.grab`). A connector whose platform side stalls while
+its WebSocket stays up (for example the bot process behind it stops ticking) sends `flow` `pause`
+and `bridge.status` `degraded`, keeps forwarding events it already captured, and sends `resume`
+when the platform side is back.
 
 ## 13. Heartbeats, reconnect and resume
 
@@ -496,6 +829,16 @@ jitter), honouring `bye.retry_after_ms`.
    the connector emits `sync.gap {reason: resume_rejected}`. The runtime MUST NOT blindly re-send the
    old session's unfinished actions (the connector may have executed them without a cached result);
    it completes them locally with `session_invalid` and lets modules decide.
+6. **(1.1) Bridge hubs** persist sessions, so a resume still succeeds after the hub fails over to
+   another instance. Step 4 applies to every accepted resume, as in 1.0: an accepted resume means
+   the connector still holds its replay buffer and result cache. A connector that declared
+   `hello.bridge.result_cache: volatile` and restarted its process MUST NOT ask to resume; it
+   starts a new session (step 5). When a bridge connector starts a new session (no resume, or a
+   refused one), the hub never re-sends the old session's unfinished actions and records an action
+   whose outcome is unknown as unconfirmed. The hub sends `ack` only after the event is durable on
+   its side (committed or written to its log). Replayed events may be old: bridge hubs never
+   dispatch commands or interactions from events whose envelope `ts` (frame creation time,
+   unchanged on replay) is more than 60 s old, and other runtimes SHOULD apply the same rule.
 
 **Close codes** (WebSocket close frame; a `bye` precedes them when possible):
 
@@ -539,6 +882,22 @@ close the connection with `4000`.
     not worth standardising yet. Promote to a real type in a later minor if a second platform needs it.
 - Schema `$id`s carry the major (`…/pcp/v1/…`). The base URL is a placeholder until the repo is
   published (open question).
+- **(1.1)** [`index.json`](../schemas/index.json) marks each type with the minor that added it
+  (`since`; absent = 1.0), so validators and tests can check that a session negotiated at an older
+  minor uses only its types (§2.1).
+
+**Worked example: why 1.1 adds fields instead of changing them.** Several bridge needs met 1.0
+fields of the wrong type. A minor never changes a type, so:
+
+| need | 1.0 field (kept) | 1.1 addition |
+|---|---|---|
+| message ids that are only unique per session | `features.message_ids: bool` | `features.message_id_scope: stable\|session\|none` |
+| the bot can edit its own messages | `features.edits: bool` (sees edits) | `features.edits_own` |
+| custom and durable reactions | `features.reactions: bool` | `reactions_custom`, `reactions_durable` (and a new event, `message.reaction`, rather than a priority change on `reaction`) |
+| where a bound room's audio goes | `bindings[].audio: bool` | `bindings[].room_audio: string` |
+| a `waiting` step for playback | `audio.play` `status` (closed enum) | `phase` (open string) |
+| a 240 s wait ceiling | `wait_for_slot_ms`, `wait_ms` (unbounded) | none: a hub rule, since narrowing a 1.0 field is not additive |
+| an author's account at a hub | `UserRef.ext.<platform>` | generic `resolved_by`, `unresolved`, `anonymous`; hub-specific account ids stay in `ext.<hub platform>` |
 
 ## 15. Security and privacy
 
@@ -547,10 +906,81 @@ close the connection with `4000`.
 - `message.private` and inbox content MUST NOT be forwarded to public surfaces (bridged web rooms,
   feeds, search). Memory/AI modules that keep PM content keep it private to that user (v1 rule).
 - Users who opted out (`!incognito`) are redacted by the runtime before anything leaves it; the
-  connector still reports them (it cannot know).
+  connector still reports them (it cannot know). **(1.1)** This remains the rule for connectors
+  without `features.privacy_edge_filter`; connectors that declare it follow §15.1 instead.
 - Connectors report what the platform shows; they MUST NOT derive sensitive traits (Camfrog's
   profile gender bit, for example, is not forwarded).
 - Media URLs SHOULD be short-lived; blob ids SHOULD be unguessable.
+
+### 15.1 Privacy edge filter and policy mirror (1.1, amends §15)
+
+PCP 1.0 has the connector report everyone and the runtime redact. With bridges, that means a hidden
+user's lines reach the hub (and its logs) before anything can drop them. 1.1 moves the filter to
+the edge for connectors that can apply it.
+
+**The mirror.** A hub sends `policy.sync` per bound room and the connector acks with its `v`.
+`full: true` replaces the whole mirror; otherwise each present field replaces that field. It
+carries feature `bans[]`, the `lockdown` level, per-room `switches{}` (e.g. `relay`,
+`transcripts`, `captions`, `clips`, `whispers`), the command deny list `cmd_deny[]`, and three
+identity lists: `hidden[]`, `caption_optout[]`, `transcripts_optout[]`. Identities in those lists
+are never sent in clear, and only identities on the connector's own platform are listed. Per-viewer
+ignores and anything else about hub users never reach the edge.
+
+**Identity hashes.** Each list item is
+
+```
+lower_hex(HMAC-SHA256(key, utf8(platform + ":" + id)))[0:20]
+```
+
+where `platform` is the connector's platform name (`hello.data.connector.platform`) and `id` is
+the `UserRef.id` exactly as this connector reports it in its own events: no case folding, trimming
+or other normalisation (on Camfrog the id is the lowercased login, so the hash uses that, not the
+`login` spelling). The connector checks a user by computing the same hash over the id it is about
+to report.
+
+- **Keys** are byte strings provisioned out of band with the connector's credentials (like the
+  hello token, from the hub's admin console) and never travel in PCP frames. Each key has its own
+  id, the kid.
+- `hidden_kid` names the key every identity list in that `policy.sync` uses; a frame that carries
+  `hidden`, `caption_optout` or `transcripts_optout` MUST carry `hidden_kid`.
+- **Rotation.** The hub provisions the next key (with its kid) before it starts using it. The
+  connector keeps the key of its current mirror until a full `policy.sync` names the new kid, so
+  during a rotation it holds the current and the previous key. A mirror naming a kid the connector
+  does not hold is stale (rule 6 below): the connector refuses hub-originated work with
+  `stale_policy` until it is provisioned.
+- **Test vector.** key = the 16 ASCII bytes `pcp-1.1-test-key`, platform `camfrog`, id
+  `lilypadlou`: the item is `f84004d41a6a8ddaf206`. (With id `LilyPadLou` it would be
+  `59f5b268a7e190753538`, which is why the id is never normalised by either side.)
+
+**A connector that declares `features.privacy_edge_filter`:**
+
+1. drops at the edge every line, sticker, transcript, caption and turn-audio blob of an identity
+   in `hidden[]` or opted out on its own platform, **before** anything is logged, recorded,
+   remembered or transcribed;
+2. reports such users only as `anonymous: true` presence (§4.1), never with their id or name;
+3. never runs speech-to-text for identities in `transcripts_optout[]` or `caption_optout[]`, for
+   speakers it cannot attribute confidently while such an identity is present, or in rooms whose
+   `transcripts` / `captions` switches are off; it reports the switches it applies in
+   `room.state`;
+4. never writes `otr` lines or whisper text to its logs or memory (§6.1, §10.1);
+5. purges its own logs and caches for the given identities on `privacy.forget`, and returns what it
+   holds on `privacy.export`;
+6. treats its mirror as **stale** when it is older than `hello.bridge.policy_ttl_ms`: it reports
+   `connector.status` / `bridge.status` `degraded` and refuses hub-originated work (relay sends,
+   interactions, hub room control, hub-pushed moderation, mic-lane grabs) with `stale_policy`,
+   while its platform-native features (commands typed on the platform, the bot's own games and
+   music) keep running on the last mirror with bans enforced from cache. Ingest continues; the hub
+   re-checks everything.
+
+**A connector without it** keeps 1.0 behaviour (it reports everyone). A hub MUST then drop that
+connector's events for hidden or opted-out identities at ingest, before any write or log, and
+SHOULD show "edge privacy filter missing" on its bindings. A hub also drops any transcript,
+caption or turn audio from a room whose switch is off or attributed to an opted-out identity,
+whatever the connector declared.
+
+**Privacy requests from the platform.** `privacy.request` lets a login-resolved user set a privacy
+flag, ask for an export, have their public lines forgotten, or prove an identity link, by typing a
+command where they are. The hub answers privately (`send.private`).
 
 ## 16. Worked examples
 
@@ -600,6 +1030,57 @@ cache, then a refused resume followed by `sync.gap`.
 [`twitch/01-session.json`](../samples/twitch/01-session.json) (emotes, badges as roles, subs as
 notices, whispers with no room).
 
+**(1.1) Relay and its echo** ([`bridge/02-relay-echo.json`](../samples/bridge/02-relay-echo.json)):
+the first part of a pre-split line, its result with timing, and the platform echo correlated by
+`relay_ref`:
+
+```json
+{"op":"action","id":"relay:0192f3c4-7a1e-7c2b-9d10-5e6f7a8b9c0d:bnd-cf-lilypond:p1","ts":"2026-10-18T18:01:00.040Z",
+ "type":"send","scope":{"platform":"camfrog","room":{"id":"LilyPond.Room","name":"The Lily Pond","kind":"room"}},
+ "data":{"text":"🌐 Mia (web): the first half of a long line, …",
+         "relay":{"msg_id":"0192f3c4-7a1e-7c2b-9d10-5e6f7a8b9c0d","binding":"bnd-cf-lilypond",
+                  "author":{"acct":"acct-9f2c","name":"Mia","name_src":"display","tag":"web","verified":true,
+                            "identities":{"camfrog":"mia_k"}},
+                  "otr":false,"hops":0,"render":"prefix","presplit":true,"part":{"n":1,"of":2},"deadline_ms":29360}},
+ "timeout_ms":29360,"origin":{"bot":"hub","module":"relay"}}
+
+{"op":"result","id":"c-3201","ts":"2026-10-18T18:01:00.080Z","seq":6,
+ "ref":"relay:0192f3c4-7a1e-7c2b-9d10-5e6f7a8b9c0d:bnd-cf-lilypond:p1","type":"send","ok":true,
+ "data":{"message_ids":["cf-m-3f9a2c1d7e4b-LilyPond.Room-88219"],"parts":1,"t":{"wait_ms":640,"send_ms":35}}}
+
+{"op":"event","id":"c-3202","ts":"2026-10-18T18:01:00.120Z","seq":7,"type":"message","connector":"cf-main",
+ "scope":{"platform":"camfrog","room":{"id":"LilyPond.Room","name":"The Lily Pond","kind":"room"}},
+ "data":{"message_id":"cf-m-3f9a2c1d7e4b-LilyPond.Room-88219","user":{"id":"pepebot","login":"PepeBot","is_self":true},
+         "text":"🌐 Mia (web): the first half of a long line, …","self":true,
+         "relay_ref":"relay:0192f3c4-7a1e-7c2b-9d10-5e6f7a8b9c0d:bnd-cf-lilypond:p1"}}
+```
+
+**(1.1) Policy mirror** ([`bridge/03-policy-privacy.json`](../samples/bridge/03-policy-privacy.json)):
+
+```json
+{"op":"action","id":"r-3301","ts":"2026-10-18T18:02:00.040Z","type":"policy.sync",
+ "scope":{"platform":"camfrog","room":{"id":"LilyPond.Room"}},
+ "data":{"v":41,"full":true,"bans":[{"user":{"id":"spamfrog","login":"spamfrog"},"feature":"chat","expires_at":"2026-10-19T18:00:00.000Z"}],
+         "lockdown":"off","hidden":["3fa91c0b7d2e4a6c8e10","aa01bb02cc03dd04ee05"],"hidden_kid":"k-2026q4",
+         "caption_optout":[],"transcripts_optout":["0f1e2d3c4b5a69788796"],
+         "switches":{"relay":true,"transcripts":true,"captions":false,"clips":true,"whispers":true},"cmd_deny":["roast"]}}
+
+{"op":"result","id":"c-3301","ts":"2026-10-18T18:02:00.080Z","seq":20,"ref":"r-3301","type":"policy.sync","ok":true,"data":{"v":41}}
+```
+
+**(1.1) A privacy request typed in the room** (same file):
+
+```json
+{"op":"event","id":"c-3308","ts":"2026-10-18T18:02:00.400Z","seq":27,"type":"privacy.request","connector":"cf-main",
+ "scope":{"platform":"camfrog"},
+ "data":{"identity":{"id":"toadstool77","login":"toadstool77","display":"mossy","resolved_by":"login"},
+         "kind":"flag","flag":"transcripts_optout","value":true}}
+```
+
+The other bridge samples cover the 1.1 handshake and bindings, room state and moderation caps,
+Discord edits, deletes and durable reactions, interactions and cards, whispers, voice, hub
+moderation with `target`, and the 1.0 fallback ([`bridge/`](../samples/bridge)).
+
 ## 17. Camfrog (cf-connector) mapping
 
 How today's Camfrog hook (v1 `frida-bot.py` + `frida-hook.js`, CF10 framing `"CF10" | u32 len |
@@ -633,6 +1114,11 @@ work package B-2.
 | Join Room dialog (WM_COMMAND 0x7595, edit 1001, OK 126), MOTD and password prompts | `room.join` |
 | WM_SYSCOMMAND SC_CLOSE on the room window (separate-window mode) | `room.leave` |
 | "Conversations" window capture + vision | `inbox.read` |
+| (1.1) chat line ids | `message_id` = `cf-m-<session>-<room>-<seq>` (`message_id_scope: session`): `<room>` is the room id with every character outside the `Id` alphabet replaced by `-`, or the first 16 hex characters of its SHA-256 when the id would pass 128 characters |
+| (1.1) s2c 0x06 font blob on a login-resolved line | `message.ext.camfrog.font{face, color}` (parsed; never raw markup) |
+| (1.1) s2c 0x60 PM "reply" / "whisper to" commands | `message.private` with `whisper{reply_to \| to}` |
+| (1.1) s2c 0x3f sticker | `sticker` with `StickerRef.ext.camfrog{pack, id, desc}`; `desc` from a vision pass, the art itself is never forwarded |
+| (1.1) relayed lines | `send` with `relay`: prefix render in a relay font, `{name}` from `author.name`; echoes come back with `relay_ref` |
 
 Connector-internal concerns that do **not** surface in PCP: socket fd ↔ room mapping, the
 "active room" window the hook drives (exposed only as `room.list[].active`), RPC threading (v1
@@ -641,8 +1127,8 @@ client version.
 
 ## 18. Open questions
 
-1. **Blob store placement.** Specified as runtime-hosted (connectors dial out and may sit behind
-   NAT). Alternative: presigned S3 URLs handed out by the runtime. Confirm with F-2 (MinIO/Garage).
+1. **Blob store placement.** *Settled in 1.1* (§11): runtime-hosted at `{runtime}/pcp/v1/blobs/{id}`,
+   connector-token authenticated, backed by object storage; receivers get short-lived signed URLs.
 2. **Who owns `audio.play` on Camfrog?** Playback needs both the mic slot (cf-connector) and the
    virtual-mic device (audiohook). The samples have cf-connector declare `audio.play` (audiohook as a
    library inside it); the alternative is the runtime orchestrating `mic.grab` on cf-connector +
@@ -662,3 +1148,8 @@ client version.
 9. **Licence**: decided — MIT (see `LICENSE`).
 10. **Ordering across rooms.** Actions are ordered per room only. Does any module need a global
     order (e.g. turf announcements to several rooms at once)?
+11. **`room.state` patches** (1.1) use RFC 7386 JSON Merge Patch, which cannot express array edits
+    or set a value to `null`. Should they move to RFC 6902 JSON Patch?
+12. **`policy.sync` key rotation** (1.1): keys are provisioned out of band with a kid each, and a
+    mirror naming a kid the connector does not hold is stale (§15.1). Should there be an explicit
+    in-band key-rotation handshake action as well?

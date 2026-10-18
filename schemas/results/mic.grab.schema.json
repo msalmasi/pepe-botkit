@@ -17,6 +17,24 @@
     "bumped": {
       "$ref": "../defs.schema.json#/$defs/UserRef"
     },
+    "phase": {
+      "$ref": "../defs.schema.json#/$defs/Phase",
+      "description": "(1.1) Interim progress: queued, waiting, live, lost, grab_pending, grab_failed. Open."
+    },
+    "position": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "(1.1) Place in the platform's mic queue."
+    },
+    "eta_ms": {
+      "$ref": "../defs.schema.json#/$defs/DurationMs",
+      "description": "(1.1) Honest estimate of the wait."
+    },
+    "reason": {
+      "type": "string",
+      "maxLength": 64,
+      "description": "(1.1) With phase grab_failed or lost: why (e.g. cooldown, blocked, race_lost)."
+    },
     "ext": {
       "$ref": "../defs.schema.json#/$defs/Ext"
     }

@@ -1,0 +1,31 @@
+{
+  "description": "ban.feature.set says whether the ban is set or lifted",
+  "expect_path": "/data",
+  "frame": {
+    "op": "action",
+    "id": "r-bad-56",
+    "ts": "2026-10-18T18:40:00.200Z",
+    "type": "ban.feature.set",
+    "scope": {
+      "platform": "patv",
+      "room": {
+        "id": "the-lily-pond",
+        "name": "The Lily Pond",
+        "kind": "room"
+      }
+    },
+    "data": {
+      "user": {
+        "id": "u:spamfrog",
+        "login": "spamfrog"
+      },
+      "feature": "media",
+      "duration_s": 86400,
+      "reason": "repeated link spam"
+    },
+    "origin": {
+      "bot": "bot-pepe",
+      "module": "automod"
+    }
+  }
+}

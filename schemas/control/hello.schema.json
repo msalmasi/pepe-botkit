@@ -22,7 +22,7 @@
           "properties": {
             "id": { "description": "Stable connector instance id, configured in the admin console (one per platform account).", "$ref": "../defs.schema.json#/$defs/Id" },
             "platform": { "$ref": "../defs.schema.json#/$defs/Platform" },
-            "kind": { "description": "chat (default) or audio (audiohook) or other.", "type": "string", "enum": ["chat", "audio", "bridge", "other"] },
+            "kind": { "description": "chat (default), audio (audiohook), bridge (talks to a bridge hub, 1.1 semantics: sends hello.data.bridge), or other.", "type": "string", "enum": ["chat", "audio", "bridge", "other"] },
             "name": { "description": "Software name, e.g. cf-connector.", "type": "string", "maxLength": 128 },
             "version": { "description": "Software version (semver).", "type": "string", "maxLength": 64 },
             "platform_version": { "description": "Version of the platform client/API the connector drives (e.g. Camfrog client build).", "type": "string", "maxLength": 64 },
@@ -37,6 +37,17 @@
           "properties": { "token": { "type": "string", "minLength": 16, "maxLength": 4096, "writeOnly": true } }
         },
         "capabilities": { "$ref": "../capabilities.schema.json" },
+        "bridge": {
+          "description": "(1.1) Sent by connectors with kind=bridge, whose runtime is a bridge hub that relays lines between platforms.",
+          "type": "object",
+          "properties": {
+            "echo_correlation": { "description": "How the connector ties the platform echo of a relayed line to its action: job (an intermediate queue's job id), label (a platform request label, e.g. IRCv3 labeled-response), nonce (a platform send nonce).", "enum": ["job", "label", "nonce"] },
+            "delivery_ack": { "description": "When the send result is final: on_wire (written to the platform) or on_echo (the platform echoed it back).", "enum": ["on_wire", "on_echo"] },
+            "history_backfill": { "description": "The connector can fetch platform history after an outage.", "type": "boolean" },
+            "policy_ttl_ms": { "description": "Age after which the connector treats its policy.sync mirror as stale (spec/PCP.md, Security and privacy).", "type": "integer", "minimum": 1000 },
+            "result_cache": { "description": "durable: the action result cache survives a connector restart for the replay window, so the connector may resume after a restart. volatile: it does not, so after a process restart the connector starts a new session instead of resuming. Every accepted resume gets its unfinished actions re-sent (spec/PCP.md, Resume).", "enum": ["durable", "volatile"] }
+          }
+        },
         "resume": {
           "description": "Resume a previous session after a disconnect.",
           "type": "object",

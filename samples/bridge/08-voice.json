@@ -1,0 +1,273 @@
+{
+  "description": "Voice: live caption.partial events then the final transcript of one mic turn (deduped on utt_id); a mic-lane grab with interim phases queued (position, eta_ms) -> waiting -> live; audio.play reporting the 1.1 phase beside the 1.0 status (waiting = for a free mic slot).",
+  "grounding": "Captions and transcripts are produced at the connector only for speakers who have not opted out and in rooms whose captions/transcripts switches are on. The 240 s wait ceiling is a hub rule, not a schema limit.",
+  "frames": [
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event",
+        "id": "c-3801",
+        "ts": "2026-10-18T18:30:00.040Z",
+        "seq": 70,
+        "type": "caption.partial",
+        "connector": "cf-main",
+        "scope": {
+          "platform": "camfrog",
+          "room": {
+            "id": "LilyPond.Room",
+            "name": "The Lily Pond",
+            "kind": "room"
+          }
+        },
+        "data": {
+          "utt_id": "utt-3f9a2c-0042",
+          "speaker": {
+            "id": "ribbit_ron",
+            "login": "ribbit_ron",
+            "resolved_by": "login"
+          },
+          "lang": "en",
+          "text": "so the thing about",
+          "t0": "2026-10-18T18:30:01.200Z"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event",
+        "id": "c-3802",
+        "ts": "2026-10-18T18:30:00.080Z",
+        "seq": 71,
+        "type": "caption.partial",
+        "connector": "cf-main",
+        "scope": {
+          "platform": "camfrog",
+          "room": {
+            "id": "LilyPond.Room",
+            "name": "The Lily Pond",
+            "kind": "room"
+          }
+        },
+        "data": {
+          "utt_id": "utt-3f9a2c-0042",
+          "speaker": {
+            "id": "ribbit_ron",
+            "login": "ribbit_ron",
+            "resolved_by": "login"
+          },
+          "lang": "en",
+          "text": "so the thing about frogs is",
+          "t0": "2026-10-18T18:30:01.200Z",
+          "media_ts": "2026-10-18T18:30:02.700Z"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event",
+        "id": "c-3803",
+        "ts": "2026-10-18T18:30:00.120Z",
+        "seq": 72,
+        "type": "transcript",
+        "connector": "cf-main",
+        "scope": {
+          "platform": "camfrog",
+          "room": {
+            "id": "LilyPond.Room",
+            "name": "The Lily Pond",
+            "kind": "room"
+          }
+        },
+        "data": {
+          "utt_id": "utt-3f9a2c-0042",
+          "speaker": {
+            "id": "ribbit_ron",
+            "login": "ribbit_ron",
+            "resolved_by": "login"
+          },
+          "lang": "en",
+          "prob": 0.97,
+          "t0": "2026-10-18T18:30:01.200Z",
+          "t1": "2026-10-18T18:30:05.900Z",
+          "text": "so the thing about frogs is they never stop singing",
+          "source": "mic",
+          "attribution": "mic_holder",
+          "confidence": 0.93
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action",
+        "id": "lane:0192fb20-11aa-7b00-8c00-000000000001:bnd-cf-lilypond",
+        "ts": "2026-10-18T18:30:00.160Z",
+        "type": "mic.grab",
+        "scope": {
+          "platform": "camfrog",
+          "room": {
+            "id": "LilyPond.Room",
+            "name": "The Lily Pond",
+            "kind": "room"
+          }
+        },
+        "data": {
+          "hold": true,
+          "wait_ms": 240000,
+          "lane": true
+        },
+        "origin": {
+          "bot": "hub",
+          "module": "mic-lane",
+          "user": {
+            "id": "mia_k",
+            "login": "mia_k",
+            "resolved_by": "login"
+          }
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result",
+        "id": "c-3804",
+        "ts": "2026-10-18T18:30:00.200Z",
+        "seq": 73,
+        "ref": "lane:0192fb20-11aa-7b00-8c00-000000000001:bnd-cf-lilypond",
+        "type": "mic.grab",
+        "ok": true,
+        "final": false,
+        "data": {
+          "held": false,
+          "phase": "queued",
+          "position": 2,
+          "eta_ms": 40000
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result",
+        "id": "c-3805",
+        "ts": "2026-10-18T18:30:00.240Z",
+        "seq": 74,
+        "ref": "lane:0192fb20-11aa-7b00-8c00-000000000001:bnd-cf-lilypond",
+        "type": "mic.grab",
+        "ok": true,
+        "final": false,
+        "data": {
+          "held": false,
+          "phase": "waiting",
+          "waited_ms": 38000
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result",
+        "id": "c-3806",
+        "ts": "2026-10-18T18:30:00.280Z",
+        "seq": 75,
+        "ref": "lane:0192fb20-11aa-7b00-8c00-000000000001:bnd-cf-lilypond",
+        "type": "mic.grab",
+        "ok": true,
+        "data": {
+          "held": true,
+          "phase": "live",
+          "waited_ms": 41200
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action",
+        "id": "r-3801",
+        "ts": "2026-10-18T18:30:00.320Z",
+        "type": "audio.play",
+        "scope": {
+          "platform": "camfrog",
+          "room": {
+            "id": "LilyPond.Room",
+            "name": "The Lily Pond",
+            "kind": "room"
+          }
+        },
+        "data": {
+          "media": {
+            "kind": "audio",
+            "mime": "audio/wav",
+            "url": "https://runtime.example/pcp/v1/blobs/tts-a41c",
+            "duration_ms": 3100
+          },
+          "mode": "queue",
+          "mic": "auto",
+          "wait_for_slot_ms": 240000,
+          "caption": "good set Ron"
+        },
+        "origin": {
+          "bot": "bot-pepe",
+          "module": "greeter"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result",
+        "id": "c-3807",
+        "ts": "2026-10-18T18:30:00.360Z",
+        "seq": 76,
+        "ref": "r-3801",
+        "type": "audio.play",
+        "ok": true,
+        "final": false,
+        "data": {
+          "status": "queued",
+          "phase": "waiting"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result",
+        "id": "c-3808",
+        "ts": "2026-10-18T18:30:00.400Z",
+        "seq": 77,
+        "ref": "r-3801",
+        "type": "audio.play",
+        "ok": true,
+        "final": false,
+        "data": {
+          "status": "playing",
+          "phase": "playing",
+          "waited_ms": 9000
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result",
+        "id": "c-3809",
+        "ts": "2026-10-18T18:30:00.440Z",
+        "seq": 78,
+        "ref": "r-3801",
+        "type": "audio.play",
+        "ok": true,
+        "data": {
+          "status": "played",
+          "phase": "played",
+          "waited_ms": 9000,
+          "played_ms": 3100
+        }
+      }
+    }
+  ]
+}

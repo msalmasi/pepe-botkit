@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/results/privacy.forget.schema.json",
+  "title": "result privacy.forget: data",
+  "description": "privacy.forget result.",
+  "type": "object",
+  "required": [
+    "purged"
+  ],
+  "properties": {
+    "purged": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Records removed."
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

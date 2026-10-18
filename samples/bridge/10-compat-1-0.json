@@ -1,0 +1,281 @@
+{
+  "description": "Version negotiation keeps 1.0 peers working. A 1.1 connector meets a 1.0 runtime: welcome says 1.0, so the connector falls back (reaction instead of message.reaction, no typing, no 1.1 fields) and the runtime sends only 1.0 actions. Then a 1.0 connector meets a 1.1 hub: the hub treats it as privacy_edge_filter=false and message ids as stable (message_ids=true), and sends no relay block, presplit or other 1.1 field.",
+  "grounding": "MINOR = min(connector, runtime). Both sides MUST NOT send types or fields introduced after the negotiated minor; receivers ignore unknown ones anyway.",
+  "frames": [
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "hello",
+        "id": "o-4001",
+        "ts": "2026-10-18T18:50:00.040Z",
+        "data": {
+          "pcp": "1.1",
+          "connector": {
+            "id": "dc-old",
+            "platform": "discord",
+            "kind": "chat",
+            "name": "discord-connector",
+            "version": "0.2.0"
+          },
+          "capabilities": {
+            "events": [
+              "message",
+              "reaction",
+              "message.reaction",
+              "typing",
+              "connector.status"
+            ],
+            "actions": [
+              "send",
+              "react",
+              "message.edit"
+            ],
+            "features": {
+              "message_ids": true,
+              "message_id_scope": "stable",
+              "reactions": true,
+              "reactions_durable": true,
+              "edits": true,
+              "edits_own": true,
+              "typing": true
+            },
+            "limits": {
+              "message_max_chars": 2000
+            }
+          }
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "note": "The runtime only speaks 1.0.",
+      "frame": {
+        "op": "welcome",
+        "id": "or-4001",
+        "ts": "2026-10-18T18:50:00.080Z",
+        "ref": "o-4001",
+        "data": {
+          "pcp": "1.0",
+          "session_id": "sess-01JA4F0000OLD",
+          "heartbeat_ms": 30000,
+          "runtime": {
+            "name": "botkit",
+            "version": "0.1.0"
+          }
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event",
+        "id": "o-4002",
+        "ts": "2026-10-18T18:50:00.120Z",
+        "seq": 1,
+        "type": "message",
+        "connector": "dc-old",
+        "scope": {
+          "platform": "discord",
+          "guild": {
+            "id": "1100000000000000001",
+            "name": "Frog Pond"
+          },
+          "room": {
+            "id": "1100000000000000010",
+            "name": "lounge",
+            "kind": "channel"
+          }
+        },
+        "data": {
+          "message_id": "1400000000000000300",
+          "user": {
+            "id": "1300000000000000002",
+            "login": "dave"
+          },
+          "text": "gm"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "1.0 reaction (low priority), not message.reaction.",
+      "frame": {
+        "op": "event",
+        "id": "o-4003",
+        "ts": "2026-10-18T18:50:00.160Z",
+        "seq": 2,
+        "type": "reaction",
+        "connector": "dc-old",
+        "scope": {
+          "platform": "discord",
+          "guild": {
+            "id": "1100000000000000001",
+            "name": "Frog Pond"
+          },
+          "room": {
+            "id": "1100000000000000010",
+            "name": "lounge",
+            "kind": "channel"
+          }
+        },
+        "data": {
+          "user": {
+            "id": "1300000000000000003",
+            "login": "lou"
+          },
+          "message_id": "1400000000000000300",
+          "emoji": {
+            "name": "🐸"
+          },
+          "op": "add"
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action",
+        "id": "or-4002",
+        "ts": "2026-10-18T18:50:00.200Z",
+        "type": "send",
+        "scope": {
+          "platform": "discord",
+          "guild": {
+            "id": "1100000000000000001",
+            "name": "Frog Pond"
+          },
+          "room": {
+            "id": "1100000000000000010",
+            "name": "lounge",
+            "kind": "channel"
+          }
+        },
+        "data": {
+          "text": "gm Dave",
+          "reply_to": "1400000000000000300"
+        },
+        "origin": {
+          "bot": "bot-pepe",
+          "module": "greeter"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "No t{} timing block: that is a 1.1 field.",
+      "frame": {
+        "op": "result",
+        "id": "o-4004",
+        "ts": "2026-10-18T18:50:00.240Z",
+        "seq": 3,
+        "ref": "or-4002",
+        "type": "send",
+        "ok": true,
+        "data": {
+          "message_ids": [
+            "1400000000000000301"
+          ],
+          "parts": 1
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "A later session of an older build that only speaks 1.0, against a 1.1 hub.",
+      "frame": {
+        "op": "hello",
+        "id": "p-4101",
+        "ts": "2026-10-18T18:55:00.040Z",
+        "data": {
+          "pcp": "1.0",
+          "connector": {
+            "id": "dc-old",
+            "platform": "discord",
+            "kind": "chat",
+            "name": "discord-connector",
+            "version": "0.1.0"
+          },
+          "capabilities": {
+            "events": [
+              "message",
+              "reaction"
+            ],
+            "actions": [
+              "send",
+              "react"
+            ],
+            "features": {
+              "message_ids": true,
+              "reactions": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "welcome",
+        "id": "pr-4101",
+        "ts": "2026-10-18T18:55:00.080Z",
+        "ref": "p-4101",
+        "data": {
+          "pcp": "1.0",
+          "session_id": "sess-01JA4F0001OLD",
+          "heartbeat_ms": 30000,
+          "runtime": {
+            "name": "hub-1",
+            "version": "0.1.0"
+          }
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "note": "Plain 1.0 send. The connector has no edge filter, so the hub drops its events for hidden or opted-out identities at ingest, before any write or log (§15.1).",
+      "frame": {
+        "op": "action",
+        "id": "pr-4102",
+        "ts": "2026-10-18T18:55:00.120Z",
+        "type": "send",
+        "scope": {
+          "platform": "discord",
+          "guild": {
+            "id": "1100000000000000001",
+            "name": "Frog Pond"
+          },
+          "room": {
+            "id": "1100000000000000010",
+            "name": "lounge",
+            "kind": "channel"
+          }
+        },
+        "data": {
+          "text": "the stream starts at 9"
+        },
+        "origin": {
+          "bot": "hub",
+          "module": "notes"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result",
+        "id": "p-4102",
+        "ts": "2026-10-18T18:55:00.160Z",
+        "seq": 1,
+        "ref": "pr-4102",
+        "type": "send",
+        "ok": true,
+        "data": {
+          "message_ids": [
+            "1400000000000000302"
+          ],
+          "parts": 1
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "description": "policy.sync.hidden items are 20 lowercase hex characters",
+  "expect_path": "/data/hidden/0",
+  "frame": {
+    "op": "action",
+    "id": "r-bad-29",
+    "ts": "2026-10-18T18:00:00.000Z",
+    "type": "policy.sync",
+    "scope": {
+      "platform": "camfrog",
+      "room": {
+        "id": "LilyPond.Room",
+        "name": "The Lily Pond",
+        "kind": "room"
+      }
+    },
+    "data": {
+      "v": 3,
+      "hidden": [
+        "XYZ"
+      ]
+    }
+  }
+}

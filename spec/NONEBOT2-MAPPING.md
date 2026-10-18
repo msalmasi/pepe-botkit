@@ -87,6 +87,21 @@ so connectors written in Python share them.
 Self events (`data.self` / `user.is_self`): the adapter still delivers them, but a global
 `event_preprocessor` drops them for matchers unless a plugin opts in (loggers do).
 
+**PCP 1.1.** The new event types map like any other type: one `Event` subclass each, named after
+the type, with `get_event_name()` = the PCP type. `message.update` and `message.delete` are
+`notice` events about a message (`MessageUpdateEvent`, `MessageDeleteEvent`); `message.reaction`
+is `MessageReactionEvent`. A connector sends `message.reaction` in place of `reaction` only when
+the adapter's `welcome.subscribe` lists `message.reaction` and not `reaction` (PCP §2.1); an adapter
+that wants it subscribes to it by name, and one that does not keeps receiving `reaction`. `typing`,
+`transcript`, `caption.partial`, `room.state`, `registry.put`, `binding.request` and
+`privacy.request` are `notice` events; `bridge.status` is a `meta_event` beside
+`connector.status`. `interaction` maps to a `notice`-type `InteractionEvent` (`is_tome()` =
+`True`, `get_message()` = the command line `/<name> <sub> <options>` for logging); plugins handle
+it with `on_type(InteractionEvent)` and answer through `bot.interaction_respond(...)` (the
+`interaction.respond` action) before `deadline_ms`, or defer first. Vendor `x.*` types stay `UnknownEvent` and are matched with
+`on_type`. `get_user_id()` should raise for `unresolved` or `anonymous` users, so their session
+tokens never become per-user state.
+
 ## 4. Message and segments
 
 ```python

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/actions/interaction.defer.schema.json",
+  "title": "action interaction.defer: data",
+  "description": "(1.1) Acknowledge an interaction now and answer later (the platform shows a 'thinking' state).",
+  "type": "object",
+  "required": [
+    "interaction_id"
+  ],
+  "properties": {
+    "interaction_id": {
+      "$ref": "../defs.schema.json#/$defs/Id"
+    },
+    "ephemeral": {
+      "type": "boolean",
+      "description": "The eventual answer is visible only to the user."
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}
