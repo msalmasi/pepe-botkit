@@ -1,6 +1,6 @@
 {
   "name": "@pepe-botkit/pcp-schemas",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "JSON Schemas and a validator for PCP (Pepe Connector Protocol) frames.",
   "license": "MIT",
   "type": "module",
