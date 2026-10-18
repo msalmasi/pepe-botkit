@@ -40,6 +40,19 @@
     "edited": {
       "type": "boolean"
     },
+    "relay_ref": {
+      "$ref": "../defs.schema.json#/$defs/Id",
+      "description": "(1.1) On a self line: id of the relay action (or job) this echo answers. Lets a bridge hub mark the delivery echoed instead of ingesting it."
+    },
+    "webhook_id": {
+      "type": "string",
+      "maxLength": 128,
+      "description": "(1.1) Sent through this platform webhook (Discord); hubs drop lines from their own webhooks."
+    },
+    "remote_reply_to": {
+      "$ref": "../defs.schema.json#/$defs/Id",
+      "description": "(1.1) The platform's reply target when it is not a message_id this session reported (an older message); the hub resolves it through its id map."
+    },
     "ext": {
       "$ref": "../defs.schema.json#/$defs/Ext"
     }

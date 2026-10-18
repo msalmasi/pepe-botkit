@@ -1,0 +1,39 @@
+{
+  "description": "a message.delete event names the deleted message",
+  "expect_path": "/data",
+  "frame": {
+    "op": "event",
+    "id": "c-bad-64",
+    "ts": "2026-10-18T18:10:00.320Z",
+    "seq": 6,
+    "type": "message.delete",
+    "connector": "dc-main",
+    "scope": {
+      "platform": "discord",
+      "guild": {
+        "id": "1100000000000000001",
+        "name": "Frog Pond"
+      },
+      "room": {
+        "id": "1100000000000000010",
+        "name": "lounge",
+        "kind": "channel"
+      }
+    },
+    "data": {
+      "user": {
+        "id": "1300000000000000002",
+        "login": "dave",
+        "display": "Dave",
+        "resolved_by": "login"
+      },
+      "deleted_by": {
+        "id": "1300000000000000002",
+        "login": "dave",
+        "display": "Dave",
+        "resolved_by": "login"
+      },
+      "verified": true
+    }
+  }
+}

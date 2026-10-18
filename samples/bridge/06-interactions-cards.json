@@ -1,0 +1,505 @@
+{
+  "description": "Interactions and cards on a connector with features.interactions and components: a slash command (interaction) deferred and answered ephemerally, a card with an actions row posted, a select click answered with a followup, card.update with a state patch, and one send carrying every other 1.1 element (tip, gift, boost, poll, timestamp, pad_ref, user_ref, code_block, custom_emoji, embed, system), each with its text rendering.",
+  "grounding": "Discord requires an acknowledgement within 3 s, hence deadline_ms and interaction.defer. custom_id is module:entity:verb:version, at most 64 bytes, so it fits Telegram callback_data unchanged.",
+  "frames": [
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event",
+        "id": "d-3601",
+        "ts": "2026-10-18T18:12:00.040Z",
+        "seq": 20,
+        "type": "interaction",
+        "connector": "dc-main",
+        "scope": {
+          "platform": "discord",
+          "guild": {
+            "id": "1100000000000000001",
+            "name": "Frog Pond"
+          },
+          "room": {
+            "id": "1100000000000000010",
+            "name": "lounge",
+            "kind": "channel"
+          }
+        },
+        "data": {
+          "interaction_id": "1800000000000000001",
+          "kind": "command",
+          "command": {
+            "name": "raffle",
+            "sub": "buy"
+          },
+          "options": {
+            "raffle": "R12",
+            "count": 5
+          },
+          "user": {
+            "id": "1300000000000000003",
+            "login": "lou",
+            "display": "Lou",
+            "resolved_by": "login"
+          },
+          "deadline_ms": 3000,
+          "expect": {
+            "price": "25000"
+          }
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action",
+        "id": "dr-3601",
+        "ts": "2026-10-18T18:12:00.080Z",
+        "type": "interaction.defer",
+        "data": {
+          "interaction_id": "1800000000000000001",
+          "ephemeral": true
+        },
+        "origin": {
+          "bot": "hub",
+          "module": "raffle",
+          "event": "d-3601"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result",
+        "id": "d-3602",
+        "ts": "2026-10-18T18:12:00.120Z",
+        "seq": 21,
+        "ref": "dr-3601",
+        "type": "interaction.defer",
+        "ok": true,
+        "data": {}
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action",
+        "id": "dr-3602",
+        "ts": "2026-10-18T18:12:00.160Z",
+        "type": "interaction.respond",
+        "data": {
+          "interaction_id": "1800000000000000001",
+          "ephemeral": true,
+          "text": "You bought 5 tickets (25,000 PAT)."
+        },
+        "origin": {
+          "bot": "hub",
+          "module": "raffle",
+          "event": "d-3601"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result",
+        "id": "d-3603",
+        "ts": "2026-10-18T18:12:00.200Z",
+        "seq": 22,
+        "ref": "dr-3602",
+        "type": "interaction.respond",
+        "ok": true,
+        "data": {
+          "message_ids": [
+            "1400000000000000200"
+          ]
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "note": "Connectors without components would drop the actions element and post the card's text, which names the command.",
+      "frame": {
+        "op": "action",
+        "id": "bot:act-0192f3d0",
+        "ts": "2026-10-18T18:12:00.240Z",
+        "type": "send",
+        "scope": {
+          "platform": "discord",
+          "guild": {
+            "id": "1100000000000000001",
+            "name": "Frog Pond"
+          },
+          "room": {
+            "id": "1100000000000000010",
+            "name": "lounge",
+            "kind": "channel"
+          }
+        },
+        "data": {
+          "text": "Raffle: 250,000 PAT pot, 60 tickets left · !raffle buy",
+          "content": [
+            {
+              "type": "card",
+              "ref": "R:12",
+              "v": 44,
+              "cl": 1,
+              "layout": {
+                "b": "section",
+                "c": [
+                  {
+                    "b": "text",
+                    "key": "card.raffle.pot"
+                  }
+                ]
+              },
+              "state": {
+                "open": true,
+                "sold": 190,
+                "left": 60
+              },
+              "text": "Raffle: 250,000 PAT pot, 60 tickets left · !raffle buy"
+            },
+            {
+              "type": "actions",
+              "rows": [
+                [
+                  {
+                    "b": "button",
+                    "custom_id": "raffle:R12:buy:v1",
+                    "label_key": "card.raffle.buy",
+                    "label": "Buy 1",
+                    "price": "5000",
+                    "cmd": {
+                      "name": "raffle",
+                      "sub": "buy",
+                      "opts": {
+                        "count": 1
+                      }
+                    }
+                  },
+                  {
+                    "b": "select",
+                    "custom_id": "raffle:R12:buyn:v1",
+                    "options": [
+                      {
+                        "value": "5",
+                        "label": "5 tickets"
+                      },
+                      {
+                        "value": "10",
+                        "label": "10 tickets"
+                      }
+                    ],
+                    "cmd": {
+                      "name": "raffle",
+                      "sub": "buy"
+                    }
+                  }
+                ]
+              ],
+              "ttl_s": 900,
+              "text": "(buttons: !raffle buy <count>)"
+            }
+          ]
+        },
+        "origin": {
+          "bot": "hub",
+          "module": "raffle"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result",
+        "id": "d-3604",
+        "ts": "2026-10-18T18:12:00.280Z",
+        "seq": 23,
+        "ref": "bot:act-0192f3d0",
+        "type": "send",
+        "ok": true,
+        "data": {
+          "message_ids": [
+            "1400000000000000201"
+          ],
+          "parts": 1
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event",
+        "id": "d-3605",
+        "ts": "2026-10-18T18:12:00.320Z",
+        "seq": 24,
+        "type": "interaction",
+        "connector": "dc-main",
+        "scope": {
+          "platform": "discord",
+          "guild": {
+            "id": "1100000000000000001",
+            "name": "Frog Pond"
+          },
+          "room": {
+            "id": "1100000000000000010",
+            "name": "lounge",
+            "kind": "channel"
+          }
+        },
+        "data": {
+          "interaction_id": "1800000000000000002",
+          "kind": "component",
+          "custom_id": "raffle:R12:buyn:v1",
+          "values": [
+            "10"
+          ],
+          "message_id": "1400000000000000201",
+          "user": {
+            "id": "1300000000000000003",
+            "login": "lou",
+            "display": "Lou",
+            "resolved_by": "login"
+          },
+          "deadline_ms": 3000
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action",
+        "id": "dr-3603",
+        "ts": "2026-10-18T18:12:00.360Z",
+        "type": "interaction.followup",
+        "data": {
+          "interaction_id": "1800000000000000002",
+          "text": "Lou bought 10 tickets."
+        },
+        "origin": {
+          "bot": "hub",
+          "module": "raffle",
+          "event": "d-3605"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result",
+        "id": "d-3606",
+        "ts": "2026-10-18T18:12:00.400Z",
+        "seq": 25,
+        "ref": "dr-3603",
+        "type": "interaction.followup",
+        "ok": true,
+        "data": {
+          "message_ids": [
+            "1400000000000000202"
+          ]
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "note": "Coalesced: at most one card edit per card per 5 s.",
+      "frame": {
+        "op": "action",
+        "id": "dr-3604",
+        "ts": "2026-10-18T18:12:00.440Z",
+        "type": "card.update",
+        "scope": {
+          "platform": "discord",
+          "guild": {
+            "id": "1100000000000000001",
+            "name": "Frog Pond"
+          },
+          "room": {
+            "id": "1100000000000000010",
+            "name": "lounge",
+            "kind": "channel"
+          }
+        },
+        "data": {
+          "ref": "R:12",
+          "v": 45,
+          "patch": {
+            "sold": 200,
+            "left": 50
+          },
+          "text": "Raffle: 250,000 PAT pot, 50 tickets left · !raffle buy"
+        },
+        "origin": {
+          "bot": "hub",
+          "module": "raffle"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result",
+        "id": "d-3607",
+        "ts": "2026-10-18T18:12:00.480Z",
+        "seq": 26,
+        "ref": "dr-3604",
+        "type": "card.update",
+        "ok": true,
+        "data": {}
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action",
+        "id": "bot:act-0192f3d1",
+        "ts": "2026-10-18T18:12:00.520Z",
+        "type": "send",
+        "scope": {
+          "platform": "discord",
+          "guild": {
+            "id": "1100000000000000001",
+            "name": "Frog Pond"
+          },
+          "room": {
+            "id": "1100000000000000010",
+            "name": "lounge",
+            "kind": "channel"
+          }
+        },
+        "data": {
+          "text": "Mia tipped Dave 5,000 PAT · Poll: best frog? · starts at 21:00",
+          "content": [
+            {
+              "type": "tip",
+              "tx": "L:88123",
+              "from": {
+                "id": "1300000000000000001",
+                "login": "mia"
+              },
+              "to": {
+                "id": "1300000000000000002",
+                "login": "dave"
+              },
+              "amount": "5000",
+              "text": "Mia tipped Dave 5,000 PAT"
+            },
+            {
+              "type": "gift",
+              "ref": "g_7Qm2Lx9Pk4",
+              "to": {
+                "id": "1300000000000000002",
+                "login": "dave"
+              },
+              "amount": "25000",
+              "item": "crown",
+              "text": "Someone gifted Dave a crown"
+            },
+            {
+              "type": "boost",
+              "tx": "L:88200",
+              "from": {
+                "id": "1300000000000000003",
+                "login": "lou"
+              },
+              "pad": "the-lily-pond",
+              "amount": "10000",
+              "text": "Lou boosted p/the-lily-pond"
+            },
+            {
+              "type": "poll",
+              "ref": "P:7",
+              "v": 3,
+              "cl": 1,
+              "layout": {
+                "b": "section",
+                "c": []
+              },
+              "state": {
+                "open": true
+              },
+              "text": "Poll: best frog? · !poll vote"
+            },
+            {
+              "type": "timestamp",
+              "at": "2026-10-18T21:00:00Z",
+              "fmt": "t",
+              "text": "21:00 UTC"
+            },
+            {
+              "type": "pad_ref",
+              "slug": "the-lily-pond",
+              "text": "p/the-lily-pond"
+            },
+            {
+              "type": "user_ref",
+              "user": {
+                "id": "1300000000000000002",
+                "login": "dave"
+              },
+              "text": "u/dave"
+            },
+            {
+              "type": "code_block",
+              "lang": "txt",
+              "text": "!poll vote 2"
+            },
+            {
+              "type": "custom_emoji",
+              "id": "frogwave",
+              "pack": "pond",
+              "name": "frogwave",
+              "media": {
+                "kind": "image",
+                "mime": "image/webp",
+                "url": "https://cdn.example/e/frogwave.webp"
+              },
+              "text": ":frogwave:"
+            },
+            {
+              "type": "embed",
+              "url": "https://video.example/watch/fake000",
+              "kind": "link",
+              "title": "Frog song",
+              "site": "video.example",
+              "text": "Frog song"
+            },
+            {
+              "type": "system",
+              "key": "topic.set",
+              "args": {
+                "by": {
+                  "id": "1300000000000000002",
+                  "login": "dave"
+                },
+                "topic": "no politics after 9"
+              },
+              "text": "Dave set the topic: no politics after 9"
+            }
+          ]
+        },
+        "origin": {
+          "bot": "hub",
+          "module": "notes"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result",
+        "id": "d-3608",
+        "ts": "2026-10-18T18:12:00.560Z",
+        "seq": 27,
+        "ref": "bot:act-0192f3d1",
+        "type": "send",
+        "ok": true,
+        "data": {
+          "message_ids": [
+            "1400000000000000203"
+          ],
+          "parts": 1
+        }
+      }
+    }
+  ]
+}

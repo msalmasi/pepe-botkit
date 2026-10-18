@@ -1,0 +1,30 @@
+{
+  "description": "a partial caption names its utterance, so later partials replace it",
+  "expect_path": "/data",
+  "frame": {
+    "op": "event",
+    "id": "c-bad-52",
+    "ts": "2026-10-18T18:30:00.040Z",
+    "seq": 70,
+    "type": "caption.partial",
+    "connector": "cf-main",
+    "scope": {
+      "platform": "camfrog",
+      "room": {
+        "id": "LilyPond.Room",
+        "name": "The Lily Pond",
+        "kind": "room"
+      }
+    },
+    "data": {
+      "speaker": {
+        "id": "ribbit_ron",
+        "login": "ribbit_ron",
+        "resolved_by": "login"
+      },
+      "lang": "en",
+      "text": "so the thing about",
+      "t0": "2026-10-18T18:30:01.200Z"
+    }
+  }
+}

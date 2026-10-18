@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/actions/privacy.export.schema.json",
+  "title": "action privacy.export: data",
+  "description": "(1.1) Collect everything the connector itself holds about these identities, for a data export.",
+  "type": "object",
+  "required": [
+    "identities"
+  ],
+  "properties": {
+    "identities": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 100,
+      "items": {
+        "$ref": "../defs.schema.json#/$defs/UserRef"
+      }
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

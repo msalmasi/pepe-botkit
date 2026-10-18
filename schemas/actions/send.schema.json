@@ -19,6 +19,71 @@
       "$ref": "../defs.schema.json#/$defs/UserRef",
       "description": "Address the line to this user (connector picks the platform's convention)."
     },
+    "relay": {
+      "description": "(1.1) Present when a bridge hub relays a person's line. The connector renders {name} from author.name only, never from author.display; never re-splits a presplit part (one over its limit is refused relay_refused, details.code too_long); and never logs or remembers an otr line.",
+      "type": "object",
+      "required": [
+        "msg_id",
+        "binding",
+        "author"
+      ],
+      "properties": {
+        "msg_id": {
+          "$ref": "../defs.schema.json#/$defs/Id",
+          "description": "The line's id at the hub."
+        },
+        "binding": {
+          "$ref": "../defs.schema.json#/$defs/Id"
+        },
+        "author": {
+          "$ref": "../defs.schema.json#/$defs/RelayAuthor"
+        },
+        "otr": {
+          "type": "boolean",
+          "description": "Off the record: never written to the connector's logs or memory."
+        },
+        "hops": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "0 = native line; 1 = already bridged once (never relayed further)."
+        },
+        "render": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{0,31}$",
+          "description": "Render style (open), e.g. prefix, masquerade, bot."
+        },
+        "presplit": {
+          "type": "boolean",
+          "description": "The hub split the line: text fits one platform line; the connector does not split."
+        },
+        "part": {
+          "type": "object",
+          "required": [
+            "n",
+            "of"
+          ],
+          "properties": {
+            "n": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "of": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "deadline_ms": {
+          "$ref": "../defs.schema.json#/$defs/DurationMs",
+          "description": "Give up (error timeout) if the line cannot be sent within this time of receipt."
+        },
+        "reply_to_remote": {
+          "$ref": "../defs.schema.json#/$defs/Id",
+          "description": "Platform message id to reply to natively (features.reply_refs)."
+        }
+      }
+    },
     "ext": {
       "$ref": "../defs.schema.json#/$defs/Ext"
     }

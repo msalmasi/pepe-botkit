@@ -32,6 +32,10 @@
         "other"
       ]
     },
+    "phase": {
+      "$ref": "../defs.schema.json#/$defs/Phase",
+      "description": "(1.1) Finer progress beside status: queued, waiting (for a free mic slot), playing, played, dropped. Open."
+    },
     "ext": {
       "$ref": "../defs.schema.json#/$defs/Ext"
     }

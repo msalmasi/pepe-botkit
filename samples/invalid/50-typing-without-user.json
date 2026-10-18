@@ -1,0 +1,25 @@
+{
+  "description": "typing names who is typing",
+  "expect_path": "/data",
+  "frame": {
+    "op": "event",
+    "id": "c-bad-50",
+    "ts": "2026-10-18T18:10:00.160Z",
+    "seq": 2,
+    "type": "typing",
+    "connector": "dc-main",
+    "scope": {
+      "platform": "discord",
+      "guild": {
+        "id": "1100000000000000001",
+        "name": "Frog Pond"
+      },
+      "room": {
+        "id": "1100000000000000010",
+        "name": "lounge",
+        "kind": "channel"
+      }
+    },
+    "data": {}
+  }
+}

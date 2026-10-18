@@ -13,7 +13,8 @@
       "examples": [
         "bad_request", "unauthorized", "forbidden", "not_found", "not_in_room", "unsupported",
         "conflict", "rate_limited", "timeout", "unavailable", "payload_too_large", "cancelled",
-        "version_unsupported", "session_invalid", "platform_error", "internal"
+        "version_unsupported", "session_invalid", "platform_error", "internal",
+        "relay_refused", "flood_risk", "binding_off", "stale_policy"
       ]
     },
     "message": { "description": "Human-readable, for logs. Not shown to end users verbatim.", "type": "string", "maxLength": 2000 },
@@ -28,8 +29,16 @@
       "then": { "properties": { "retryable": { "const": true } } }
     },
     {
-      "if": { "properties": { "code": { "enum": ["bad_request", "unsupported", "version_unsupported", "payload_too_large"] } }, "required": ["code"] },
+      "if": { "properties": { "code": { "enum": ["bad_request", "unsupported", "version_unsupported", "payload_too_large", "relay_refused"] } }, "required": ["code"] },
       "then": { "properties": { "retryable": { "const": false } } }
+    },
+    {
+      "$comment": "(1.1) relay_refused names the connector's reason in details.code (too_long, account, not_present, ...).",
+      "if": { "properties": { "code": { "const": "relay_refused" } }, "required": ["code"] },
+      "then": {
+        "required": ["details"],
+        "properties": { "details": { "required": ["code"], "properties": { "code": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" } } } }
+      }
     }
   ]
 }

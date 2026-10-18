@@ -679,6 +679,317 @@
           }
         }
       }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "message.edit"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "required": [
+          "scope"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "actions/message.edit.schema.json"
+          },
+          "scope": {
+            "required": [
+              "room"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "message.delete"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "required": [
+          "scope"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "actions/message.delete.schema.json"
+          },
+          "scope": {
+            "required": [
+              "room"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "message.hide"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "required": [
+          "scope"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "actions/message.hide.schema.json"
+          },
+          "scope": {
+            "required": [
+              "room"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "ban.feature.set"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "required": [
+          "scope"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "actions/ban.feature.set.schema.json"
+          },
+          "scope": {
+            "required": [
+              "room"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "lockdown.set"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "required": [
+          "scope"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "actions/lockdown.set.schema.json"
+          },
+          "scope": {
+            "required": [
+              "room"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "policy.sync"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "required": [
+          "scope"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "actions/policy.sync.schema.json"
+          },
+          "scope": {
+            "required": [
+              "room"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "modcaps.query"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "required": [
+          "scope"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "actions/modcaps.query.schema.json"
+          },
+          "scope": {
+            "required": [
+              "room"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "interaction.defer"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "$ref": "actions/interaction.defer.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "interaction.respond"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "$ref": "actions/interaction.respond.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "interaction.followup"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "$ref": "actions/interaction.followup.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "card.update"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "required": [
+          "scope"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "actions/card.update.schema.json"
+          },
+          "scope": {
+            "required": [
+              "room"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "privacy.forget"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "$ref": "actions/privacy.forget.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "privacy.export"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "$ref": "actions/privacy.export.schema.json"
+          }
+        }
+      }
     }
   ],
   "type": "object",
@@ -704,6 +1015,10 @@
       "description": "If the connector cannot START the action within this many ms of receiving it, it gives up and returns error 'timeout' (retryable).",
       "type": "integer",
       "minimum": 1
+    },
+    "target": {
+      "$ref": "defs.schema.json#/$defs/BindingTarget",
+      "description": "(1.1) On a bridge hub with several bindings in one scope: which binding the action is for, or \"native\" for the hub's own room. Absent = the scope's only binding."
     },
     "origin": {
       "description": "Who caused this action, for audit logs and platform-side attribution (module, bot instance, triggering event).",

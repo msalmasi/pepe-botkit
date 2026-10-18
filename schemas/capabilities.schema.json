@@ -53,13 +53,57 @@
           "enum": ["always", "sometimes", "never"]
         },
         "roles": { "description": "Role names role.set accepts.", "type": "array", "items": { "type": "string" } },
-        "platform_commands": { "description": "Commands platform.command accepts (e.g. Camfrog slash commands).", "type": "array", "items": { "type": "string" } }
-      }
+        "platform_commands": { "description": "Commands platform.command accepts (e.g. Camfrog slash commands).", "type": "array", "items": { "type": "string" } },
+        "message_id_scope": {
+          "description": "(1.1) How long message ids stay valid: stable (durable platform ids), session (unique only within one connector session, e.g. cf-m-<session>-<room>-<seq>), none. Replaces the 1.0 boolean message_ids for 1.1 receivers; a 1.0 connector's message_ids=true means stable, false means none. A connector whose scope is session or none sends message_ids=false.",
+          "enum": ["stable", "session", "none"]
+        },
+        "edits_own": { "description": "(1.1) The bot can edit its own messages (message.edit).", "type": "boolean" },
+        "deletes": { "description": "(1.1) What message.delete can remove: own (the bot's own messages), any (needs moderator rights), none.", "enum": ["own", "any", "none"] },
+        "delete_window_s": { "description": "(1.1) Messages older than this cannot be deleted (Telegram: 172800). Absent = no limit.", "type": "integer", "minimum": 0 },
+        "reply_refs": { "description": "(1.1) send.reply_to and relay.reply_to_remote produce native replies.", "type": "boolean" },
+        "masquerade": { "description": "(1.1) Relayed lines can carry the author's name and avatar natively (Discord webhooks) instead of a text prefix.", "type": "boolean" },
+        "relay_prefix": { "description": "(1.1) Relayed lines are rendered with a text prefix ({name} and a tag).", "type": "boolean" },
+        "reactions_custom": { "description": "(1.1) Custom (non-unicode) emoji can be used in reactions.", "type": "boolean" },
+        "reactions_durable": { "description": "(1.1) The connector can report reactions per user as normal-priority message.reaction events. It sends them in place of 1.0's low-priority reaction only when welcome.subscribe lists message.reaction and not reaction; otherwise it keeps sending reaction (spec/PCP.md, Version negotiation).", "type": "boolean" },
+        "typing": { "description": "(1.1) The connector emits typing events.", "type": "boolean" },
+        "components": { "description": "(1.1) The connector renders card and actions elements natively (buttons, selects).", "type": "boolean" },
+        "interactions": { "description": "(1.1) The connector emits interaction events and executes interaction.defer/respond/followup.", "type": "boolean" },
+        "privacy_edge_filter": {
+          "description": "(1.1) The connector applies the privacy edge filter of spec/PCP.md, Security and privacy: it drops lines, stickers, transcripts and turn audio of hidden or opted-out identities before anything is logged, and reports them only as anonymous presence. Absent = false.",
+          "type": "boolean"
+        },
+        "media": {
+          "description": "(1.1) Media limits.",
+          "type": "object",
+          "properties": { "inline_max_bytes": { "description": "Largest attachment the connector posts natively; bigger media goes as a link.", "type": "integer", "minimum": 0 } }
+        },
+        "pacing": {
+          "description": "(1.1) The platform's send limits, so a hub that paces relayed lines can do so without the connector re-ordering. Durations in ms; *_burst are line counts within the matching window.",
+          "type": "object",
+          "properties": {
+            "gap_ms": { "description": "Minimum gap between two lines of one sender.", "type": "integer", "minimum": 0 },
+            "burst": { "type": "integer", "minimum": 1 },
+            "window_ms": { "type": "integer", "minimum": 1 },
+            "room_gap_ms": { "description": "Minimum gap between two lines in one room.", "type": "integer", "minimum": 0 },
+            "room_burst": { "type": "integer", "minimum": 1 },
+            "room_window_ms": { "type": "integer", "minimum": 1 },
+            "global_gap_ms": { "description": "Minimum gap between any two lines of the connector's account.", "type": "integer", "minimum": 0 },
+            "webhook_burst": { "type": "integer", "minimum": 1 },
+            "webhook_window_ms": { "type": "integer", "minimum": 1 },
+            "dup_window_ms": { "description": "The platform drops a line identical to one sent within this window.", "type": "integer", "minimum": 0 }
+          }
+        }
+      },
+      "$comment": "(1.1) message_ids=true means stable ids to a 1.0 reader, so it never goes with a session or none scope.",
+      "if": { "properties": { "message_id_scope": { "enum": ["session", "none"] } }, "required": ["message_id_scope"] },
+      "then": { "properties": { "message_ids": { "const": false } } }
     },
     "limits": {
       "type": "object",
       "properties": {
         "message_max_chars": { "type": "integer", "minimum": 1 },
+        "message_max_bytes": { "description": "(1.1) Line limit in UTF-8 bytes, for platforms that count bytes (IRC).", "type": "integer", "minimum": 1 },
         "send_per_minute": { "type": "integer", "minimum": 1 },
         "max_rooms": { "type": "integer", "minimum": 1 },
         "topic_max_chars": { "type": "integer", "minimum": 1 }

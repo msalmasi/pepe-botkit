@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/results/policy.sync.schema.json",
+  "title": "result policy.sync: data",
+  "description": "policy.sync result: the version now applied.",
+  "type": "object",
+  "required": [
+    "v"
+  ],
+  "properties": {
+    "v": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

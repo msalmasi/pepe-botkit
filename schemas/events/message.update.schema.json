@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/events/message.update.schema.json",
+  "title": "event message.update: data",
+  "description": "(1.1) A message was edited on the platform by its author. Needs features.edits. text and content are the new full message.",
+  "type": "object",
+  "required": [
+    "message_id",
+    "text"
+  ],
+  "properties": {
+    "message_id": {
+      "$ref": "../defs.schema.json#/$defs/Id"
+    },
+    "user": {
+      "$ref": "../defs.schema.json#/$defs/UserRef",
+      "description": "Who edited (the author)."
+    },
+    "text": {
+      "$ref": "../defs.schema.json#/$defs/Text"
+    },
+    "content": {
+      "$ref": "../defs.schema.json#/$defs/Content"
+    },
+    "edited_at": {
+      "$ref": "../defs.schema.json#/$defs/Timestamp"
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

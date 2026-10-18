@@ -1,0 +1,18 @@
+{
+  "description": "registry.put carries the command list",
+  "expect_path": "/data",
+  "frame": {
+    "op": "event",
+    "id": "c-bad-49",
+    "ts": "2026-10-18T18:00:00.160Z",
+    "seq": 2,
+    "type": "registry.put",
+    "connector": "cf-main",
+    "scope": {
+      "platform": "camfrog"
+    },
+    "data": {
+      "full": true
+    }
+  }
+}

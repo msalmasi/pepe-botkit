@@ -1,0 +1,43 @@
+{
+  "description": "an anonymous gift (ref) carries no from and no tx",
+  "expect_path": "/data/content/0",
+  "frame": {
+    "op": "action",
+    "id": "r-bad-41",
+    "ts": "2026-10-18T18:12:00.240Z",
+    "type": "send",
+    "scope": {
+      "platform": "discord",
+      "guild": {
+        "id": "1100000000000000001",
+        "name": "Frog Pond"
+      },
+      "room": {
+        "id": "1100000000000000010",
+        "name": "lounge",
+        "kind": "channel"
+      }
+    },
+    "data": {
+      "text": "🎁 a gift for Lou",
+      "content": [
+        {
+          "type": "gift",
+          "amount": "500",
+          "to": {
+            "id": "1300000000000000003"
+          },
+          "ref": "anon-ref-00000001",
+          "from": {
+            "id": "1300000000000000002"
+          },
+          "text": "🎁 a gift for Lou"
+        }
+      ]
+    },
+    "origin": {
+      "bot": "hub",
+      "module": "raffle"
+    }
+  }
+}

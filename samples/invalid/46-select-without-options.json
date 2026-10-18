@@ -1,0 +1,48 @@
+{
+  "description": "a select input has at least one option",
+  "expect_path": "/data/content/0/rows/0/0",
+  "frame": {
+    "op": "action",
+    "id": "r-bad-46",
+    "ts": "2026-10-18T18:12:00.240Z",
+    "type": "send",
+    "scope": {
+      "platform": "discord",
+      "guild": {
+        "id": "1100000000000000001",
+        "name": "Frog Pond"
+      },
+      "room": {
+        "id": "1100000000000000010",
+        "name": "lounge",
+        "kind": "channel"
+      }
+    },
+    "data": {
+      "text": "pick: /game pick <name>",
+      "content": [
+        {
+          "type": "actions",
+          "text": "pick: /game pick <name>",
+          "rows": [
+            [
+              {
+                "b": "select",
+                "custom_id": "game:g1:pick:1",
+                "cmd": {
+                  "name": "game",
+                  "sub": "pick"
+                },
+                "options": []
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    "origin": {
+      "bot": "hub",
+      "module": "raffle"
+    }
+  }
+}

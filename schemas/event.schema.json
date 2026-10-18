@@ -544,6 +544,306 @@
           }
         }
       }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "message.update"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "required": [
+          "scope"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "events/message.update.schema.json"
+          },
+          "scope": {
+            "required": [
+              "room"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "message.delete"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "required": [
+          "scope"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "events/message.delete.schema.json"
+          },
+          "scope": {
+            "required": [
+              "room"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "message.reaction"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "required": [
+          "scope"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "events/message.reaction.schema.json"
+          },
+          "scope": {
+            "required": [
+              "room"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "privacy.request"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "$ref": "events/privacy.request.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "room.state"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "required": [
+          "scope"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "events/room.state.schema.json"
+          },
+          "scope": {
+            "required": [
+              "room"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "binding.request"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "required": [
+          "scope"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "events/binding.request.schema.json"
+          },
+          "scope": {
+            "required": [
+              "room"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "registry.put"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "$ref": "events/registry.put.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "interaction"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "required": [
+          "scope"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "events/interaction.schema.json"
+          },
+          "scope": {
+            "required": [
+              "room"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "typing"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "required": [
+          "scope"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "events/typing.schema.json"
+          },
+          "scope": {
+            "required": [
+              "room"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "transcript"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "required": [
+          "scope"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "events/transcript.schema.json"
+          },
+          "scope": {
+            "required": [
+              "room"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "caption.partial"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "required": [
+          "scope"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "events/caption.partial.schema.json"
+          },
+          "scope": {
+            "required": [
+              "room"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "bridge.status"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "$ref": "events/bridge.status.schema.json"
+          }
+        }
+      }
     }
   ],
   "type": "object",

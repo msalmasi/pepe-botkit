@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/events/message.reaction.schema.json",
+  "title": "event message.reaction: data",
+  "description": "(1.1) A reaction by one user, reported durably (normal priority) by connectors declaring features.reactions_durable instead of the low-priority 1.0 reaction event. count is the platform's total for that emoji after the change, when known.",
+  "type": "object",
+  "required": [
+    "message_id",
+    "emoji",
+    "user",
+    "op"
+  ],
+  "properties": {
+    "message_id": {
+      "$ref": "../defs.schema.json#/$defs/Id"
+    },
+    "emoji": {
+      "$ref": "../defs.schema.json#/$defs/Emoji"
+    },
+    "user": {
+      "$ref": "../defs.schema.json#/$defs/UserRef"
+    },
+    "op": {
+      "enum": [
+        "add",
+        "remove"
+      ]
+    },
+    "count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

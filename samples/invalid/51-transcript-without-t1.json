@@ -1,0 +1,35 @@
+{
+  "description": "a transcript carries the turn's start and end",
+  "expect_path": "/data",
+  "frame": {
+    "op": "event",
+    "id": "c-bad-51",
+    "ts": "2026-10-18T18:30:00.120Z",
+    "seq": 72,
+    "type": "transcript",
+    "connector": "cf-main",
+    "scope": {
+      "platform": "camfrog",
+      "room": {
+        "id": "LilyPond.Room",
+        "name": "The Lily Pond",
+        "kind": "room"
+      }
+    },
+    "data": {
+      "utt_id": "utt-3f9a2c-0042",
+      "speaker": {
+        "id": "ribbit_ron",
+        "login": "ribbit_ron",
+        "resolved_by": "login"
+      },
+      "lang": "en",
+      "prob": 0.97,
+      "t0": "2026-10-18T18:30:01.200Z",
+      "text": "so the thing about frogs is they never stop singing",
+      "source": "mic",
+      "attribution": "mic_holder",
+      "confidence": 0.93
+    }
+  }
+}

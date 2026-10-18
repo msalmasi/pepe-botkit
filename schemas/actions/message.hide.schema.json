@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/actions/message.hide.schema.json",
+  "title": "action message.hide: data",
+  "description": "(1.1) Hide a message from view, reversibly (moderation in rooms the connector hosts, e.g. a bridge hub's own rooms). on=false un-hides.",
+  "type": "object",
+  "required": [
+    "message_id"
+  ],
+  "properties": {
+    "message_id": {
+      "$ref": "../defs.schema.json#/$defs/Id"
+    },
+    "on": {
+      "type": "boolean",
+      "description": "Absent = true."
+    },
+    "reason": {
+      "type": "string",
+      "maxLength": 512
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

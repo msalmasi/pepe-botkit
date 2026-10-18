@@ -1,0 +1,219 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/events/room.state.schema.json",
+  "title": "event room.state: data",
+  "description": "(1.1) Room state the connector applies: switches, command menu and prices, bot menu, roster freshness, settings and languages. full=true is a complete snapshot; otherwise the data is an RFC 7386 JSON Merge Patch of the previous state (null removes a key). v increases by 1 per room; a receiver that sees a gap ignores patches until the next full snapshot, which the connector sends on room.joined, on session start or resume, and at least every 30 s.",
+  "type": "object",
+  "required": [
+    "v"
+  ],
+  "properties": {
+    "v": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "State version, strictly increasing per room."
+    },
+    "full": {
+      "type": "boolean",
+      "description": "This is a complete snapshot."
+    },
+    "switches": {
+      "description": "Feature switches in force in this room (hub-defined names), as the connector applies them.",
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_]{0,31}$"
+      },
+      "additionalProperties": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      }
+    },
+    "menu": {
+      "description": "Command menu: command name -> price in points (\"0\" = free).",
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z0-9][a-z0-9_.-]{0,31}$"
+      },
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "$ref": "../defs.schema.json#/$defs/Points"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "bot_menu": {
+      "description": "The bot's own action menu: action -> {on, price}.",
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z0-9][a-z0-9_.-]{0,31}$"
+      },
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "on": {
+                "type": "boolean"
+              },
+              "price": {
+                "$ref": "../defs.schema.json#/$defs/Points"
+              }
+            }
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "roster_fresh": {
+      "anyOf": [
+        {
+          "description": "How fresh the connector's member list is.",
+          "type": "object",
+          "properties": {
+            "list_at": {
+              "$ref": "../defs.schema.json#/$defs/Timestamp"
+            },
+            "list_fresh": {
+              "type": "boolean"
+            },
+            "list_stale_after": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Seconds after list_at when the list counts as stale."
+            },
+            "seen_ttl": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Seconds a member counts as present after last seen."
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "stage": {
+      "anyOf": [
+        {
+          "description": "Connector-defined stage/host state.",
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "settings": {
+      "description": "Room settings the bot applies: key -> {v, by}.",
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+      },
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "object",
+            "required": [
+              "v"
+            ],
+            "properties": {
+              "v": {},
+              "by": {
+                "type": "string",
+                "maxLength": 256
+              }
+            }
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "masters_off": {
+      "anyOf": [
+        {
+          "description": "Settings the room's owner has locked off.",
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "type": "string",
+            "maxLength": 64
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "lang": {
+      "anyOf": [
+        {
+          "description": "Languages in force: chat (the bot's chat language here), stt, tts, tts_effective (the voice actually used).",
+          "type": "object",
+          "properties": {
+            "chat": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[A-Za-z]{2,8}(-[A-Za-z0-9]{1,8})*$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "stt": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[A-Za-z]{2,8}(-[A-Za-z0-9]{1,8})*$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "tts": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[A-Za-z]{2,8}(-[A-Za-z0-9]{1,8})*$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "tts_effective": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[A-Za-z]{2,8}(-[A-Za-z0-9]{1,8})*$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

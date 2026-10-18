@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/actions/policy.sync.schema.json",
+  "title": "action policy.sync: data",
+  "description": "(1.1) The hub's policy for one bound room, mirrored at the connector and acked by v. full=true replaces the whole mirror; otherwise each present field replaces that field and absent fields stay. Hidden and opted-out identities are HmacIds keyed by hidden_kid, for the connector's own platform only. The connector enforces it at the edge (spec/PCP.md, Security and privacy) and treats a mirror older than hello.bridge.policy_ttl_ms as stale.",
+  "type": "object",
+  "required": [
+    "v"
+  ],
+  "dependentRequired": {
+    "hidden": [
+      "hidden_kid"
+    ],
+    "caption_optout": [
+      "hidden_kid"
+    ],
+    "transcripts_optout": [
+      "hidden_kid"
+    ]
+  },
+  "properties": {
+    "v": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Policy version."
+    },
+    "full": {
+      "type": "boolean"
+    },
+    "bans": {
+      "description": "Feature bans that apply in this room, for identities on the connector's platform.",
+      "type": "array",
+      "maxItems": 10000,
+      "items": {
+        "type": "object",
+        "required": [
+          "user",
+          "feature"
+        ],
+        "properties": {
+          "user": {
+            "$ref": "../defs.schema.json#/$defs/UserRef"
+          },
+          "feature": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{0,31}$"
+          },
+          "expires_at": {
+            "$ref": "../defs.schema.json#/$defs/Timestamp"
+          }
+        }
+      }
+    },
+    "lockdown": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{0,31}$"
+    },
+    "hidden": {
+      "description": "Identities whose lines, stickers, transcripts, captions and turn audio never leave the connector (dropped before anything is logged, recorded, remembered or transcribed).",
+      "type": "array",
+      "maxItems": 100000,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "../defs.schema.json#/$defs/HmacId"
+      }
+    },
+    "hidden_kid": {
+      "description": "Id of the HMAC key the identity lists use. Keys are provisioned out of band with the connector credentials and never travel in PCP frames; each key has its own kid. A mirror naming a kid the connector does not hold is stale (stale_policy). Required whenever an identity list is present.",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._-]{1,64}$"
+    },
+    "caption_optout": {
+      "description": "Identities never captioned.",
+      "type": "array",
+      "maxItems": 100000,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "../defs.schema.json#/$defs/HmacId"
+      }
+    },
+    "transcripts_optout": {
+      "description": "Identities never transcribed.",
+      "type": "array",
+      "maxItems": 100000,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "../defs.schema.json#/$defs/HmacId"
+      }
+    },
+    "switches": {
+      "description": "Per-room switches (hub-defined names, e.g. relay, transcripts, captions, clips, whispers). The connector records nothing and runs no speech-to-text where a switch is off.",
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_]{0,31}$"
+      },
+      "additionalProperties": {
+        "type": "boolean"
+      }
+    },
+    "cmd_deny": {
+      "description": "Commands the connector's bot must not run in this room.",
+      "type": "array",
+      "maxItems": 1000,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9_.-]{0,31}$"
+      }
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

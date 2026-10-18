@@ -1,0 +1,25 @@
+{
+  "description": "message.edit carries the new text or content",
+  "expect_path": "/data",
+  "frame": {
+    "op": "action",
+    "id": "r-bad-54",
+    "ts": "2026-10-18T18:10:00.400Z",
+    "type": "message.edit",
+    "scope": {
+      "platform": "discord",
+      "guild": {
+        "id": "1100000000000000001",
+        "name": "Frog Pond"
+      },
+      "room": {
+        "id": "1100000000000000010",
+        "name": "lounge",
+        "kind": "channel"
+      }
+    },
+    "data": {
+      "message_id": "1400000000000000101"
+    }
+  }
+}

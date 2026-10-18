@@ -924,6 +924,435 @@
           }
         }
       }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "message.edit"
+          },
+          "ok": {
+            "const": true
+          }
+        },
+        "required": [
+          "type",
+          "ok"
+        ],
+        "not": {
+          "properties": {
+            "final": {
+              "const": false
+            }
+          },
+          "required": [
+            "final"
+          ]
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "$ref": "results/message.edit.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "message.delete"
+          },
+          "ok": {
+            "const": true
+          }
+        },
+        "required": [
+          "type",
+          "ok"
+        ],
+        "not": {
+          "properties": {
+            "final": {
+              "const": false
+            }
+          },
+          "required": [
+            "final"
+          ]
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "$ref": "results/none.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "message.hide"
+          },
+          "ok": {
+            "const": true
+          }
+        },
+        "required": [
+          "type",
+          "ok"
+        ],
+        "not": {
+          "properties": {
+            "final": {
+              "const": false
+            }
+          },
+          "required": [
+            "final"
+          ]
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "$ref": "results/none.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "ban.feature.set"
+          },
+          "ok": {
+            "const": true
+          }
+        },
+        "required": [
+          "type",
+          "ok"
+        ],
+        "not": {
+          "properties": {
+            "final": {
+              "const": false
+            }
+          },
+          "required": [
+            "final"
+          ]
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "$ref": "results/none.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "lockdown.set"
+          },
+          "ok": {
+            "const": true
+          }
+        },
+        "required": [
+          "type",
+          "ok"
+        ],
+        "not": {
+          "properties": {
+            "final": {
+              "const": false
+            }
+          },
+          "required": [
+            "final"
+          ]
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "$ref": "results/none.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "policy.sync"
+          },
+          "ok": {
+            "const": true
+          }
+        },
+        "required": [
+          "type",
+          "ok"
+        ],
+        "not": {
+          "properties": {
+            "final": {
+              "const": false
+            }
+          },
+          "required": [
+            "final"
+          ]
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "$ref": "results/policy.sync.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "modcaps.query"
+          },
+          "ok": {
+            "const": true
+          }
+        },
+        "required": [
+          "type",
+          "ok"
+        ],
+        "not": {
+          "properties": {
+            "final": {
+              "const": false
+            }
+          },
+          "required": [
+            "final"
+          ]
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "$ref": "results/modcaps.query.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "interaction.defer"
+          },
+          "ok": {
+            "const": true
+          }
+        },
+        "required": [
+          "type",
+          "ok"
+        ],
+        "not": {
+          "properties": {
+            "final": {
+              "const": false
+            }
+          },
+          "required": [
+            "final"
+          ]
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "$ref": "results/none.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "interaction.respond"
+          },
+          "ok": {
+            "const": true
+          }
+        },
+        "required": [
+          "type",
+          "ok"
+        ],
+        "not": {
+          "properties": {
+            "final": {
+              "const": false
+            }
+          },
+          "required": [
+            "final"
+          ]
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "$ref": "results/interaction.respond.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "interaction.followup"
+          },
+          "ok": {
+            "const": true
+          }
+        },
+        "required": [
+          "type",
+          "ok"
+        ],
+        "not": {
+          "properties": {
+            "final": {
+              "const": false
+            }
+          },
+          "required": [
+            "final"
+          ]
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "$ref": "results/interaction.respond.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "card.update"
+          },
+          "ok": {
+            "const": true
+          }
+        },
+        "required": [
+          "type",
+          "ok"
+        ],
+        "not": {
+          "properties": {
+            "final": {
+              "const": false
+            }
+          },
+          "required": [
+            "final"
+          ]
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "$ref": "results/none.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "privacy.forget"
+          },
+          "ok": {
+            "const": true
+          }
+        },
+        "required": [
+          "type",
+          "ok"
+        ],
+        "not": {
+          "properties": {
+            "final": {
+              "const": false
+            }
+          },
+          "required": [
+            "final"
+          ]
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "$ref": "results/privacy.forget.schema.json"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "privacy.export"
+          },
+          "ok": {
+            "const": true
+          }
+        },
+        "required": [
+          "type",
+          "ok"
+        ],
+        "not": {
+          "properties": {
+            "final": {
+              "const": false
+            }
+          },
+          "required": [
+            "final"
+          ]
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "$ref": "results/privacy.export.schema.json"
+          }
+        }
+      }
     }
   ],
   "type": "object",

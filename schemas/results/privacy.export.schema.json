@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/results/privacy.export.schema.json",
+  "title": "result privacy.export: data",
+  "description": "privacy.export result: what the connector holds, as a blob (usually JSON), or nothing.",
+  "type": "object",
+  "required": [
+    "records"
+  ],
+  "properties": {
+    "records": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "media": {
+      "$ref": "../defs.schema.json#/$defs/MediaRef"
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

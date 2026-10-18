@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/events/registry.put.schema.json",
+  "title": "event registry.put: data",
+  "description": "(1.1) The connector's command menu, as untyped manifests (name plus one free-text args string), so a hub can offer the commands in its own UI. full=true replaces every command the connector registered before.",
+  "type": "object",
+  "required": [
+    "commands"
+  ],
+  "properties": {
+    "full": {
+      "type": "boolean"
+    },
+    "commands": {
+      "type": "array",
+      "maxItems": 2000,
+      "items": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_.-]{0,31}$"
+          },
+          "aliases": {
+            "type": "array",
+            "maxItems": 16,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9_.-]{0,31}$"
+            }
+          },
+          "summary": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "usage": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "price": {
+            "$ref": "../defs.schema.json#/$defs/Points"
+          },
+          "roles": {
+            "description": "Roles allowed to run it; absent = everyone.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 64
+            }
+          },
+          "hidden": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

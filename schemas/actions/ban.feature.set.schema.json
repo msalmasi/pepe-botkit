@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/actions/ban.feature.set.schema.json",
+  "title": "action ban.feature.set: data",
+  "description": "(1.1) Ban a user from one feature of a room the connector hosts (chat, commands, voice, media, ...; hub-defined, open), or lift the ban (on=false).",
+  "type": "object",
+  "required": [
+    "user",
+    "feature",
+    "on"
+  ],
+  "properties": {
+    "user": {
+      "$ref": "../defs.schema.json#/$defs/UserRef"
+    },
+    "feature": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{0,31}$",
+      "examples": [
+        "all",
+        "chat",
+        "commands",
+        "voice",
+        "media",
+        "reactions"
+      ]
+    },
+    "on": {
+      "type": "boolean"
+    },
+    "duration_s": {
+      "$ref": "../defs.schema.json#/$defs/DurationS"
+    },
+    "reason": {
+      "type": "string",
+      "maxLength": 512
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

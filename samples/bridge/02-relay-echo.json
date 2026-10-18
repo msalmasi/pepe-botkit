@@ -1,0 +1,430 @@
+{
+  "description": "Relay: a hub pre-splits a long line into two parts (one action each, presplit, part n/of), results carry t{wait_ms, send_ms}, the platform echoes come back as self lines with relay_ref so the hub marks them echoed instead of ingesting them. Then an oversized presplit part is refused (relay_refused, too_long), a relay into a switched-off binding fails (binding_off), and a bot-authored reply keeps 1.0 behaviour.",
+  "grounding": "Relay ids are relay:<msg>:<binding>[:p<n>] and bot actions bot:<id>, so echoes and resends correlate by id, never by text.",
+  "frames": [
+    {
+      "dir": "r2c",
+      "note": "{name} comes from relay.author.name only. The connector does not split a presplit part.",
+      "frame": {
+        "op": "action",
+        "id": "relay:0192f3c4-7a1e-7c2b-9d10-5e6f7a8b9c0d:bnd-cf-lilypond:p1",
+        "ts": "2026-10-18T18:01:00.040Z",
+        "type": "send",
+        "scope": {
+          "platform": "camfrog",
+          "room": {
+            "id": "LilyPond.Room",
+            "name": "The Lily Pond",
+            "kind": "room"
+          }
+        },
+        "data": {
+          "text": "🌐 Mia (web): the first half of a long line, split by the hub at a sentence boundary so each part fits one Camfrog line.",
+          "relay": {
+            "msg_id": "0192f3c4-7a1e-7c2b-9d10-5e6f7a8b9c0d",
+            "binding": "bnd-cf-lilypond",
+            "author": {
+              "acct": "acct-9f2c",
+              "name": "Mia",
+              "name_src": "display",
+              "display": "Mia",
+              "tag": "web",
+              "verified": true,
+              "identities": {
+                "camfrog": "mia_k"
+              }
+            },
+            "otr": false,
+            "hops": 0,
+            "render": "prefix",
+            "presplit": true,
+            "part": {
+              "n": 1,
+              "of": 2
+            },
+            "deadline_ms": 29360
+          }
+        },
+        "timeout_ms": 29360,
+        "origin": {
+          "bot": "hub",
+          "module": "relay",
+          "user": {
+            "id": "mia_k",
+            "login": "mia_k",
+            "display": "Mia",
+            "resolved_by": "login"
+          }
+        },
+        "traceparent": "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01"
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result",
+        "id": "c-3201",
+        "ts": "2026-10-18T18:01:00.080Z",
+        "seq": 6,
+        "ref": "relay:0192f3c4-7a1e-7c2b-9d10-5e6f7a8b9c0d:bnd-cf-lilypond:p1",
+        "type": "send",
+        "ok": true,
+        "data": {
+          "message_ids": [
+            "cf-m-3f9a2c1d7e4b-LilyPond.Room-88219"
+          ],
+          "parts": 1,
+          "t": {
+            "wait_ms": 640,
+            "send_ms": 35
+          }
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "The Camfrog echo of the bot's own line: self=true plus the relay action id.",
+      "frame": {
+        "op": "event",
+        "id": "c-3202",
+        "ts": "2026-10-18T18:01:00.120Z",
+        "seq": 7,
+        "type": "message",
+        "connector": "cf-main",
+        "scope": {
+          "platform": "camfrog",
+          "room": {
+            "id": "LilyPond.Room",
+            "name": "The Lily Pond",
+            "kind": "room"
+          }
+        },
+        "data": {
+          "message_id": "cf-m-3f9a2c1d7e4b-LilyPond.Room-88219",
+          "user": {
+            "id": "pepebot",
+            "login": "PepeBot",
+            "display": "Pepe",
+            "is_self": true
+          },
+          "text": "🌐 Mia (web): the first half of a long line, split by the hub at a sentence boundary so each part fits one Camfrog line.",
+          "self": true,
+          "relay_ref": "relay:0192f3c4-7a1e-7c2b-9d10-5e6f7a8b9c0d:bnd-cf-lilypond:p1"
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action",
+        "id": "relay:0192f3c4-7a1e-7c2b-9d10-5e6f7a8b9c0d:bnd-cf-lilypond:p2",
+        "ts": "2026-10-18T18:01:00.160Z",
+        "type": "send",
+        "scope": {
+          "platform": "camfrog",
+          "room": {
+            "id": "LilyPond.Room",
+            "name": "The Lily Pond",
+            "kind": "room"
+          }
+        },
+        "data": {
+          "text": "🌐 Mia (web): and the second half, sent as its own action.",
+          "relay": {
+            "msg_id": "0192f3c4-7a1e-7c2b-9d10-5e6f7a8b9c0d",
+            "binding": "bnd-cf-lilypond",
+            "author": {
+              "acct": "acct-9f2c",
+              "name": "Mia",
+              "name_src": "display",
+              "display": "Mia",
+              "tag": "web",
+              "verified": true,
+              "identities": {
+                "camfrog": "mia_k"
+              }
+            },
+            "otr": false,
+            "hops": 0,
+            "render": "prefix",
+            "presplit": true,
+            "part": {
+              "n": 2,
+              "of": 2
+            },
+            "deadline_ms": 28700
+          }
+        },
+        "timeout_ms": 28700,
+        "origin": {
+          "bot": "hub",
+          "module": "relay"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result",
+        "id": "c-3203",
+        "ts": "2026-10-18T18:01:00.200Z",
+        "seq": 8,
+        "ref": "relay:0192f3c4-7a1e-7c2b-9d10-5e6f7a8b9c0d:bnd-cf-lilypond:p2",
+        "type": "send",
+        "ok": true,
+        "data": {
+          "message_ids": [
+            "cf-m-3f9a2c1d7e4b-LilyPond.Room-88220"
+          ],
+          "parts": 1,
+          "t": {
+            "wait_ms": 410,
+            "send_ms": 31
+          }
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event",
+        "id": "c-3204",
+        "ts": "2026-10-18T18:01:00.240Z",
+        "seq": 9,
+        "type": "message",
+        "connector": "cf-main",
+        "scope": {
+          "platform": "camfrog",
+          "room": {
+            "id": "LilyPond.Room",
+            "name": "The Lily Pond",
+            "kind": "room"
+          }
+        },
+        "data": {
+          "message_id": "cf-m-3f9a2c1d7e4b-LilyPond.Room-88220",
+          "user": {
+            "id": "pepebot",
+            "login": "PepeBot",
+            "display": "Pepe",
+            "is_self": true
+          },
+          "text": "🌐 Mia (web): and the second half, sent as its own action.",
+          "self": true,
+          "relay_ref": "relay:0192f3c4-7a1e-7c2b-9d10-5e6f7a8b9c0d:bnd-cf-lilypond:p2"
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action",
+        "id": "relay:0192f3c4-7a1e-7c2b-9d10-5e6f7a8b9c1e:bnd-cf-lilypond",
+        "ts": "2026-10-18T18:01:00.280Z",
+        "type": "send",
+        "scope": {
+          "platform": "camfrog",
+          "room": {
+            "id": "LilyPond.Room",
+            "name": "The Lily Pond",
+            "kind": "room"
+          }
+        },
+        "data": {
+          "text": "🌐 Mia (web): xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "relay": {
+            "msg_id": "0192f3c4-7a1e-7c2b-9d10-5e6f7a8b9c1e",
+            "binding": "bnd-cf-lilypond",
+            "author": {
+              "acct": "acct-9f2c",
+              "name": "Mia",
+              "name_src": "display",
+              "display": "Mia",
+              "tag": "web",
+              "verified": true,
+              "identities": {
+                "camfrog": "mia_k"
+              }
+            },
+            "otr": false,
+            "hops": 0,
+            "render": "prefix",
+            "presplit": true,
+            "part": {
+              "n": 1,
+              "of": 1
+            }
+          }
+        },
+        "origin": {
+          "bot": "hub",
+          "module": "relay"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "Never re-split: the part is over the line limit, so it is refused.",
+      "frame": {
+        "op": "result",
+        "id": "c-3205",
+        "ts": "2026-10-18T18:01:00.320Z",
+        "seq": 10,
+        "ref": "relay:0192f3c4-7a1e-7c2b-9d10-5e6f7a8b9c1e:bnd-cf-lilypond",
+        "type": "send",
+        "ok": false,
+        "error": {
+          "code": "relay_refused",
+          "message": "presplit part over 490 chars",
+          "retryable": false,
+          "details": {
+            "code": "too_long",
+            "max": 490
+          }
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action",
+        "id": "relay:0192f3c4-7a1e-7c2b-9d10-5e6f7a8b9c2f:bnd-cf-lilypond",
+        "ts": "2026-10-18T18:01:00.360Z",
+        "type": "send",
+        "scope": {
+          "platform": "camfrog",
+          "room": {
+            "id": "LilyPond.Room",
+            "name": "The Lily Pond",
+            "kind": "room"
+          }
+        },
+        "data": {
+          "text": "🌐 Mia (web): anyone here?",
+          "relay": {
+            "msg_id": "0192f3c4-7a1e-7c2b-9d10-5e6f7a8b9c2f",
+            "binding": "bnd-cf-lilypond",
+            "author": {
+              "acct": "acct-9f2c",
+              "name": "Mia",
+              "name_src": "display",
+              "display": "Mia",
+              "tag": "web",
+              "verified": true,
+              "identities": {
+                "camfrog": "mia_k"
+              }
+            },
+            "otr": false,
+            "hops": 0,
+            "render": "prefix",
+            "presplit": true
+          }
+        },
+        "origin": {
+          "bot": "hub",
+          "module": "relay"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result",
+        "id": "c-3206",
+        "ts": "2026-10-18T18:01:00.400Z",
+        "seq": 11,
+        "ref": "relay:0192f3c4-7a1e-7c2b-9d10-5e6f7a8b9c2f:bnd-cf-lilypond",
+        "type": "send",
+        "ok": false,
+        "error": {
+          "code": "binding_off",
+          "message": "relay switched off in this room",
+          "retryable": true,
+          "retry_after_ms": 60000
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "A native line, login-resolved.",
+      "frame": {
+        "op": "event",
+        "id": "c-3207",
+        "ts": "2026-10-18T18:01:00.440Z",
+        "seq": 12,
+        "type": "message",
+        "connector": "cf-main",
+        "scope": {
+          "platform": "camfrog",
+          "room": {
+            "id": "LilyPond.Room",
+            "name": "The Lily Pond",
+            "kind": "room"
+          }
+        },
+        "data": {
+          "message_id": "cf-m-3f9a2c1d7e4b-LilyPond.Room-88221",
+          "user": {
+            "id": "bogwalker",
+            "login": "bogwalker",
+            "resolved_by": "login"
+          },
+          "text": "!bal"
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "note": "Bot-authored lines carry no relay block: PCP 1.0's connector-side split still applies.",
+      "frame": {
+        "op": "action",
+        "id": "bot:act-0192f3c5",
+        "ts": "2026-10-18T18:01:00.480Z",
+        "type": "send",
+        "scope": {
+          "platform": "camfrog",
+          "room": {
+            "id": "LilyPond.Room",
+            "name": "The Lily Pond",
+            "kind": "room"
+          }
+        },
+        "data": {
+          "text": "you've got 12,400 PAT",
+          "mention": {
+            "id": "bogwalker",
+            "login": "bogwalker"
+          }
+        },
+        "origin": {
+          "bot": "bot-pepe",
+          "module": "economy",
+          "event": "c-3207"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result",
+        "id": "c-3208",
+        "ts": "2026-10-18T18:01:00.520Z",
+        "seq": 13,
+        "ref": "bot:act-0192f3c5",
+        "type": "send",
+        "ok": true,
+        "data": {
+          "message_ids": [
+            "cf-m-3f9a2c1d7e4b-LilyPond.Room-88222"
+          ],
+          "parts": 1,
+          "t": {
+            "wait_ms": 120,
+            "send_ms": 28
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,172 @@
+{
+  "description": "room.state: a full snapshot (switches, command menu with prices in points, bot menu, roster freshness, settings, locked settings, languages), then a JSON Merge Patch (null removes a key). modcaps.query: which of the hub's viewers have moderation powers in the room; users without powers are omitted.",
+  "grounding": "The connector sends a full snapshot on room.joined, on session start or resume and at least every 30 s; patches in between.",
+  "frames": [
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "event",
+        "id": "c-3401",
+        "ts": "2026-10-18T18:03:00.040Z",
+        "seq": 40,
+        "type": "room.state",
+        "connector": "cf-main",
+        "scope": {
+          "platform": "camfrog",
+          "room": {
+            "id": "LilyPond.Room",
+            "name": "The Lily Pond",
+            "kind": "room"
+          }
+        },
+        "data": {
+          "v": 1,
+          "full": true,
+          "switches": {
+            "relay": true,
+            "transcripts": true,
+            "captions": false,
+            "clips": true,
+            "cmds": true
+          },
+          "menu": {
+            "bal": "0",
+            "roast": "500",
+            "tip": "0"
+          },
+          "bot_menu": {
+            "greet": {
+              "on": true,
+              "price": "0"
+            },
+            "dj": {
+              "on": false,
+              "price": "2500"
+            }
+          },
+          "roster_fresh": {
+            "list_at": "2026-10-18T18:02:58.000Z",
+            "list_fresh": true,
+            "list_stale_after": 120,
+            "seen_ttl": 300
+          },
+          "settings": {
+            "greet_style": {
+              "v": "short",
+              "by": "lilypadlou"
+            }
+          },
+          "masters_off": [
+            "casino"
+          ],
+          "lang": {
+            "chat": "en",
+            "stt": "auto",
+            "tts": "en",
+            "tts_effective": "en-GB"
+          }
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "note": "v 2 follows v 1: apply as a merge patch.",
+      "frame": {
+        "op": "event",
+        "id": "c-3402",
+        "ts": "2026-10-18T18:03:00.080Z",
+        "seq": 41,
+        "type": "room.state",
+        "connector": "cf-main",
+        "scope": {
+          "platform": "camfrog",
+          "room": {
+            "id": "LilyPond.Room",
+            "name": "The Lily Pond",
+            "kind": "room"
+          }
+        },
+        "data": {
+          "v": 2,
+          "switches": {
+            "captions": true
+          },
+          "menu": {
+            "roast": null
+          },
+          "settings": {
+            "greet_style": {
+              "v": "off",
+              "by": "lilypadlou"
+            }
+          }
+        }
+      }
+    },
+    {
+      "dir": "r2c",
+      "frame": {
+        "op": "action",
+        "id": "r-3401",
+        "ts": "2026-10-18T18:03:00.120Z",
+        "type": "modcaps.query",
+        "scope": {
+          "platform": "camfrog",
+          "room": {
+            "id": "LilyPond.Room",
+            "name": "The Lily Pond",
+            "kind": "room"
+          }
+        },
+        "data": {
+          "users": [
+            "lilypadlou",
+            "bogwalker",
+            "toadstool77"
+          ]
+        },
+        "origin": {
+          "bot": "hub",
+          "module": "manage"
+        }
+      }
+    },
+    {
+      "dir": "c2r",
+      "frame": {
+        "op": "result",
+        "id": "c-3403",
+        "ts": "2026-10-18T18:03:00.160Z",
+        "seq": 42,
+        "ref": "r-3401",
+        "type": "modcaps.query",
+        "ok": true,
+        "data": {
+          "caps": {
+            "lilypadlou": {
+              "actions": [
+                "kick",
+                "ban",
+                "mute",
+                "mic.block",
+                "topic.set"
+              ],
+              "roles": [
+                "admin"
+              ],
+              "admin": true
+            },
+            "bogwalker": {
+              "actions": [
+                "kick"
+              ],
+              "roles": [
+                "moderator"
+              ]
+            }
+          }
+        }
+      }
+    }
+  ]
+}

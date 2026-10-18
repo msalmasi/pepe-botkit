@@ -1,0 +1,18 @@
+{
+  "description": "interaction.defer names the interaction",
+  "expect_path": "/data",
+  "frame": {
+    "op": "action",
+    "id": "r-bad-58",
+    "ts": "2026-10-18T18:12:00.080Z",
+    "type": "interaction.defer",
+    "data": {
+      "ephemeral": true
+    },
+    "origin": {
+      "bot": "hub",
+      "module": "raffle",
+      "event": "d-3601"
+    }
+  }
+}

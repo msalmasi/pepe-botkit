@@ -1,0 +1,26 @@
+{
+  "description": "lockdown.set names the level",
+  "expect_path": "/data",
+  "frame": {
+    "op": "action",
+    "id": "r-bad-57",
+    "ts": "2026-10-18T18:40:00.280Z",
+    "type": "lockdown.set",
+    "scope": {
+      "platform": "patv",
+      "room": {
+        "id": "the-lily-pond",
+        "name": "The Lily Pond",
+        "kind": "room"
+      }
+    },
+    "data": {
+      "duration_s": 1800,
+      "reason": "raid: 20 new identities in 60 s"
+    },
+    "origin": {
+      "bot": "bot-pepe",
+      "module": "automod"
+    }
+  }
+}

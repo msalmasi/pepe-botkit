@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/results/message.edit.schema.json",
+  "title": "result message.edit: data",
+  "description": "message.edit result.",
+  "type": "object",
+  "required": [],
+  "properties": {
+    "message_ids": {
+      "type": "array",
+      "items": {
+        "$ref": "../defs.schema.json#/$defs/Id"
+      }
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

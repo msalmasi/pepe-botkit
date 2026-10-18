@@ -1,0 +1,15 @@
+{
+  "description": "privacy.export names the identities to export",
+  "expect_path": "/data",
+  "frame": {
+    "op": "action",
+    "id": "r-bad-63",
+    "ts": "2026-10-18T18:02:00.520Z",
+    "type": "privacy.export",
+    "data": {},
+    "origin": {
+      "bot": "hub",
+      "module": "privacy"
+    }
+  }
+}

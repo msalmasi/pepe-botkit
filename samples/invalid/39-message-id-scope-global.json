@@ -1,0 +1,29 @@
+{
+  "description": "features.message_id_scope is stable/session/none",
+  "expect_path": "/data/capabilities/features/message_id_scope",
+  "frame": {
+    "op": "hello",
+    "id": "c-bad-39",
+    "ts": "2026-10-18T18:00:00.000Z",
+    "data": {
+      "pcp": "1.1",
+      "connector": {
+        "id": "dc-main",
+        "platform": "discord",
+        "name": "discord-connector",
+        "version": "0.2.0"
+      },
+      "capabilities": {
+        "events": [
+          "message"
+        ],
+        "actions": [
+          "send"
+        ],
+        "features": {
+          "message_id_scope": "global"
+        }
+      }
+    }
+  }
+}

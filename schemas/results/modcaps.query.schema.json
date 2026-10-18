@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/results/modcaps.query.schema.json",
+  "title": "result modcaps.query: data",
+  "description": "modcaps.query result: powers per queried user id; users without powers are omitted. The object per user is connector-defined beyond the fields below.",
+  "type": "object",
+  "required": [
+    "caps"
+  ],
+  "properties": {
+    "caps": {
+      "type": "object",
+      "maxProperties": 60,
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "actions": {
+            "description": "Action types this user may run here (kick, ban, ...).",
+            "type": "array",
+            "maxItems": 64,
+            "items": {
+              "type": "string",
+              "maxLength": 64
+            }
+          },
+          "roles": {
+            "type": "array",
+            "maxItems": 32,
+            "items": {
+              "type": "string",
+              "maxLength": 64
+            }
+          },
+          "admin": {
+            "type": "boolean"
+          },
+          "blocked": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  }
+}

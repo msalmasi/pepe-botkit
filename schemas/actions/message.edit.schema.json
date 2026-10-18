@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/msalmasi/pepe-botkit/pcp/v1/actions/message.edit.schema.json",
+  "title": "action message.edit: data",
+  "description": "(1.1) Edit one of the bot's own messages (needs features.edits_own). On a split message, message_id names the part to edit.",
+  "type": "object",
+  "required": [
+    "message_id"
+  ],
+  "properties": {
+    "message_id": {
+      "$ref": "../defs.schema.json#/$defs/Id"
+    },
+    "text": {
+      "$ref": "../defs.schema.json#/$defs/Text"
+    },
+    "content": {
+      "$ref": "../defs.schema.json#/$defs/Content"
+    },
+    "ext": {
+      "$ref": "../defs.schema.json#/$defs/Ext"
+    }
+  },
+  "anyOf": [
+    {
+      "required": [
+        "text"
+      ]
+    },
+    {
+      "required": [
+        "content"
+      ]
+    }
+  ]
+}

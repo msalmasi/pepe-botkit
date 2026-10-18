@@ -15,6 +15,10 @@
     "wait_ms": {
       "$ref": "../defs.schema.json#/$defs/DurationMs"
     },
+    "lane": {
+      "type": "boolean",
+      "description": "(1.1) The grab carries a hub speaker's live audio (a mic lane), not the bot's own audio; interim results report phase, position and eta_ms."
+    },
     "ext": {
       "$ref": "../defs.schema.json#/$defs/Ext"
     }
