@@ -17,6 +17,9 @@ platform <--native--> connector ==PCP (JSON over WebSocket, pcp.v1)==> runtime -
 - Connectors declare **capabilities**; modules check capabilities, never platform names.
 - Sessions are resumable: events carry sequence numbers, the runtime acks them, actions are
   idempotent by id.
+- PCP 1.1 adds what a **bridge hub** (a runtime that also hosts rooms and relays between platforms)
+  needs: relay with provenance, a policy mirror with privacy filtering at the edge, room state,
+  interactions and cards, edits, deletes and durable reactions.
 
 ## Layout
 
@@ -25,7 +28,9 @@ platform <--native--> connector ==PCP (JSON over WebSocket, pcp.v1)==> runtime -
 | [`spec/PCP.md`](spec/PCP.md) | the protocol (normative) |
 | [`spec/NONEBOT2-MAPPING.md`](spec/NONEBOT2-MAPPING.md) | how PCP maps onto a NoneBot2 adapter |
 | [`schemas/`](schemas) | JSON Schema draft 2020-12: `envelope`, `frame`, `event`/`action`/`result` dispatch, `control/*`, `events/*`, `actions/*`, `results/*`, `error`, `capabilities`, shared `defs`; [`index.json`](schemas/index.json) registers every type |
-| [`samples/`](samples) | sample sessions: `camfrog/` (grounded in the current Camfrog bot), `discord/`, `twitch/`; `invalid/` holds frames that must be rejected |
+| [`samples/`](samples) | sample sessions: `camfrog/` (grounded in the current Camfrog bot), `discord/`, `twitch/`, `bridge/` (PCP 1.1 bridge sessions); `invalid/` holds frames that must be rejected |
+| [`CHANGELOG.md`](CHANGELOG.md) | what each protocol version added |
+| [`compat/pcp-1.0/`](compat/pcp-1.0) | frozen copy of the PCP 1.0 schemas, for the tests that check 1.0 sessions carry no newer field |
 | [`packages/pcp-schemas`](packages/pcp-schemas) | TypeScript validator (Ajv) |
 | [`python/`](python) | Python validator (`pcp_schemas`, jsonschema) |
 | [`scripts/gen-dispatch.mjs`](scripts/gen-dispatch.mjs) | regenerates the dispatch schemas from `index.json` (`--check` for CI) |
@@ -68,11 +73,13 @@ python -m venv .venv && .venv/Scripts/python -m pip install -e ".[test]"   # bin
 Adding or changing a type:
 
 1. Edit or add `schemas/events|actions|results/<type>.schema.json` and register it in
-   `schemas/index.json` (`requires_room`, `priority`, `result`).
+   `schemas/index.json` (`requires_room`, `priority`, `result`, and `since` for a type added after
+   1.0).
 2. `npm run gen` to rebuild `event/action/result/frame.schema.json`.
 3. Add at least one sample frame (the tests require every type to have one) and, for new
    constraints, a bad sample in `samples/invalid/` with the JSON pointer where it must fail.
-4. Follow the additive-only rules in PCP §14.
+4. Follow the additive-only rules in PCP §14, mark new fields "(MAJOR.MINOR)" in their schema
+   descriptions, and add a `CHANGELOG.md` entry.
 
 ## Sample data
 
@@ -82,5 +89,7 @@ file's `grounding` note), never real traffic.
 
 ## Status
 
-Draft 1.0 of the protocol (work package F-4). Open questions are listed at the end of
+Draft 1.1 of the protocol: an additive minor of draft 1.0 (work package F-4) for bridge hubs,
+privacy at the edge, interactions and richer content; 1.0 peers keep working through version
+negotiation. See [`CHANGELOG.md`](CHANGELOG.md). Open questions are listed at the end of
 [`spec/PCP.md`](spec/PCP.md#18-open-questions). Licence: [MIT](LICENSE).
